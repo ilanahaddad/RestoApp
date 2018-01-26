@@ -1,0 +1,102 @@
+class Item 
+{
+  enum Category { Food, Beverage } 
+  String name;
+  String description;
+  Float price;
+  
+}  
+  
+class SplitItem 
+{
+  isA Item;
+  Integer numPeopleSharing;
+}  
+  
+class Menu 
+{
+  singleton;
+  lazy String pathToMenuFile;
+}
+
+class Order {}
+
+class Bill
+{
+  Float totalCosts;
+}
+
+class Seat 
+{
+  autounique id;
+  Boolean isOccupied;
+}
+
+class Table 
+{
+  autounique id;
+  Integer maxNumSeats;
+}
+
+class AvailabilityStatus {}
+
+class AvailableTable 
+{
+  isA AvailabilityStatus;
+}
+
+class InUseTable 
+{
+  isA AvailabilityStatus;
+  Integer numberOfSeatsUsed;
+}
+
+class ReservedTable 
+{
+  isA AvailabilityStatus;
+}
+
+class Reservation 
+{
+  autounique id;
+  Date date;
+  Time time;
+  Integer numOfPeople;
+  String customerName;
+  String customerContact;
+}
+
+class RestoAppManager {}
+
+class User 
+{
+  autounique id;
+}
+
+class Waiter 
+{
+  isA User;
+}
+
+class Owner 
+{
+  isA User;
+}
+
+association {  
+  1 RestoAppManager -- * Order;  
+  1 RestoAppManager -- * User;
+  0..1 RestoAppManager -- 0..1 Menu;
+  1 RestoAppManager -- * Reservation;
+  1 RestoAppManager -- * Table;
+  
+  1..* Order -- 0..1 Bill;
+  0..1 Order -- 1 Seat;  
+  
+  1 Table -- 1..* Seat;
+  1..* Table -- 0..1 Reservation;
+  1 Table -- 1 AvailabilityStatus;
+  
+  1 Menu -- 1..* Item;
+  1 Menu -- * Order;  
+}
