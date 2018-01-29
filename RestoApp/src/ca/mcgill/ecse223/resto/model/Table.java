@@ -1,11 +1,10 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3758.c600698 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
-
+package ca.mcgill.ecse223.resto.model;
 import java.util.*;
 
-// line 36 "model.ump"
-// line 135 "model.ump"
+// line 37 "../../../../../RestoApp.ump"
 public class Table
 {
 
@@ -86,12 +85,12 @@ public class Table
   {
     return id;
   }
-  /* Code from template association_GetOne */
+
   public RestoAppManager getRestoAppManager()
   {
     return restoAppManager;
   }
-  /* Code from template association_GetMany */
+
   public Seat getSeat(int index)
   {
     Seat aSeat = seats.get(index);
@@ -121,7 +120,7 @@ public class Table
     int index = seats.indexOf(aSeat);
     return index;
   }
-  /* Code from template association_GetOne */
+
   public Reservation getReservation()
   {
     return reservation;
@@ -132,12 +131,12 @@ public class Table
     boolean has = reservation != null;
     return has;
   }
-  /* Code from template association_GetOne */
+
   public AvailabilityStatus getAvailabilityStatus()
   {
     return availabilityStatus;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setRestoAppManager(RestoAppManager aRestoAppManager)
   {
     boolean wasSet = false;
@@ -156,7 +155,7 @@ public class Table
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_IsNumberOfValidMethod */
+
   public boolean isNumberOfSeatsValid()
   {
     boolean isValid = numberOfSeats() >= minimumNumberOfSeats();
@@ -167,7 +166,7 @@ public class Table
   {
     return 1;
   }
-  /* Code from template association_AddMandatoryManyToOne */
+
   public Seat addSeat(boolean aIsOccupied)
   {
     Seat aNewSeat = new Seat(aIsOccupied, this);
@@ -216,7 +215,7 @@ public class Table
     wasRemoved = true;
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addSeatAt(Seat aSeat, int index)
   {  
     boolean wasAdded = false;
@@ -248,7 +247,7 @@ public class Table
     }
     return wasAdded;
   }
-  /* Code from template association_SetOptionalOneToMandatoryMany */
+
   public boolean setReservation(Reservation aReservation)
   {
     //

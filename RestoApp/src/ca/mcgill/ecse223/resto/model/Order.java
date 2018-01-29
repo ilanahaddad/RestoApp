@@ -1,10 +1,9 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3758.c600698 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
+package ca.mcgill.ecse223.resto.model;
 
-
-// line 23 "model.ump"
-// line 120 "model.ump"
+// line 24 "../../../../../RestoApp.ump"
 public class Order
 {
 
@@ -44,12 +43,12 @@ public class Order
   //------------------------
   // INTERFACE
   //------------------------
-  /* Code from template association_GetOne */
+
   public RestoAppManager getRestoAppManager()
   {
     return restoAppManager;
   }
-  /* Code from template association_GetOne */
+
   public Bill getBill()
   {
     return bill;
@@ -60,17 +59,17 @@ public class Order
     boolean has = bill != null;
     return has;
   }
-  /* Code from template association_GetOne */
+
   public Seat getSeat()
   {
     return seat;
   }
-  /* Code from template association_GetOne */
+
   public Menu getMenu()
   {
     return menu;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setRestoAppManager(RestoAppManager aRestoAppManager)
   {
     boolean wasSet = false;
@@ -89,7 +88,7 @@ public class Order
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_SetOptionalOneToMandatoryMany */
+
   public boolean setBill(Bill aBill)
   {
     //
@@ -139,7 +138,7 @@ public class Order
     }
     return wasSet;
   }
-    /* Code from template association_SetOneToOptionalOne */
+  
   public boolean setSeat(Seat aNewSeat)
   {
     boolean wasSet = false;
@@ -167,7 +166,7 @@ public class Order
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setMenu(Menu aMenu)
   {
     boolean wasSet = false;

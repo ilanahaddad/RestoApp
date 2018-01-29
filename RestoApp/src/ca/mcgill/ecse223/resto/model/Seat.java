@@ -1,10 +1,9 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3758.c600698 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
+package ca.mcgill.ecse223.resto.model;
 
-
-// line 30 "model.ump"
-// line 130 "model.ump"
+// line 31 "../../../../../RestoApp.ump"
 public class Seat
 {
 
@@ -64,12 +63,12 @@ public class Seat
   {
     return id;
   }
-  /* Code from template attribute_IsBoolean */
+
   public boolean isIsOccupied()
   {
     return isOccupied;
   }
-  /* Code from template association_GetOne */
+
   public Order getOrder()
   {
     return order;
@@ -80,12 +79,12 @@ public class Seat
     boolean has = order != null;
     return has;
   }
-  /* Code from template association_GetOne */
+
   public Table getTable()
   {
     return table;
   }
-  /* Code from template association_SetOptionalOneToOne */
+
   public boolean setOrder(Order aNewOrder)
   {
     boolean wasSet = false;
@@ -112,7 +111,7 @@ public class Seat
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_SetOneToMandatoryMany */
+
   public boolean setTable(Table aTable)
   {
     boolean wasSet = false;

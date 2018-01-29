@@ -1,13 +1,12 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3758.c600698 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
-
+package ca.mcgill.ecse223.resto.model;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.*;
 
-// line 60 "model.ump"
-// line 160 "model.ump"
+// line 61 "../../../../../RestoApp.ump"
 public class Reservation
 {
 
@@ -133,12 +132,12 @@ public class Reservation
   {
     return id;
   }
-  /* Code from template association_GetOne */
+
   public RestoAppManager getRestoAppManager()
   {
     return restoAppManager;
   }
-  /* Code from template association_GetMany */
+
   public Table getTable(int index)
   {
     Table aTable = tables.get(index);
@@ -168,7 +167,7 @@ public class Reservation
     int index = tables.indexOf(aTable);
     return index;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setRestoAppManager(RestoAppManager aRestoAppManager)
   {
     boolean wasSet = false;
@@ -192,7 +191,7 @@ public class Reservation
   {
     return 1;
   }
-  /* Code from template association_AddMNToOptionalOne */
+
   public boolean addTable(Table aTable)
   {
     boolean wasAdded = false;
@@ -277,7 +276,7 @@ public class Reservation
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_GetPrivate */
+
   private void setReservation(Table aTable, Reservation aReservation)
   {
     try
@@ -291,7 +290,7 @@ public class Reservation
       throw new RuntimeException("Issue internally setting aReservation to aTable", e);
     }
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addTableAt(Table aTable, int index)
   {  
     boolean wasAdded = false;

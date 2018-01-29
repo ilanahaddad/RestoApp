@@ -1,10 +1,9 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3758.c600698 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
+package ca.mcgill.ecse223.resto.model;
 
-
-// line 2 "model.ump"
-// line 105 "model.ump"
+// line 3 "../../../../../RestoApp.ump"
 public class Item
 {
 
@@ -30,10 +29,10 @@ public class Item
   // CONSTRUCTOR
   //------------------------
 
-  public Item(String aName, String aDescription, float aPrice, Menu aMenu)
+  public Item(String aName, float aPrice, Menu aMenu)
   {
     name = aName;
-    description = aDescription;
+    description = null;
     price = aPrice;
     boolean didAddMenu = setMenu(aMenu);
     if (!didAddMenu)
@@ -84,12 +83,12 @@ public class Item
   {
     return price;
   }
-  /* Code from template association_GetOne */
+
   public Menu getMenu()
   {
     return menu;
   }
-  /* Code from template association_SetOneToMandatoryMany */
+
   public boolean setMenu(Menu aMenu)
   {
     boolean wasSet = false;

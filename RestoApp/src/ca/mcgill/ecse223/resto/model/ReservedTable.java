@@ -1,10 +1,9 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3758.c600698 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
+package ca.mcgill.ecse223.resto.model;
 
-
-// line 55 "model.ump"
-// line 155 "model.ump"
+// line 56 "../../../../../RestoApp.ump"
 public class ReservedTable extends AvailabilityStatus
 {
 

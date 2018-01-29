@@ -1,11 +1,10 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3758.c600698 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
-
+package ca.mcgill.ecse223.resto.model;
 import java.util.*;
 
-// line 17 "model.ump"
-// line 115 "model.ump"
+// line 18 "../../../../../RestoApp.ump"
 public class Menu
 {
 
@@ -63,7 +62,7 @@ public class Menu
   {
     return pathToMenuFile;
   }
-  /* Code from template association_GetOne */
+
   public RestoAppManager getRestoAppManager()
   {
     return restoAppManager;
@@ -74,7 +73,7 @@ public class Menu
     boolean has = restoAppManager != null;
     return has;
   }
-  /* Code from template association_GetMany */
+
   public Item getItem(int index)
   {
     Item aItem = items.get(index);
@@ -104,7 +103,7 @@ public class Menu
     int index = items.indexOf(aItem);
     return index;
   }
-  /* Code from template association_GetMany */
+
   public Order getOrder(int index)
   {
     Order aOrder = orders.get(index);
@@ -134,7 +133,7 @@ public class Menu
     int index = orders.indexOf(aOrder);
     return index;
   }
-  /* Code from template association_SetOptionalOneToOptionalOne */
+
   public boolean setRestoAppManager(RestoAppManager aNewRestoAppManager)
   {
     boolean wasSet = false;
@@ -167,7 +166,7 @@ public class Menu
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_IsNumberOfValidMethod */
+
   public boolean isNumberOfItemsValid()
   {
     boolean isValid = numberOfItems() >= minimumNumberOfItems();
@@ -178,10 +177,10 @@ public class Menu
   {
     return 1;
   }
-  /* Code from template association_AddMandatoryManyToOne */
-  public Item addItem(String aName, String aDescription, float aPrice)
+
+  public Item addItem(String aName, float aPrice)
   {
-    Item aNewItem = new Item(aName, aDescription, aPrice, this);
+    Item aNewItem = new Item(aName, aPrice, this);
     return aNewItem;
   }
 
@@ -227,7 +226,7 @@ public class Menu
     wasRemoved = true;
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addItemAt(Item aItem, int index)
   {  
     boolean wasAdded = false;
@@ -299,7 +298,7 @@ public class Menu
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addOrderAt(Order aOrder, int index)
   {  
     boolean wasAdded = false;

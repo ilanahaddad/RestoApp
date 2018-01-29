@@ -1,10 +1,9 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3758.c600698 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
+package ca.mcgill.ecse223.resto.model;
 
-
-// line 72 "model.ump"
-// line 170 "model.ump"
+// line 73 "../../../../../RestoApp.ump"
 public class User
 {
 
@@ -46,12 +45,12 @@ public class User
   {
     return id;
   }
-  /* Code from template association_GetOne */
+
   public RestoAppManager getRestoAppManager()
   {
     return restoAppManager;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setRestoAppManager(RestoAppManager aRestoAppManager)
   {
     boolean wasSet = false;

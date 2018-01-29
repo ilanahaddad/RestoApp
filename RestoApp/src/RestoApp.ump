@@ -1,8 +1,10 @@
+namespace ca.mcgill.ecse223.resto.model;
+
 class Item 
 {
   enum Category { Food, Beverage } 
   String name;
-  String description;
+  lazy String description;
   Float price;
   
 }  

@@ -1,13 +1,12 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3758.c600698 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
-
+package ca.mcgill.ecse223.resto.model;
 import java.util.*;
 import java.sql.Date;
 import java.sql.Time;
 
-// line 70 "model.ump"
-// line 165 "model.ump"
+// line 71 "../../../../../RestoApp.ump"
 public class RestoAppManager
 {
 
@@ -37,7 +36,7 @@ public class RestoAppManager
   //------------------------
   // INTERFACE
   //------------------------
-  /* Code from template association_GetMany */
+
   public Order getOrder(int index)
   {
     Order aOrder = orders.get(index);
@@ -67,7 +66,7 @@ public class RestoAppManager
     int index = orders.indexOf(aOrder);
     return index;
   }
-  /* Code from template association_GetMany */
+
   public User getUser(int index)
   {
     User aUser = users.get(index);
@@ -97,7 +96,7 @@ public class RestoAppManager
     int index = users.indexOf(aUser);
     return index;
   }
-  /* Code from template association_GetOne */
+
   public Menu getMenu()
   {
     return menu;
@@ -108,7 +107,7 @@ public class RestoAppManager
     boolean has = menu != null;
     return has;
   }
-  /* Code from template association_GetMany */
+
   public Reservation getReservation(int index)
   {
     Reservation aReservation = reservations.get(index);
@@ -138,7 +137,7 @@ public class RestoAppManager
     int index = reservations.indexOf(aReservation);
     return index;
   }
-  /* Code from template association_GetMany */
+
   public Table getTable(int index)
   {
     Table aTable = tables.get(index);
@@ -208,7 +207,7 @@ public class RestoAppManager
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addOrderAt(Order aOrder, int index)
   {  
     boolean wasAdded = false;
@@ -280,7 +279,7 @@ public class RestoAppManager
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addUserAt(User aUser, int index)
   {  
     boolean wasAdded = false;
@@ -312,7 +311,7 @@ public class RestoAppManager
     }
     return wasAdded;
   }
-  /* Code from template association_SetOptionalOneToOptionalOne */
+
   public boolean setMenu(Menu aNewMenu)
   {
     boolean wasSet = false;
@@ -385,7 +384,7 @@ public class RestoAppManager
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addReservationAt(Reservation aReservation, int index)
   {  
     boolean wasAdded = false;
@@ -457,7 +456,7 @@ public class RestoAppManager
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addTableAt(Table aTable, int index)
   {  
     boolean wasAdded = false;

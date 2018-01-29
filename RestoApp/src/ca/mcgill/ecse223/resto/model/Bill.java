@@ -1,11 +1,10 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3758.c600698 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
-
+package ca.mcgill.ecse223.resto.model;
 import java.util.*;
 
-// line 25 "model.ump"
-// line 125 "model.ump"
+// line 26 "../../../../../RestoApp.ump"
 public class Bill
 {
 
@@ -50,7 +49,7 @@ public class Bill
   {
     return totalCosts;
   }
-  /* Code from template association_GetMany */
+
   public Order getOrder(int index)
   {
     Order aOrder = orders.get(index);
@@ -85,7 +84,7 @@ public class Bill
   {
     return 1;
   }
-  /* Code from template association_AddMNToOptionalOne */
+
   public boolean addOrder(Order aOrder)
   {
     boolean wasAdded = false;
@@ -170,7 +169,7 @@ public class Bill
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_GetPrivate */
+
   private void setBill(Order aOrder, Bill aBill)
   {
     try
@@ -184,7 +183,7 @@ public class Bill
       throw new RuntimeException("Issue internally setting aBill to aOrder", e);
     }
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addOrderAt(Order aOrder, int index)
   {  
     boolean wasAdded = false;

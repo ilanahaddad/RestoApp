@@ -1,10 +1,9 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3758.c600698 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
+package ca.mcgill.ecse223.resto.model;
 
-
-// line 11 "model.ump"
-// line 110 "model.ump"
+// line 12 "../../../../../RestoApp.ump"
 public class SplitItem extends Item
 {
 
@@ -19,9 +18,9 @@ public class SplitItem extends Item
   // CONSTRUCTOR
   //------------------------
 
-  public SplitItem(String aName, String aDescription, float aPrice, Menu aMenu, int aNumPeopleSharing)
+  public SplitItem(String aName, float aPrice, Menu aMenu, int aNumPeopleSharing)
   {
-    super(aName, aDescription, aPrice, aMenu);
+    super(aName, aPrice, aMenu);
     numPeopleSharing = aNumPeopleSharing;
   }
 
