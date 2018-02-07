@@ -1,359 +1,168 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
 import java.util.*;
 
-// line 18 "../../../../../RestoApp.ump"
+// line 50 "../../../../../../../../ump/tmp349106/model.ump"
+// line 102 "../../../../../../../../ump/tmp349106/model.ump"
 public class Menu
 {
-
-  //------------------------
-  // STATIC VARIABLES
-  //------------------------
-
-  private static Menu theInstance = null;
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //Menu Attributes
-  private String pathToMenuFile;
-
   //Menu Associations
-  private RestoAppManager restoAppManager;
-  private List<Item> items;
-  private List<Order> orders;
+  private List<MenuItem> menuItems;
+  private RestoApp restoApp;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  private Menu()
+  public Menu(RestoApp aRestoApp)
   {
-    pathToMenuFile = null;
-    items = new ArrayList<Item>();
-    orders = new ArrayList<Order>();
+    menuItems = new ArrayList<MenuItem>();
+    if (aRestoApp == null || aRestoApp.getMenu() != null)
+    {
+      throw new RuntimeException("Unable to create Menu due to aRestoApp");
+    }
+    restoApp = aRestoApp;
   }
 
-  public static Menu getInstance()
+  public Menu()
   {
-    if(theInstance == null)
-    {
-      theInstance = new Menu();
-    }
-    return theInstance;
+    menuItems = new ArrayList<MenuItem>();
+    restoApp = new RestoApp(this);
   }
 
   //------------------------
   // INTERFACE
   //------------------------
-
-  public boolean setPathToMenuFile(String aPathToMenuFile)
+  /* Code from template association_GetMany */
+  public MenuItem getMenuItem(int index)
   {
-    boolean wasSet = false;
-    pathToMenuFile = aPathToMenuFile;
-    wasSet = true;
-    return wasSet;
+    MenuItem aMenuItem = menuItems.get(index);
+    return aMenuItem;
   }
 
-  public String getPathToMenuFile()
+  public List<MenuItem> getMenuItems()
   {
-    return pathToMenuFile;
+    List<MenuItem> newMenuItems = Collections.unmodifiableList(menuItems);
+    return newMenuItems;
   }
 
-  public RestoAppManager getRestoAppManager()
+  public int numberOfMenuItems()
   {
-    return restoAppManager;
-  }
-
-  public boolean hasRestoAppManager()
-  {
-    boolean has = restoAppManager != null;
-    return has;
-  }
-
-  public Item getItem(int index)
-  {
-    Item aItem = items.get(index);
-    return aItem;
-  }
-
-  public List<Item> getItems()
-  {
-    List<Item> newItems = Collections.unmodifiableList(items);
-    return newItems;
-  }
-
-  public int numberOfItems()
-  {
-    int number = items.size();
+    int number = menuItems.size();
     return number;
   }
 
-  public boolean hasItems()
+  public boolean hasMenuItems()
   {
-    boolean has = items.size() > 0;
+    boolean has = menuItems.size() > 0;
     return has;
   }
 
-  public int indexOfItem(Item aItem)
+  public int indexOfMenuItem(MenuItem aMenuItem)
   {
-    int index = items.indexOf(aItem);
+    int index = menuItems.indexOf(aMenuItem);
     return index;
   }
-
-  public Order getOrder(int index)
+  /* Code from template association_GetOne */
+  public RestoApp getRestoApp()
   {
-    Order aOrder = orders.get(index);
-    return aOrder;
+    return restoApp;
   }
-
-  public List<Order> getOrders()
-  {
-    List<Order> newOrders = Collections.unmodifiableList(orders);
-    return newOrders;
-  }
-
-  public int numberOfOrders()
-  {
-    int number = orders.size();
-    return number;
-  }
-
-  public boolean hasOrders()
-  {
-    boolean has = orders.size() > 0;
-    return has;
-  }
-
-  public int indexOfOrder(Order aOrder)
-  {
-    int index = orders.indexOf(aOrder);
-    return index;
-  }
-
-  public boolean setRestoAppManager(RestoAppManager aNewRestoAppManager)
-  {
-    boolean wasSet = false;
-    if (aNewRestoAppManager == null)
-    {
-      RestoAppManager existingRestoAppManager = restoAppManager;
-      restoAppManager = null;
-      
-      if (existingRestoAppManager != null && existingRestoAppManager.getMenu() != null)
-      {
-        existingRestoAppManager.setMenu(null);
-      }
-      wasSet = true;
-      return wasSet;
-    }
-
-    RestoAppManager currentRestoAppManager = getRestoAppManager();
-    if (currentRestoAppManager != null && !currentRestoAppManager.equals(aNewRestoAppManager))
-    {
-      currentRestoAppManager.setMenu(null);
-    }
-
-    restoAppManager = aNewRestoAppManager;
-    Menu existingMenu = aNewRestoAppManager.getMenu();
-
-    if (!equals(existingMenu))
-    {
-      aNewRestoAppManager.setMenu(this);
-    }
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean isNumberOfItemsValid()
-  {
-    boolean isValid = numberOfItems() >= minimumNumberOfItems();
-    return isValid;
-  }
-
-  public static int minimumNumberOfItems()
-  {
-    return 1;
-  }
-
-  public Item addItem(String aName, float aPrice)
-  {
-    Item aNewItem = new Item(aName, aPrice, this);
-    return aNewItem;
-  }
-
-  public boolean addItem(Item aItem)
-  {
-    boolean wasAdded = false;
-    if (items.contains(aItem)) { return false; }
-    Menu existingMenu = aItem.getMenu();
-    boolean isNewMenu = existingMenu != null && !this.equals(existingMenu);
-
-    if (isNewMenu && existingMenu.numberOfItems() <= minimumNumberOfItems())
-    {
-      return wasAdded;
-    }
-    if (isNewMenu)
-    {
-      aItem.setMenu(this);
-    }
-    else
-    {
-      items.add(aItem);
-    }
-    wasAdded = true;
-    return wasAdded;
-  }
-
-  public boolean removeItem(Item aItem)
-  {
-    boolean wasRemoved = false;
-    //Unable to remove aItem, as it must always have a menu
-    if (this.equals(aItem.getMenu()))
-    {
-      return wasRemoved;
-    }
-
-    //menu already at minimum (1)
-    if (numberOfItems() <= minimumNumberOfItems())
-    {
-      return wasRemoved;
-    }
-
-    items.remove(aItem);
-    wasRemoved = true;
-    return wasRemoved;
-  }
-
-  public boolean addItemAt(Item aItem, int index)
-  {  
-    boolean wasAdded = false;
-    if(addItem(aItem))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfItems()) { index = numberOfItems() - 1; }
-      items.remove(aItem);
-      items.add(index, aItem);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveItemAt(Item aItem, int index)
-  {
-    boolean wasAdded = false;
-    if(items.contains(aItem))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfItems()) { index = numberOfItems() - 1; }
-      items.remove(aItem);
-      items.add(index, aItem);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addItemAt(aItem, index);
-    }
-    return wasAdded;
-  }
-
-  public static int minimumNumberOfOrders()
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfMenuItems()
   {
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Order addOrder(RestoAppManager aRestoAppManager, Seat aSeat)
+  public MenuItem addMenuItem(String aName)
   {
-    return new Order(aRestoAppManager, aSeat, this);
+    return new MenuItem(aName, this);
   }
 
-  public boolean addOrder(Order aOrder)
+  public boolean addMenuItem(MenuItem aMenuItem)
   {
     boolean wasAdded = false;
-    if (orders.contains(aOrder)) { return false; }
-    Menu existingMenu = aOrder.getMenu();
+    if (menuItems.contains(aMenuItem)) { return false; }
+    Menu existingMenu = aMenuItem.getMenu();
     boolean isNewMenu = existingMenu != null && !this.equals(existingMenu);
     if (isNewMenu)
     {
-      aOrder.setMenu(this);
+      aMenuItem.setMenu(this);
     }
     else
     {
-      orders.add(aOrder);
+      menuItems.add(aMenuItem);
     }
     wasAdded = true;
     return wasAdded;
   }
 
-  public boolean removeOrder(Order aOrder)
+  public boolean removeMenuItem(MenuItem aMenuItem)
   {
     boolean wasRemoved = false;
-    //Unable to remove aOrder, as it must always have a menu
-    if (!this.equals(aOrder.getMenu()))
+    //Unable to remove aMenuItem, as it must always have a menu
+    if (!this.equals(aMenuItem.getMenu()))
     {
-      orders.remove(aOrder);
+      menuItems.remove(aMenuItem);
       wasRemoved = true;
     }
     return wasRemoved;
   }
-
-  public boolean addOrderAt(Order aOrder, int index)
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addMenuItemAt(MenuItem aMenuItem, int index)
   {  
     boolean wasAdded = false;
-    if(addOrder(aOrder))
+    if(addMenuItem(aMenuItem))
     {
       if(index < 0 ) { index = 0; }
-      if(index > numberOfOrders()) { index = numberOfOrders() - 1; }
-      orders.remove(aOrder);
-      orders.add(index, aOrder);
+      if(index > numberOfMenuItems()) { index = numberOfMenuItems() - 1; }
+      menuItems.remove(aMenuItem);
+      menuItems.add(index, aMenuItem);
       wasAdded = true;
     }
     return wasAdded;
   }
 
-  public boolean addOrMoveOrderAt(Order aOrder, int index)
+  public boolean addOrMoveMenuItemAt(MenuItem aMenuItem, int index)
   {
     boolean wasAdded = false;
-    if(orders.contains(aOrder))
+    if(menuItems.contains(aMenuItem))
     {
       if(index < 0 ) { index = 0; }
-      if(index > numberOfOrders()) { index = numberOfOrders() - 1; }
-      orders.remove(aOrder);
-      orders.add(index, aOrder);
+      if(index > numberOfMenuItems()) { index = numberOfMenuItems() - 1; }
+      menuItems.remove(aMenuItem);
+      menuItems.add(index, aMenuItem);
       wasAdded = true;
     } 
     else 
     {
-      wasAdded = addOrderAt(aOrder, index);
+      wasAdded = addMenuItemAt(aMenuItem, index);
     }
     return wasAdded;
   }
 
   public void delete()
   {
-    if (restoAppManager != null)
+    while (menuItems.size() > 0)
     {
-      restoAppManager.setMenu(null);
+      MenuItem aMenuItem = menuItems.get(menuItems.size() - 1);
+      aMenuItem.delete();
+      menuItems.remove(aMenuItem);
     }
-    for(int i=items.size(); i > 0; i--)
+    
+    RestoApp existingRestoApp = restoApp;
+    restoApp = null;
+    if (existingRestoApp != null)
     {
-      Item aItem = items.get(i - 1);
-      aItem.delete();
-    }
-    for(int i=orders.size(); i > 0; i--)
-    {
-      Order aOrder = orders.get(i - 1);
-      aOrder.delete();
+      existingRestoApp.delete();
     }
   }
 
-
-  public String toString()
-  {
-    return super.toString() + "["+
-            "pathToMenuFile" + ":" + getPathToMenuFile()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "restoAppManager = "+(getRestoAppManager()!=null?Integer.toHexString(System.identityHashCode(getRestoAppManager())):"null");
-  }
 }

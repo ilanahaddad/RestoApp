@@ -1,10 +1,11 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
 import java.util.*;
 
-// line 37 "../../../../../RestoApp.ump"
+// line 25 "../../../../../../../../ump/tmp349106/model.ump"
+// line 82 "../../../../../../../../ump/tmp349106/model.ump"
 public class Table
 {
 
@@ -12,85 +13,136 @@ public class Table
   // STATIC VARIABLES
   //------------------------
 
-  private static int nextId = 1;
+  private static Map<Integer, Table> tablesByNumber = new HashMap<Integer, Table>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //Table Attributes
-  private int maxNumSeats;
-
-  //Autounique Attributes
-  private int id;
+  private int number;
+  private int x;
+  private int y;
+  private int width;
+  private int length;
 
   //Table Associations
-  private RestoAppManager restoAppManager;
   private List<Seat> seats;
-  private Reservation reservation;
-  private AvailabilityStatus availabilityStatus;
+  private RestoApp restoApp;
+  private List<Reservation> reservations;
+  private List<Order> orders;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Table(int aMaxNumSeats, RestoAppManager aRestoAppManager, AvailabilityStatus aAvailabilityStatus)
+  public Table(int aNumber, int aX, int aY, int aWidth, int aLength, RestoApp aRestoApp)
   {
-    maxNumSeats = aMaxNumSeats;
-    id = nextId++;
-    boolean didAddRestoAppManager = setRestoAppManager(aRestoAppManager);
-    if (!didAddRestoAppManager)
+    x = aX;
+    y = aY;
+    width = aWidth;
+    length = aLength;
+    if (!setNumber(aNumber))
     {
-      throw new RuntimeException("Unable to create table due to restoAppManager");
+      throw new RuntimeException("Cannot create due to duplicate number");
     }
     seats = new ArrayList<Seat>();
-    if (aAvailabilityStatus == null || aAvailabilityStatus.getTable() != null)
+    boolean didAddRestoApp = setRestoApp(aRestoApp);
+    if (!didAddRestoApp)
     {
-      throw new RuntimeException("Unable to create Table due to aAvailabilityStatus");
+      throw new RuntimeException("Unable to create table due to restoApp");
     }
-    availabilityStatus = aAvailabilityStatus;
-  }
-
-  public Table(int aMaxNumSeats, RestoAppManager aRestoAppManager)
-  {
-    maxNumSeats = aMaxNumSeats;
-    id = nextId++;
-    boolean didAddRestoAppManager = setRestoAppManager(aRestoAppManager);
-    if (!didAddRestoAppManager)
-    {
-      throw new RuntimeException("Unable to create table due to restoAppManager");
-    }
-    seats = new ArrayList<Seat>();
-    availabilityStatus = new AvailabilityStatus(this);
+    reservations = new ArrayList<Reservation>();
+    orders = new ArrayList<Order>();
   }
 
   //------------------------
   // INTERFACE
   //------------------------
 
-  public boolean setMaxNumSeats(int aMaxNumSeats)
+  public boolean setNumber(int aNumber)
   {
     boolean wasSet = false;
-    maxNumSeats = aMaxNumSeats;
+    Integer anOldNumber = getNumber();
+    if (hasWithNumber(aNumber)) {
+      return wasSet;
+    }
+    number = aNumber;
+    wasSet = true;
+    if (anOldNumber != null) {
+      tablesByNumber.remove(anOldNumber);
+    }
+    tablesByNumber.put(aNumber, this);
+    return wasSet;
+  }
+
+  public boolean setX(int aX)
+  {
+    boolean wasSet = false;
+    x = aX;
     wasSet = true;
     return wasSet;
   }
 
-  public int getMaxNumSeats()
+  public boolean setY(int aY)
   {
-    return maxNumSeats;
+    boolean wasSet = false;
+    y = aY;
+    wasSet = true;
+    return wasSet;
   }
 
-  public int getId()
+  public boolean setWidth(int aWidth)
   {
-    return id;
+    boolean wasSet = false;
+    width = aWidth;
+    wasSet = true;
+    return wasSet;
   }
 
-  public RestoAppManager getRestoAppManager()
+  public boolean setLength(int aLength)
   {
-    return restoAppManager;
+    boolean wasSet = false;
+    length = aLength;
+    wasSet = true;
+    return wasSet;
   }
 
+  public int getNumber()
+  {
+    return number;
+  }
+  /* Code from template attribute_GetUnique */
+  public static Table getWithNumber(int aNumber)
+  {
+    return tablesByNumber.get(aNumber);
+  }
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithNumber(int aNumber)
+  {
+    return getWithNumber(aNumber) != null;
+  }
+
+  public int getX()
+  {
+    return x;
+  }
+
+  public int getY()
+  {
+    return y;
+  }
+
+  public int getWidth()
+  {
+    return width;
+  }
+
+  public int getLength()
+  {
+    return length;
+  }
+  /* Code from template association_GetMany */
   public Seat getSeat(int index)
   {
     Seat aSeat = seats.get(index);
@@ -120,56 +172,86 @@ public class Table
     int index = seats.indexOf(aSeat);
     return index;
   }
-
-  public Reservation getReservation()
+  /* Code from template association_GetOne */
+  public RestoApp getRestoApp()
   {
-    return reservation;
+    return restoApp;
+  }
+  /* Code from template association_GetMany */
+  public Reservation getReservation(int index)
+  {
+    Reservation aReservation = reservations.get(index);
+    return aReservation;
   }
 
-  public boolean hasReservation()
+  public List<Reservation> getReservations()
   {
-    boolean has = reservation != null;
+    List<Reservation> newReservations = Collections.unmodifiableList(reservations);
+    return newReservations;
+  }
+
+  public int numberOfReservations()
+  {
+    int number = reservations.size();
+    return number;
+  }
+
+  public boolean hasReservations()
+  {
+    boolean has = reservations.size() > 0;
     return has;
   }
 
-  public AvailabilityStatus getAvailabilityStatus()
+  public int indexOfReservation(Reservation aReservation)
   {
-    return availabilityStatus;
+    int index = reservations.indexOf(aReservation);
+    return index;
+  }
+  /* Code from template association_GetMany */
+  public Order getOrder(int index)
+  {
+    Order aOrder = orders.get(index);
+    return aOrder;
   }
 
-  public boolean setRestoAppManager(RestoAppManager aRestoAppManager)
+  public List<Order> getOrders()
   {
-    boolean wasSet = false;
-    if (aRestoAppManager == null)
-    {
-      return wasSet;
-    }
-
-    RestoAppManager existingRestoAppManager = restoAppManager;
-    restoAppManager = aRestoAppManager;
-    if (existingRestoAppManager != null && !existingRestoAppManager.equals(aRestoAppManager))
-    {
-      existingRestoAppManager.removeTable(this);
-    }
-    restoAppManager.addTable(this);
-    wasSet = true;
-    return wasSet;
+    List<Order> newOrders = Collections.unmodifiableList(orders);
+    return newOrders;
   }
 
+  public int numberOfOrders()
+  {
+    int number = orders.size();
+    return number;
+  }
+
+  public boolean hasOrders()
+  {
+    boolean has = orders.size() > 0;
+    return has;
+  }
+
+  public int indexOfOrder(Order aOrder)
+  {
+    int index = orders.indexOf(aOrder);
+    return index;
+  }
+  /* Code from template association_IsNumberOfValidMethod */
   public boolean isNumberOfSeatsValid()
   {
     boolean isValid = numberOfSeats() >= minimumNumberOfSeats();
     return isValid;
   }
-
+  /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfSeats()
   {
     return 1;
   }
-
-  public Seat addSeat(boolean aIsOccupied)
+  /* Code from template association_AddMandatoryManyToOne */
+  public Seat addSeat()
   {
-    Seat aNewSeat = new Seat(aIsOccupied, this);
+    Seat aNewSeat = new Seat(this);
     return aNewSeat;
   }
 
@@ -215,7 +297,7 @@ public class Table
     wasRemoved = true;
     return wasRemoved;
   }
-
+  /* Code from template association_AddIndexControlFunctions */
   public boolean addSeatAt(Seat aSeat, int index)
   {  
     boolean wasAdded = false;
@@ -247,88 +329,231 @@ public class Table
     }
     return wasAdded;
   }
-
-  public boolean setReservation(Reservation aReservation)
+  /* Code from template association_SetOneToMany */
+  public boolean setRestoApp(RestoApp aRestoApp)
   {
-    //
-    // This source of this source generation is association_SetOptionalOneToMandatoryMany.jet
-    // This set file assumes the generation of a maximumNumberOfXXX method does not exist because 
-    // it's not required (No upper bound)
-    //   
     boolean wasSet = false;
-    Reservation existingReservation = reservation;
+    if (aRestoApp == null)
+    {
+      return wasSet;
+    }
 
-    if (existingReservation == null)
+    RestoApp existingRestoApp = restoApp;
+    restoApp = aRestoApp;
+    if (existingRestoApp != null && !existingRestoApp.equals(aRestoApp))
     {
-      if (aReservation != null)
-      {
-        if (aReservation.addTable(this))
-        {
-          existingReservation = aReservation;
-          wasSet = true;
-        }
-      }
-    } 
-    else if (existingReservation != null)
-    {
-      if (aReservation == null)
-      {
-        if (existingReservation.minimumNumberOfTables() < existingReservation.numberOfTables())
-        {
-          existingReservation.removeTable(this);
-          existingReservation = aReservation;  // aReservation == null
-          wasSet = true;
-        }
-      } 
-      else
-      {
-        if (existingReservation.minimumNumberOfTables() < existingReservation.numberOfTables())
-        {
-          existingReservation.removeTable(this);
-          aReservation.addTable(this);
-          existingReservation = aReservation;
-          wasSet = true;
-        }
-      }
+      existingRestoApp.removeTable(this);
     }
-    if (wasSet)
-    {
-      reservation = existingReservation;
-    }
+    restoApp.addTable(this);
+    wasSet = true;
     return wasSet;
   }
-  
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfReservations()
+  {
+    return 0;
+  }
+  /* Code from template association_AddManyToManyMethod */
+  public boolean addReservation(Reservation aReservation)
+  {
+    boolean wasAdded = false;
+    if (reservations.contains(aReservation)) { return false; }
+    reservations.add(aReservation);
+    if (aReservation.indexOfTable(this) != -1)
+    {
+      wasAdded = true;
+    }
+    else
+    {
+      wasAdded = aReservation.addTable(this);
+      if (!wasAdded)
+      {
+        reservations.remove(aReservation);
+      }
+    }
+    return wasAdded;
+  }
+  /* Code from template association_RemoveMany */
+  public boolean removeReservation(Reservation aReservation)
+  {
+    boolean wasRemoved = false;
+    if (!reservations.contains(aReservation))
+    {
+      return wasRemoved;
+    }
+
+    int oldIndex = reservations.indexOf(aReservation);
+    reservations.remove(oldIndex);
+    if (aReservation.indexOfTable(this) == -1)
+    {
+      wasRemoved = true;
+    }
+    else
+    {
+      wasRemoved = aReservation.removeTable(this);
+      if (!wasRemoved)
+      {
+        reservations.add(oldIndex,aReservation);
+      }
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addReservationAt(Reservation aReservation, int index)
+  {  
+    boolean wasAdded = false;
+    if(addReservation(aReservation))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfReservations()) { index = numberOfReservations() - 1; }
+      reservations.remove(aReservation);
+      reservations.add(index, aReservation);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveReservationAt(Reservation aReservation, int index)
+  {
+    boolean wasAdded = false;
+    if(reservations.contains(aReservation))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfReservations()) { index = numberOfReservations() - 1; }
+      reservations.remove(aReservation);
+      reservations.add(index, aReservation);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addReservationAt(aReservation, index);
+    }
+    return wasAdded;
+  }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfOrders()
+  {
+    return 0;
+  }
+  /* Code from template association_AddManyToManyMethod */
+  public boolean addOrder(Order aOrder)
+  {
+    boolean wasAdded = false;
+    if (orders.contains(aOrder)) { return false; }
+    orders.add(aOrder);
+    if (aOrder.indexOfTable(this) != -1)
+    {
+      wasAdded = true;
+    }
+    else
+    {
+      wasAdded = aOrder.addTable(this);
+      if (!wasAdded)
+      {
+        orders.remove(aOrder);
+      }
+    }
+    return wasAdded;
+  }
+  /* Code from template association_RemoveMany */
+  public boolean removeOrder(Order aOrder)
+  {
+    boolean wasRemoved = false;
+    if (!orders.contains(aOrder))
+    {
+      return wasRemoved;
+    }
+
+    int oldIndex = orders.indexOf(aOrder);
+    orders.remove(oldIndex);
+    if (aOrder.indexOfTable(this) == -1)
+    {
+      wasRemoved = true;
+    }
+    else
+    {
+      wasRemoved = aOrder.removeTable(this);
+      if (!wasRemoved)
+      {
+        orders.add(oldIndex,aOrder);
+      }
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addOrderAt(Order aOrder, int index)
+  {  
+    boolean wasAdded = false;
+    if(addOrder(aOrder))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfOrders()) { index = numberOfOrders() - 1; }
+      orders.remove(aOrder);
+      orders.add(index, aOrder);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveOrderAt(Order aOrder, int index)
+  {
+    boolean wasAdded = false;
+    if(orders.contains(aOrder))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfOrders()) { index = numberOfOrders() - 1; }
+      orders.remove(aOrder);
+      orders.add(index, aOrder);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addOrderAt(aOrder, index);
+    }
+    return wasAdded;
+  }
+
   public void delete()
   {
-    RestoAppManager placeholderRestoAppManager = restoAppManager;
-    this.restoAppManager = null;
-    if(placeholderRestoAppManager != null)
+    tablesByNumber.remove(getNumber());
+    while (seats.size() > 0)
     {
-      placeholderRestoAppManager.removeTable(this);
-    }
-    for(int i=seats.size(); i > 0; i--)
-    {
-      Seat aSeat = seats.get(i - 1);
+      Seat aSeat = seats.get(seats.size() - 1);
       aSeat.delete();
+      seats.remove(aSeat);
     }
-    if (reservation != null)
+    
+    RestoApp placeholderRestoApp = restoApp;
+    this.restoApp = null;
+    if(placeholderRestoApp != null)
     {
-      if (reservation.numberOfTables() <= 1)
+      placeholderRestoApp.removeTable(this);
+    }
+    ArrayList<Reservation> copyOfReservations = new ArrayList<Reservation>(reservations);
+    reservations.clear();
+    for(Reservation aReservation : copyOfReservations)
+    {
+      if (aReservation.numberOfTables() <= Reservation.minimumNumberOfTables())
       {
-        reservation.delete();
+        aReservation.delete();
       }
       else
       {
-        Reservation placeholderReservation = reservation;
-        this.reservation = null;
-        placeholderReservation.removeTable(this);
+        aReservation.removeTable(this);
       }
     }
-    AvailabilityStatus existingAvailabilityStatus = availabilityStatus;
-    availabilityStatus = null;
-    if (existingAvailabilityStatus != null)
+    ArrayList<Order> copyOfOrders = new ArrayList<Order>(orders);
+    orders.clear();
+    for(Order aOrder : copyOfOrders)
     {
-      existingAvailabilityStatus.delete();
+      if (aOrder.numberOfTables() <= Order.minimumNumberOfTables())
+      {
+        aOrder.delete();
+      }
+      else
+      {
+        aOrder.removeTable(this);
+      }
     }
   }
 
@@ -336,10 +561,11 @@ public class Table
   public String toString()
   {
     return super.toString() + "["+
-            "id" + ":" + getId()+ "," +
-            "maxNumSeats" + ":" + getMaxNumSeats()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "restoAppManager = "+(getRestoAppManager()!=null?Integer.toHexString(System.identityHashCode(getRestoAppManager())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "reservation = "+(getReservation()!=null?Integer.toHexString(System.identityHashCode(getReservation())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "availabilityStatus = "+(getAvailabilityStatus()!=null?Integer.toHexString(System.identityHashCode(getAvailabilityStatus())):"null");
+            "number" + ":" + getNumber()+ "," +
+            "x" + ":" + getX()+ "," +
+            "y" + ":" + getY()+ "," +
+            "width" + ":" + getWidth()+ "," +
+            "length" + ":" + getLength()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "restoApp = "+(getRestoApp()!=null?Integer.toHexString(System.identityHashCode(getRestoApp())):"null");
   }
 }

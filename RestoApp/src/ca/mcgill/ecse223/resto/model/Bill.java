@@ -1,10 +1,11 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
 import java.util.*;
 
-// line 26 "../../../../../RestoApp.ump"
+// line 66 "../../../../../../../../ump/tmp349106/model.ump"
+// line 117 "../../../../../../../../ump/tmp349106/model.ump"
 public class Bill
 {
 
@@ -12,223 +13,274 @@ public class Bill
   // MEMBER VARIABLES
   //------------------------
 
-  //Bill Attributes
-  private float totalCosts;
-
   //Bill Associations
-  private List<Order> orders;
+  private Order order;
+  private List<Seat> issuedForSeats;
+  private RestoApp restoApp;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Bill(float aTotalCosts, Order... allOrders)
+  public Bill(Order aOrder, RestoApp aRestoApp, Seat... allIssuedForSeats)
   {
-    totalCosts = aTotalCosts;
-    orders = new ArrayList<Order>();
-    boolean didAddOrders = setOrders(allOrders);
-    if (!didAddOrders)
+    boolean didAddOrder = setOrder(aOrder);
+    if (!didAddOrder)
     {
-      throw new RuntimeException("Unable to create Bill, must have at least 1 orders");
+      throw new RuntimeException("Unable to create bill due to order");
+    }
+    issuedForSeats = new ArrayList<Seat>();
+    boolean didAddIssuedForSeats = setIssuedForSeats(allIssuedForSeats);
+    if (!didAddIssuedForSeats)
+    {
+      throw new RuntimeException("Unable to create Bill, must have at least 1 issuedForSeats");
+    }
+    boolean didAddRestoApp = setRestoApp(aRestoApp);
+    if (!didAddRestoApp)
+    {
+      throw new RuntimeException("Unable to create bill due to restoApp");
     }
   }
 
   //------------------------
   // INTERFACE
   //------------------------
-
-  public boolean setTotalCosts(float aTotalCosts)
+  /* Code from template association_GetOne */
+  public Order getOrder()
   {
-    boolean wasSet = false;
-    totalCosts = aTotalCosts;
-    wasSet = true;
-    return wasSet;
+    return order;
+  }
+  /* Code from template association_GetMany */
+  public Seat getIssuedForSeat(int index)
+  {
+    Seat aIssuedForSeat = issuedForSeats.get(index);
+    return aIssuedForSeat;
   }
 
-  public float getTotalCosts()
+  /**
+   * only from order.orderItems.seats;
+   */
+  public List<Seat> getIssuedForSeats()
   {
-    return totalCosts;
+    List<Seat> newIssuedForSeats = Collections.unmodifiableList(issuedForSeats);
+    return newIssuedForSeats;
   }
 
-  public Order getOrder(int index)
+  public int numberOfIssuedForSeats()
   {
-    Order aOrder = orders.get(index);
-    return aOrder;
-  }
-
-  public List<Order> getOrders()
-  {
-    List<Order> newOrders = Collections.unmodifiableList(orders);
-    return newOrders;
-  }
-
-  public int numberOfOrders()
-  {
-    int number = orders.size();
+    int number = issuedForSeats.size();
     return number;
   }
 
-  public boolean hasOrders()
+  public boolean hasIssuedForSeats()
   {
-    boolean has = orders.size() > 0;
+    boolean has = issuedForSeats.size() > 0;
     return has;
   }
 
-  public int indexOfOrder(Order aOrder)
+  public int indexOfIssuedForSeat(Seat aIssuedForSeat)
   {
-    int index = orders.indexOf(aOrder);
+    int index = issuedForSeats.indexOf(aIssuedForSeat);
     return index;
   }
-
-  public static int minimumNumberOfOrders()
+  /* Code from template association_GetOne */
+  public RestoApp getRestoApp()
   {
-    return 1;
+    return restoApp;
   }
-
-  public boolean addOrder(Order aOrder)
-  {
-    boolean wasAdded = false;
-    if (orders.contains(aOrder)) { return false; }
-    Bill existingBill = aOrder.getBill();
-    if (existingBill != null && existingBill.numberOfOrders() <= minimumNumberOfOrders())
-    {
-      return wasAdded;
-    }
-    else if (existingBill != null)
-    {
-      existingBill.orders.remove(aOrder);
-    }
-    orders.add(aOrder);
-    setBill(aOrder,this);
-    wasAdded = true;
-    return wasAdded;
-  }
-
-  public boolean removeOrder(Order aOrder)
-  {
-    boolean wasRemoved = false;
-    if (orders.contains(aOrder) && numberOfOrders() > minimumNumberOfOrders())
-    {
-      orders.remove(aOrder);
-      setBill(aOrder,null);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-
-  public boolean setOrders(Order... newOrders)
+  /* Code from template association_SetOneToMany */
+  public boolean setOrder(Order aOrder)
   {
     boolean wasSet = false;
-    if (newOrders.length < minimumNumberOfOrders())
+    if (aOrder == null)
     {
       return wasSet;
     }
 
-    ArrayList<Order> checkNewOrders = new ArrayList<Order>();
-    HashMap<Bill,Integer> billToNewOrders = new HashMap<Bill,Integer>();
-    for (Order aOrder : newOrders)
+    Order existingOrder = order;
+    order = aOrder;
+    if (existingOrder != null && !existingOrder.equals(aOrder))
     {
-      if (checkNewOrders.contains(aOrder))
+      existingOrder.removeBill(this);
+    }
+    order.addBill(this);
+    wasSet = true;
+    return wasSet;
+  }
+  /* Code from template association_IsNumberOfValidMethod */
+  public boolean isNumberOfIssuedForSeatsValid()
+  {
+    boolean isValid = numberOfIssuedForSeats() >= minimumNumberOfIssuedForSeats();
+    return isValid;
+  }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfIssuedForSeats()
+  {
+    return 1;
+  }
+  /* Code from template association_AddManyToManyMethod */
+  public boolean addIssuedForSeat(Seat aIssuedForSeat)
+  {
+    boolean wasAdded = false;
+    if (issuedForSeats.contains(aIssuedForSeat)) { return false; }
+    issuedForSeats.add(aIssuedForSeat);
+    if (aIssuedForSeat.indexOfBill(this) != -1)
+    {
+      wasAdded = true;
+    }
+    else
+    {
+      wasAdded = aIssuedForSeat.addBill(this);
+      if (!wasAdded)
       {
-        return wasSet;
+        issuedForSeats.remove(aIssuedForSeat);
       }
-      else if (aOrder.getBill() != null && !this.equals(aOrder.getBill()))
-      {
-        Bill existingBill = aOrder.getBill();
-        if (!billToNewOrders.containsKey(existingBill))
-        {
-          billToNewOrders.put(existingBill, new Integer(existingBill.numberOfOrders()));
-        }
-        Integer currentCount = billToNewOrders.get(existingBill);
-        int nextCount = currentCount - 1;
-        if (nextCount < 1)
-        {
-          return wasSet;
-        }
-        billToNewOrders.put(existingBill, new Integer(nextCount));
-      }
-      checkNewOrders.add(aOrder);
+    }
+    return wasAdded;
+  }
+  /* Code from template association_AddMStarToMany */
+  public boolean removeIssuedForSeat(Seat aIssuedForSeat)
+  {
+    boolean wasRemoved = false;
+    if (!issuedForSeats.contains(aIssuedForSeat))
+    {
+      return wasRemoved;
     }
 
-    orders.removeAll(checkNewOrders);
-
-    for (Order orphan : orders)
+    if (numberOfIssuedForSeats() <= minimumNumberOfIssuedForSeats())
     {
-      setBill(orphan, null);
+      return wasRemoved;
     }
-    orders.clear();
-    for (Order aOrder : newOrders)
+
+    int oldIndex = issuedForSeats.indexOf(aIssuedForSeat);
+    issuedForSeats.remove(oldIndex);
+    if (aIssuedForSeat.indexOfBill(this) == -1)
     {
-      if (aOrder.getBill() != null)
+      wasRemoved = true;
+    }
+    else
+    {
+      wasRemoved = aIssuedForSeat.removeBill(this);
+      if (!wasRemoved)
       {
-        aOrder.getBill().orders.remove(aOrder);
+        issuedForSeats.add(oldIndex,aIssuedForSeat);
       }
-      setBill(aOrder, this);
-      orders.add(aOrder);
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_SetMStarToMany */
+  public boolean setIssuedForSeats(Seat... newIssuedForSeats)
+  {
+    boolean wasSet = false;
+    ArrayList<Seat> verifiedIssuedForSeats = new ArrayList<Seat>();
+    for (Seat aIssuedForSeat : newIssuedForSeats)
+    {
+      if (verifiedIssuedForSeats.contains(aIssuedForSeat))
+      {
+        continue;
+      }
+      verifiedIssuedForSeats.add(aIssuedForSeat);
+    }
+
+    if (verifiedIssuedForSeats.size() != newIssuedForSeats.length || verifiedIssuedForSeats.size() < minimumNumberOfIssuedForSeats())
+    {
+      return wasSet;
+    }
+
+    ArrayList<Seat> oldIssuedForSeats = new ArrayList<Seat>(issuedForSeats);
+    issuedForSeats.clear();
+    for (Seat aNewIssuedForSeat : verifiedIssuedForSeats)
+    {
+      issuedForSeats.add(aNewIssuedForSeat);
+      if (oldIssuedForSeats.contains(aNewIssuedForSeat))
+      {
+        oldIssuedForSeats.remove(aNewIssuedForSeat);
+      }
+      else
+      {
+        aNewIssuedForSeat.addBill(this);
+      }
+    }
+
+    for (Seat anOldIssuedForSeat : oldIssuedForSeats)
+    {
+      anOldIssuedForSeat.removeBill(this);
     }
     wasSet = true;
     return wasSet;
   }
-
-  private void setBill(Order aOrder, Bill aBill)
-  {
-    try
-    {
-      java.lang.reflect.Field mentorField = aOrder.getClass().getDeclaredField("bill");
-      mentorField.setAccessible(true);
-      mentorField.set(aOrder, aBill);
-    }
-    catch (Exception e)
-    {
-      throw new RuntimeException("Issue internally setting aBill to aOrder", e);
-    }
-  }
-
-  public boolean addOrderAt(Order aOrder, int index)
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addIssuedForSeatAt(Seat aIssuedForSeat, int index)
   {  
     boolean wasAdded = false;
-    if(addOrder(aOrder))
+    if(addIssuedForSeat(aIssuedForSeat))
     {
       if(index < 0 ) { index = 0; }
-      if(index > numberOfOrders()) { index = numberOfOrders() - 1; }
-      orders.remove(aOrder);
-      orders.add(index, aOrder);
+      if(index > numberOfIssuedForSeats()) { index = numberOfIssuedForSeats() - 1; }
+      issuedForSeats.remove(aIssuedForSeat);
+      issuedForSeats.add(index, aIssuedForSeat);
       wasAdded = true;
     }
     return wasAdded;
   }
 
-  public boolean addOrMoveOrderAt(Order aOrder, int index)
+  public boolean addOrMoveIssuedForSeatAt(Seat aIssuedForSeat, int index)
   {
     boolean wasAdded = false;
-    if(orders.contains(aOrder))
+    if(issuedForSeats.contains(aIssuedForSeat))
     {
       if(index < 0 ) { index = 0; }
-      if(index > numberOfOrders()) { index = numberOfOrders() - 1; }
-      orders.remove(aOrder);
-      orders.add(index, aOrder);
+      if(index > numberOfIssuedForSeats()) { index = numberOfIssuedForSeats() - 1; }
+      issuedForSeats.remove(aIssuedForSeat);
+      issuedForSeats.add(index, aIssuedForSeat);
       wasAdded = true;
     } 
     else 
     {
-      wasAdded = addOrderAt(aOrder, index);
+      wasAdded = addIssuedForSeatAt(aIssuedForSeat, index);
     }
     return wasAdded;
+  }
+  /* Code from template association_SetOneToMany */
+  public boolean setRestoApp(RestoApp aRestoApp)
+  {
+    boolean wasSet = false;
+    if (aRestoApp == null)
+    {
+      return wasSet;
+    }
+
+    RestoApp existingRestoApp = restoApp;
+    restoApp = aRestoApp;
+    if (existingRestoApp != null && !existingRestoApp.equals(aRestoApp))
+    {
+      existingRestoApp.removeBill(this);
+    }
+    restoApp.addBill(this);
+    wasSet = true;
+    return wasSet;
   }
 
   public void delete()
   {
-    for(Order aOrder : orders)
+    Order placeholderOrder = order;
+    this.order = null;
+    if(placeholderOrder != null)
     {
-      setBill(aOrder,null);
+      placeholderOrder.removeBill(this);
     }
-    orders.clear();
+    ArrayList<Seat> copyOfIssuedForSeats = new ArrayList<Seat>(issuedForSeats);
+    issuedForSeats.clear();
+    for(Seat aIssuedForSeat : copyOfIssuedForSeats)
+    {
+      aIssuedForSeat.removeBill(this);
+    }
+    RestoApp placeholderRestoApp = restoApp;
+    this.restoApp = null;
+    if(placeholderRestoApp != null)
+    {
+      placeholderRestoApp.removeBill(this);
+    }
   }
 
-
-  public String toString()
-  {
-    return super.toString() + "["+
-            "totalCosts" + ":" + getTotalCosts()+ "]";
-  }
 }

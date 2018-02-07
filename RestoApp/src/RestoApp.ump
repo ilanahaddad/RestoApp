@@ -1,104 +1,68 @@
 namespace ca.mcgill.ecse223.resto.model;
 
-class Item 
-{
-  enum Category { Food, Beverage } 
-  String name;
-  lazy String description;
-  Float price;
-  
-}  
-  
-class SplitItem 
-{
-  isA Item;
-  Integer numPeopleSharing;
-}  
-  
-class Menu 
-{
-  singleton;
-  lazy String pathToMenuFile;
+class RestoApp {
+   1 <@>- * Reservation reservations; // sorted by date and time
+   1 <@>- * Table tables;
+   1 -> * Table currentTables; // subsets tables
+   1 <@>- * Order orders;
+   1 -> * Order currentOrders; // subsets orders
+   1 <@>- 1 Menu menu;
+   1 <@>- * PricedMenuItem pricedMenuItems;
+   1 <@>- * Bill bills;
 }
 
-class Order {}
-
-class Bill
-{
-  Float totalCosts;
+class Reservation {
+   Date dateTime;
+   Integer numberInParty;
+   contactName;
+   contactEmailAddress;
+   contactPhoneNumber;
+   autounique reservationNumber;
+   * reservations -- 1..* Table tables; // only from currentTables
 }
 
-class Seat 
-{
-  autounique id;
-  Boolean isOccupied;
+class Table {
+   unique Integer number;
+   Integer x;
+   Integer y;
+   Integer width;
+   Integer length;
+   1 <@>- 1..* Seat seats;
 }
 
-class Table 
-{
-  autounique id;
-  Integer maxNumSeats;
+class Seat {
 }
 
-class AvailabilityStatus {}
-
-class AvailableTable 
-{
-  isA AvailabilityStatus;
+class Order {
+   Date dateTime;
+   autounique number;
+   * orders -- 1..* Table tables; // only from currentTables for currentOrders
+   1 <@>- * OrderItem orderItems;
 }
 
-class InUseTable 
-{
-  isA AvailabilityStatus;
-  Integer numberOfSeatsUsed;
+class OrderItem {
+   Integer quantity;
+   * orderItems -- 1 PricedMenuItem pricedMenuItem; // only from MenuItem.currentPricedMenuItem for currentOrders
+   * orderItems -- 1..* Seat seats; // only from order.tables.seats
 }
 
-class ReservedTable 
-{
-  isA AvailabilityStatus;
+class Menu {
+   1 <@>- * MenuItem menuItems;
 }
 
-class Reservation 
-{
-  autounique id;
-  Date date;
-  Time time;
-  Integer numOfPeople;
-  String customerName;
-  String customerContact;
+class MenuItem {
+   unique name;
+   enum ItemCategory { Appetizer, Main, Dessert, AlcoholicBeverage, NonAlcoholicBeverage }
+   lazy ItemCategory itemCategory;
+   1 -- 1..* PricedMenuItem pricedMenuItems;
+   1 -> 0..1 PricedMenuItem currentPricedMenuItem; // subsets priced menus items
 }
 
-class RestoAppManager {}
-
-class User 
-{
-  autounique id;
+class PricedMenuItem {
+   Double price;
 }
 
-class Waiter 
-{
-  isA User;
-}
-
-class Owner 
-{
-  isA User;
-}
-
-association {  
-  1 RestoAppManager -- * Order;  
-  1 RestoAppManager -- * User;
-  0..1 RestoAppManager -- 0..1 Menu;
-  1 RestoAppManager -- * Reservation;
-  1 RestoAppManager -- * Table;
-  
-  1..* Order -- 0..1 Bill;
-  0..1 Order -- 1 Seat;  
-  
-  1 Table -- 1..* Seat;
-  1..* Table -- 0..1 Reservation;
-  1 Table -- 1 AvailabilityStatus;
-  
-  1 Menu -- 1..* Item;
-  1 Menu -- * Order;  
+class Bill {
+   * bills -- 1 Order order; // order.bills.issuedForSeats = order.orderItems.seats
+   * bills -- 1..* Seat issuedForSeats; // only from order.orderItems.seats;
 }
