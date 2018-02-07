@@ -3,9 +3,9 @@ namespace ca.mcgill.ecse223.resto.model;
 class RestoApp {
    1 <@>- * Reservation reservations; // sorted by date and time
    1 <@>- * Table tables;
-   1 -> * Table currentTables; // subsets tables
+   0..1 -> * Table currentTables; // subsets tables
    1 <@>- * Order orders;
-   1 -> * Order currentOrders; // subsets orders
+   0..1 -> * Order currentOrders; // subsets orders
    1 <@>- 1 Menu menu;
    1 <@>- * PricedMenuItem pricedMenuItems;
    1 <@>- * Bill bills;
@@ -28,6 +28,7 @@ class Table {
    Integer width;
    Integer length;
    1 <@>- 1..* Seat seats;
+   0..1 -> * Seat currentSeats; // subsets seats
 }
 
 class Seat {
@@ -55,7 +56,7 @@ class MenuItem {
    enum ItemCategory { Appetizer, Main, Dessert, AlcoholicBeverage, NonAlcoholicBeverage }
    lazy ItemCategory itemCategory;
    1 -- 1..* PricedMenuItem pricedMenuItems;
-   1 -> 0..1 PricedMenuItem currentPricedMenuItem; // subsets priced menus items
+   0..1 -> 0..1 PricedMenuItem currentPricedMenuItem; // subsets priced menus items
 }
 
 class PricedMenuItem {

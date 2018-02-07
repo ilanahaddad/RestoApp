@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.resto.model;
 import java.util.*;
 
-// line 66 "../../../../../../../../ump/tmp349106/model.ump"
-// line 117 "../../../../../../../../ump/tmp349106/model.ump"
+// line 67 "../../../../../../../../ump/tmp842728/model.ump"
+// line 118 "../../../../../../../../ump/tmp842728/model.ump"
 public class Bill
 {
 

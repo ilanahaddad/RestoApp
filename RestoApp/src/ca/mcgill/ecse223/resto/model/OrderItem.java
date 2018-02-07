@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.resto.model;
 import java.util.*;
 
-// line 44 "../../../../../../../../ump/tmp349106/model.ump"
-// line 97 "../../../../../../../../ump/tmp349106/model.ump"
+// line 45 "../../../../../../../../ump/tmp842728/model.ump"
+// line 98 "../../../../../../../../ump/tmp842728/model.ump"
 public class OrderItem
 {
 

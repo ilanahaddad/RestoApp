@@ -5,8 +5,8 @@ package ca.mcgill.ecse223.resto.model;
 import java.sql.Date;
 import java.util.*;
 
-// line 37 "../../../../../../../../ump/tmp349106/model.ump"
-// line 92 "../../../../../../../../ump/tmp349106/model.ump"
+// line 38 "../../../../../../../../ump/tmp842728/model.ump"
+// line 93 "../../../../../../../../ump/tmp842728/model.ump"
 public class Order
 {
 

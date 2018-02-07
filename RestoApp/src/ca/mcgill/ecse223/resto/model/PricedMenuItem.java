@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.resto.model;
 import java.util.*;
 
-// line 62 "../../../../../../../../ump/tmp349106/model.ump"
-// line 112 "../../../../../../../../ump/tmp349106/model.ump"
+// line 63 "../../../../../../../../ump/tmp842728/model.ump"
+// line 113 "../../../../../../../../ump/tmp842728/model.ump"
 public class PricedMenuItem
 {
 

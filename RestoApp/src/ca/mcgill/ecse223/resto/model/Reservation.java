@@ -5,8 +5,8 @@ package ca.mcgill.ecse223.resto.model;
 import java.sql.Date;
 import java.util.*;
 
-// line 15 "../../../../../../../../ump/tmp349106/model.ump"
-// line 77 "../../../../../../../../ump/tmp349106/model.ump"
+// line 15 "../../../../../../../../ump/tmp842728/model.ump"
+// line 78 "../../../../../../../../ump/tmp842728/model.ump"
 public class Reservation
 {
 

@@ -4,8 +4,8 @@
 package ca.mcgill.ecse223.resto.model;
 import java.util.*;
 
-// line 25 "../../../../../../../../ump/tmp349106/model.ump"
-// line 82 "../../../../../../../../ump/tmp349106/model.ump"
+// line 25 "../../../../../../../../ump/tmp842728/model.ump"
+// line 83 "../../../../../../../../ump/tmp842728/model.ump"
 public class Table
 {
 
@@ -28,6 +28,7 @@ public class Table
 
   //Table Associations
   private List<Seat> seats;
+  private List<Seat> currentSeats;
   private RestoApp restoApp;
   private List<Reservation> reservations;
   private List<Order> orders;
@@ -47,6 +48,7 @@ public class Table
       throw new RuntimeException("Cannot create due to duplicate number");
     }
     seats = new ArrayList<Seat>();
+    currentSeats = new ArrayList<Seat>();
     boolean didAddRestoApp = setRestoApp(aRestoApp);
     if (!didAddRestoApp)
     {
@@ -170,6 +172,39 @@ public class Table
   public int indexOfSeat(Seat aSeat)
   {
     int index = seats.indexOf(aSeat);
+    return index;
+  }
+  /* Code from template association_GetMany */
+  public Seat getCurrentSeat(int index)
+  {
+    Seat aCurrentSeat = currentSeats.get(index);
+    return aCurrentSeat;
+  }
+
+  /**
+   * subsets seats
+   */
+  public List<Seat> getCurrentSeats()
+  {
+    List<Seat> newCurrentSeats = Collections.unmodifiableList(currentSeats);
+    return newCurrentSeats;
+  }
+
+  public int numberOfCurrentSeats()
+  {
+    int number = currentSeats.size();
+    return number;
+  }
+
+  public boolean hasCurrentSeats()
+  {
+    boolean has = currentSeats.size() > 0;
+    return has;
+  }
+
+  public int indexOfCurrentSeat(Seat aCurrentSeat)
+  {
+    int index = currentSeats.indexOf(aCurrentSeat);
     return index;
   }
   /* Code from template association_GetOne */
@@ -326,6 +361,63 @@ public class Table
     else 
     {
       wasAdded = addSeatAt(aSeat, index);
+    }
+    return wasAdded;
+  }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfCurrentSeats()
+  {
+    return 0;
+  }
+  /* Code from template association_AddUnidirectionalMany */
+  public boolean addCurrentSeat(Seat aCurrentSeat)
+  {
+    boolean wasAdded = false;
+    if (currentSeats.contains(aCurrentSeat)) { return false; }
+    currentSeats.add(aCurrentSeat);
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeCurrentSeat(Seat aCurrentSeat)
+  {
+    boolean wasRemoved = false;
+    if (currentSeats.contains(aCurrentSeat))
+    {
+      currentSeats.remove(aCurrentSeat);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addCurrentSeatAt(Seat aCurrentSeat, int index)
+  {  
+    boolean wasAdded = false;
+    if(addCurrentSeat(aCurrentSeat))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfCurrentSeats()) { index = numberOfCurrentSeats() - 1; }
+      currentSeats.remove(aCurrentSeat);
+      currentSeats.add(index, aCurrentSeat);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveCurrentSeatAt(Seat aCurrentSeat, int index)
+  {
+    boolean wasAdded = false;
+    if(currentSeats.contains(aCurrentSeat))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfCurrentSeats()) { index = numberOfCurrentSeats() - 1; }
+      currentSeats.remove(aCurrentSeat);
+      currentSeats.add(index, aCurrentSeat);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addCurrentSeatAt(aCurrentSeat, index);
     }
     return wasAdded;
   }
@@ -523,6 +615,7 @@ public class Table
       seats.remove(aSeat);
     }
     
+    currentSeats.clear();
     RestoApp placeholderRestoApp = restoApp;
     this.restoApp = null;
     if(placeholderRestoApp != null)
