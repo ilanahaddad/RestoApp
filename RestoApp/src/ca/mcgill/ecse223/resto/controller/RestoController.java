@@ -60,4 +60,18 @@ public class RestoController {
     
     RestoAppApplication.save();
   };
+  
+  /**
+   * Removes a table from the current tables
+   * @param Table table to be removed
+   * @throws InvalidInputException If the specified table does not exist
+   */
+  public static void removeTable(Table table) throws InvalidInputException {
+	  try {
+		  boolean reserved = table.hasReservations();
+	  }
+	  catch (RuntimeException e){
+		  throw new InvalidInputException(e.getMessage());
+	  }
+  }
 }
