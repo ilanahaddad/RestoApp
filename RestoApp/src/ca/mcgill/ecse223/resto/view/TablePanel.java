@@ -2,29 +2,32 @@ package ca.mcgill.ecse223.resto.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Random;
 
 public class TablePanel extends JPanel
 {
     private final int UNIT_LENGTH = 50;
+    private int numXSquares;
+    private int numYSquares;
 
     private void doDrawing(Graphics g)
     {
+        numXSquares = getHeight() % UNIT_LENGTH;
+        numYSquares = getWidth() % UNIT_LENGTH;
+
         Graphics2D g2d = (Graphics2D) g;
         drawTables(g2d);
         drawGrid(g2d);
-
     }
 
-    private void drawGrid(Graphics2D g2d) {
-        int numXSquares = getHeight() % UNIT_LENGTH;
-        int numYSquares = getWidth() % UNIT_LENGTH;
-
+    private void drawGrid(Graphics2D g2d)
+    {
         float[] dash = {4f, 0f, 2f};
         BasicStroke dashedStroke = new BasicStroke(
                 1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, dash, 2f);
 
         g2d.setStroke(dashedStroke);
-
+        g2d.setColor(Color.black);
         for (int x=1; x<numXSquares; x++)
         {
             g2d.drawLine(x*UNIT_LENGTH, 0, x*UNIT_LENGTH, getHeight());
@@ -38,44 +41,28 @@ public class TablePanel extends JPanel
         g2d.dispose();
     }
 
-    private void drawTables(Graphics2D g2d) {
+    private void drawTables(Graphics2D g2d)
+    {
         setTransparentBorder(g2d);
-        g2d.drawRect(10, 15, 90, 60);
-        g2d.drawRect(130, 15, 90, 60);
-        g2d.drawRect(250, 15, 90, 60);
-        g2d.drawRect(10, 105, 90, 60);
-        g2d.drawRect(130, 105, 90, 60);
-        g2d.drawRect(250, 105, 90, 60);
-        g2d.drawRect(10, 195, 90, 60);
-        g2d.drawRect(130, 195, 90, 60);
-        g2d.drawRect(250, 195, 90, 60);
 
-        g2d.setColor(new Color(125, 167, 116));
-        g2d.fillRect(10, 15, 90, 60);
+        for (int x=1; x<numXSquares; x+=2)
+        {
+            for (int y=1; y<numYSquares; y+=2)
+            {
+                g2d.setColor(generateRandomColor());
+                g2d.drawRect(x*UNIT_LENGTH, y*UNIT_LENGTH, UNIT_LENGTH, UNIT_LENGTH);
+                g2d.fillRect(x*UNIT_LENGTH, y*UNIT_LENGTH, UNIT_LENGTH, UNIT_LENGTH);
+            }
+        }
+    }
 
-        g2d.setColor(new Color(42, 179, 231));
-        g2d.fillRect(130, 15, 90, 60);
-
-        g2d.setColor(new Color(70, 67, 123));
-        g2d.fillRect(250, 15, 90, 60);
-
-        g2d.setColor(new Color(130, 100, 84));
-        g2d.fillRect(10, 105, 90, 60);
-
-        g2d.setColor(new Color(252, 211, 61));
-        g2d.fillRect(130, 105, 90, 60);
-
-        g2d.setColor(new Color(241, 98, 69));
-        g2d.fillRect(250, 105, 90, 60);
-
-        g2d.setColor(new Color(217, 146, 54));
-        g2d.fillRect(10, 195, 90, 60);
-
-        g2d.setColor(new Color(63, 121, 186));
-        g2d.fillRect(130, 195, 90, 60);
-
-        g2d.setColor(new Color(31, 21, 1));
-        g2d.fillRect(250, 195, 90, 60);
+    private Color generateRandomColor()
+    {
+        Random r = new Random();
+        float red = (float) (r.nextFloat() / 2.5f + 0.5);
+        float green = (float) (r.nextFloat() / 2.5f + 0.5);
+        float blue = (float) (r.nextFloat() / 2f + 0.5);
+        return new Color(red, green, blue);
     }
 
     private void setTransparentBorder(Graphics2D g2d)
