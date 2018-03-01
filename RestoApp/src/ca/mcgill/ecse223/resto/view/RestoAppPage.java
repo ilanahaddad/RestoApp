@@ -11,8 +11,6 @@ import javax.swing.*;
 
 public class RestoAppPage extends JFrame
 {
-    final ActionListener EXIT_ACTION = (ActionEvent event) -> System.exit(0);
-
     public RestoAppPage() { initUI(); }
 
     private void initUI()
@@ -37,8 +35,10 @@ public class RestoAppPage extends JFrame
     {
         JMenuBar menubar = new JMenuBar();
         JMenu file = new JMenu("Actions");
-        JMenuItem addTableMenuItem = createMenuItem("Add Table", KeyEvent.VK_A, EXIT_ACTION);
-        JMenuItem exitMenuItem = createMenuItem("Exit", KeyEvent.VK_E, EXIT_ACTION);
+        JMenuItem addTableMenuItem = createMenuItem(
+                "Add Table", KeyEvent.VK_A, RestoAppForms.ADD_TABLE_ACTION);
+        JMenuItem exitMenuItem = createMenuItem(
+                "Exit", KeyEvent.VK_E, RestoAppForms.EXIT_ACTION);
 
         file.setMnemonic(KeyEvent.VK_F);
         file.add(addTableMenuItem);
@@ -58,8 +58,10 @@ public class RestoAppPage extends JFrame
     private void createToolBar()
     {
         JToolBar toolbar = new JToolBar();
-        JButton exitButton = createButton("power.png", "Exit RestoApp", EXIT_ACTION);
-        JButton addTableButton = createButton("addTable.png", "Add Table", EXIT_ACTION);
+        JButton exitButton = createButton(
+                "power.png", "Exit RestoApp", RestoAppForms.EXIT_ACTION);
+        JButton addTableButton = createButton(
+                "addTable.png", "Add Table", RestoAppForms.ADD_TABLE_ACTION);
 
         toolbar.add(exitButton);
         toolbar.add(addTableButton);
