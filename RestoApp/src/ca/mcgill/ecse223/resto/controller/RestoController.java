@@ -1,10 +1,12 @@
 package ca.mcgill.ecse223.resto.controller;
 
 import java.io.File;
+import java.util.List;
 
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.model.Menu;
 import ca.mcgill.ecse223.resto.model.MenuItem;
+import ca.mcgill.ecse223.resto.model.Order;
 import ca.mcgill.ecse223.resto.model.RestoApp;
 import ca.mcgill.ecse223.resto.model.Seat;
 import ca.mcgill.ecse223.resto.model.Table;
@@ -68,7 +70,18 @@ public class RestoController {
    */
   public static void removeTable(Table table) throws InvalidInputException {
 	  try {
+		  String error = "";
 		  boolean reserved = table.hasReservations();
+		  if (reserved == true){
+			  error = "Table is reserved and cannot be removed.";
+		  }
+		  if (error.length() > 0){
+			  throw new InvalidInputException(error.trim());
+		  }
+		  RestoApp r = RestoAppApplication.getRestoApp();
+		  List<Order> currentOrders = r.getCurrentOrders();
+		  
+		  
 	  }
 	  catch (RuntimeException e){
 		  throw new InvalidInputException(e.getMessage());
