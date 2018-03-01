@@ -69,22 +69,37 @@ public class RestoController {
    * @throws InvalidInputException If the specified table does not exist
    */
   public static void removeTable(Table table) throws InvalidInputException {
-	  try {
-		  String error = "";
-		  boolean reserved = table.hasReservations();
-		  if (reserved == true){
-			  error = "Table is reserved and cannot be removed.";
-		  }
-		  if (error.length() > 0){
-			  throw new InvalidInputException(error.trim());
-		  }
-		  RestoApp r = RestoAppApplication.getRestoApp();
-		  List<Order> currentOrders = r.getCurrentOrders();
+	String error = "";
+	if (table == null){
+		throw new InvalidInputException("Input table does not exist");
+	}
+	  
+	boolean reserved = table.hasReservations();
+	if (reserved){
+		error = error + "Table is reserved and cannot be removed.";
+	}
+	RestoApp r = RestoAppApplication.getRestoApp();
+	List<Order> currentOrders = r.getCurrentOrders();
 		  
+	List<Table> tables;
+	boolean inUse;
+	for (Order order : currentOrders){
+		tables = order.getTables();
+		inUse = tables.contains(table);
+		if (inUse){
+			error = error + "Cannot remove: Selected table is currently in use.";
+		}
+	}
+	if (error.length() > 0){
+		throw new InvalidInputException(error.trim());
+	}
 		  
-	  }
-	  catch (RuntimeException e){
-		  throw new InvalidInputException(e.getMessage());
-	  }
+	try{
+		r.removeCurrentTable(table);
+		RestoAppApplication.save();  
+	}
+	catch (RuntimeException e){
+		throw new InvalidInputException(e.getMessage());
+	}
   }
 }
