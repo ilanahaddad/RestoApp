@@ -1,7 +1,6 @@
 package ca.mcgill.ecse223.resto.view;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.nio.file.Path;
@@ -11,6 +10,11 @@ import javax.swing.*;
 
 public class RestoAppPage extends JFrame
 {
+    private final String RESSOURCES_PATH = "RestoApp/ressources/";
+    private final String GUI_TITLE = "RestoApp";
+    private final int GUI_WIDTH = 500;
+    private final int GUI_HEIGHT = 500;
+
     public RestoAppPage() { initUI(); }
 
     private void initUI()
@@ -19,8 +23,8 @@ public class RestoAppPage extends JFrame
         createToolBar();
         createTablePanel();
 
-        setTitle("Dummy GUI");
-        setSize(380, 380);
+        setTitle(GUI_TITLE);
+        setSize(GUI_WIDTH, GUI_HEIGHT);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
@@ -70,7 +74,7 @@ public class RestoAppPage extends JFrame
 
     private JButton createButton(String iconName, String buttonTip, ActionListener action)
     {
-        Path iconPath = Paths.get("RestoApp/ressources/"+iconName).toAbsolutePath();
+        Path iconPath = Paths.get(RESSOURCES_PATH+iconName).toAbsolutePath();
         ImageIcon icon = new ImageIcon(iconPath.toString());
         JButton button = new JButton(icon);
         button.setToolTipText(buttonTip);

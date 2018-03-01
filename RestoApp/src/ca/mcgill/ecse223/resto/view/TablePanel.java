@@ -5,12 +5,41 @@ import java.awt.*;
 
 public class TablePanel extends JPanel
 {
+    private final int UNIT_LENGTH = 50;
+
     private void doDrawing(Graphics g)
     {
         Graphics2D g2d = (Graphics2D) g;
+        drawTables(g2d);
+        drawGrid(g2d);
 
+    }
+
+    private void drawGrid(Graphics2D g2d) {
+        int numXSquares = getHeight() % UNIT_LENGTH;
+        int numYSquares = getWidth() % UNIT_LENGTH;
+
+        float[] dash = {4f, 0f, 2f};
+        BasicStroke dashedStroke = new BasicStroke(
+                1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, dash, 2f);
+
+        g2d.setStroke(dashedStroke);
+
+        for (int x=1; x<numXSquares; x++)
+        {
+            g2d.drawLine(x*UNIT_LENGTH, 0, x*UNIT_LENGTH, getHeight());
+        }
+        for (int y=1; y<numYSquares; y++)
+        {
+            g2d.drawLine(0, y*UNIT_LENGTH, getWidth(), y*UNIT_LENGTH);
+        }
+
+
+        g2d.dispose();
+    }
+
+    private void drawTables(Graphics2D g2d) {
         setTransparentBorder(g2d);
-
         g2d.drawRect(10, 15, 90, 60);
         g2d.drawRect(130, 15, 90, 60);
         g2d.drawRect(250, 15, 90, 60);
