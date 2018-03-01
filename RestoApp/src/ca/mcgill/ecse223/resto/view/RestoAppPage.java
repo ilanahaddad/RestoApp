@@ -1,34 +1,36 @@
 package ca.mcgill.ecse223.resto.view;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JToolBar;
+import javax.swing.*;
+
 
 public class RestoAppPage extends JFrame
 {
     final ActionListener EXIT_ACTION = (ActionEvent event) -> System.exit(0);
+
     public RestoAppPage() { initUI(); }
 
     private void initUI()
     {
         createMenuBar();
         createToolBar();
+        createTablePanel();
 
         setTitle("Dummy GUI");
-        setSize(300, 200);
+        setSize(380, 380);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    private void createTablePanel()
+    {
+        TablePanel tablePanel = new TablePanel();
+        add(tablePanel);
     }
 
     private void createMenuBar()
