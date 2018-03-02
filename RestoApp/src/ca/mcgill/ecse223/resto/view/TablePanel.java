@@ -52,14 +52,20 @@ public class TablePanel extends JPanel
                     table.getY()*UNIT_LENGTH,
                     table.getWidth()*UNIT_LENGTH,
                     table.getLength()*UNIT_LENGTH);
+            g2d.setColor(Color.black);
+            g2d.setFont(new Font("Purisa", Font.BOLD, 13));
+
+            g2d.drawString(table.getNumber()+"", table.getX()*UNIT_LENGTH, table.getY()*UNIT_LENGTH + UNIT_LENGTH/2);
+
+
         }
     }
 
     private Color generateRandomColor()
     {
         Random r = new Random();
-        float red = (float) (r.nextFloat() / 2.5f + 0.5);
-        float green = (float) (r.nextFloat() / 2.5f + 0.5);
+        float red = (float) (r.nextFloat() / 2f + 0.5);
+        float green = (float) (r.nextFloat() / 2f + 0.5);
         float blue = (float) (r.nextFloat() / 2f + 0.5);
         return new Color(red, green, blue);
     }
