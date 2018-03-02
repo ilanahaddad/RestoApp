@@ -2,17 +2,18 @@
 /*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
+import java.io.Serializable;
 import java.util.*;
 
 // line 67 "../../../../../../../../ump/tmp842728/model.ump"
 // line 118 "../../../../../../../../ump/tmp842728/model.ump"
-public class Bill
+public class Bill implements Serializable
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
-
+  private static final long serialVersionUID = 1301576255893682821L;
   //Bill Associations
   private Order order;
   private List<Seat> issuedForSeats;

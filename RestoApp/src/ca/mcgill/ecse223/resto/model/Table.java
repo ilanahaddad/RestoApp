@@ -2,13 +2,14 @@
 /*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
+import java.io.Serializable;
 import java.util.*;
 
 // line 25 "../../../../../../../../ump/tmp842728/model.ump"
 // line 83 "../../../../../../../../ump/tmp842728/model.ump"
-public class Table
+public class Table implements Serializable
 {
-
+  private static final long serialVersionUID = 8896099581655989380L;
   //------------------------
   // STATIC VARIABLES
   //------------------------

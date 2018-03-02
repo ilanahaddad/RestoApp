@@ -18,6 +18,8 @@ public class PersistenceObjectStream {
             out.close();
             fileOut.close();
         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("\n\n---------------------------------------\n\n");
             throw new RuntimeException("Could not save data to file '" + filename + "'.");
         }
 

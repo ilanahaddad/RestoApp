@@ -4,9 +4,11 @@ import ca.mcgill.ecse223.resto.model.RestoApp;
 import ca.mcgill.ecse223.resto.persistence.PersistenceObjectStream;
 import ca.mcgill.ecse223.resto.view.RestoAppPage;
 
-public class RestoAppApplication 
+import java.io.Serializable;
+
+public class RestoAppApplication
 {
-	
+
 	private static RestoApp restoApp;
 	private static String filename = "data.resto";
 	
@@ -37,8 +39,8 @@ public class RestoAppApplication
 	public static RestoApp load() 
 	{
 		PersistenceObjectStream.setFilename(filename);
+
 		restoApp = (RestoApp) PersistenceObjectStream.deserialize();
-		// model cannot be loaded - create empty BTMS
 		if (restoApp == null) { restoApp = new RestoApp(); }
 		// else { restoApp.reinitialize(); } //TODO create reinitialize from umple
 		

@@ -2,13 +2,14 @@
 /*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
+import java.io.Serializable;
 import java.util.*;
 
 // line 63 "../../../../../../../../ump/tmp842728/model.ump"
 // line 113 "../../../../../../../../ump/tmp842728/model.ump"
-public class PricedMenuItem
+public class PricedMenuItem implements Serializable
 {
-
+  private static final long serialVersionUID = -4855219931984388104L;
   //------------------------
   // MEMBER VARIABLES
   //------------------------
