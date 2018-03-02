@@ -10,10 +10,14 @@ public class TablePanel extends JPanel
     private int numXSquares;
     private int numYSquares;
 
+    private final float[] dash = {4f, 0f, 2f};
+    private final BasicStroke dashedStroke = new BasicStroke(
+            1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, dash, 2f);
+
     private void doDrawing(Graphics g)
     {
-        numXSquares = getHeight() % UNIT_LENGTH;
-        numYSquares = getWidth() % UNIT_LENGTH;
+        numYSquares = getHeight() / UNIT_LENGTH + 1;
+        numXSquares = getWidth() / UNIT_LENGTH + 1;
 
         Graphics2D g2d = (Graphics2D) g;
         drawTables(g2d);
@@ -22,10 +26,6 @@ public class TablePanel extends JPanel
 
     private void drawGrid(Graphics2D g2d)
     {
-        float[] dash = {4f, 0f, 2f};
-        BasicStroke dashedStroke = new BasicStroke(
-                1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, dash, 2f);
-
         g2d.setStroke(dashedStroke);
         g2d.setColor(Color.black);
         for (int x=1; x<numXSquares; x++)

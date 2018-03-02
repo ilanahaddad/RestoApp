@@ -1,9 +1,14 @@
 package ca.mcgill.ecse223.resto.view;
 
+import ca.mcgill.ecse223.resto.controller.InvalidInputException;
+import ca.mcgill.ecse223.resto.controller.RestoController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import static java.lang.Integer.parseInt;
 
 public class RestoAppForms
 {
@@ -21,8 +26,16 @@ public class RestoAppForms
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION)
         {
-            String successMessage = "Added table #" + tableNumField.getText() +
-                    " sith " + numSeatsField.getText() + " seats.";
+            //TODO validate input
+            int numSeats = parseInt(numSeatsField.getText());
+            int tableNum = parseInt(tableNumField.getText());
+            try {
+                RestoController.createTableAndSeats(numSeats, tableNum, 0,0,2,1);
+            } catch (InvalidInputException e) {
+                e.printStackTrace();
+            }
+
+            String successMessage = "Added table #" + tableNum + " with " + numSeats + " seats.";
             JOptionPane.showMessageDialog(null, successMessage);
         } else {
             JOptionPane.showMessageDialog(null, "No Table Added.");
