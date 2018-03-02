@@ -47,23 +47,20 @@ public class RestoAppForms
         if (result == JOptionPane.OK_OPTION)
         {
             //TODO validate input
-//            int numSeats = parseInt(numSeatsField.getText());
-//            int tableNum = parseInt(tableNumField.getText());
-//            int x = parseInt(xField.getText());
-//            int y = parseInt(yField.getText());
-//            int width = parseInt(widthField.getText());
-//            int length = parseInt(lengthField.getText());
+            int numSeats = parseInt(numSeatsField.getText());
+            int tableNum = parseInt(tableNumField.getText());
+            int x = parseInt(xField.getText());
+            int y = parseInt(yField.getText());
+            int width = parseInt(widthField.getText());
+            int length = parseInt(lengthField.getText());
             try {
-//                RestoController.createTableAndSeats(
-//                        numSeats, tableNum, x,y,width,length);
-                RestoController.createTableAndSeats(
-                        2, 99, 1,1,1,1);
+                RestoController.createTableAndSeats(numSeats, tableNum, x, y, width, length);
             } catch (InvalidInputException e) {
                 e.printStackTrace();
             }
 
-//            String successMessage = "Added table #" + tableNum + " with " + numSeats + " seats.";
-//            JOptionPane.showMessageDialog(null, successMessage);
+            String successMessage = "Added table #" + tableNum + " with " + numSeats + " seats.";
+            JOptionPane.showMessageDialog(null, successMessage);
         } else {
             JOptionPane.showMessageDialog(null, "No Table Added.");
         }

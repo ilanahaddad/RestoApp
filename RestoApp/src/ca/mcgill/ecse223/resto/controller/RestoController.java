@@ -1,6 +1,7 @@
 package ca.mcgill.ecse223.resto.controller;
 
 import java.io.File;
+import java.util.List;
 
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.model.Menu;
@@ -9,8 +10,8 @@ import ca.mcgill.ecse223.resto.model.RestoApp;
 import ca.mcgill.ecse223.resto.model.Seat;
 import ca.mcgill.ecse223.resto.model.Table;
 
-public class RestoController {
-  
+public class RestoController
+{
   /**
   * Updates desired item from the menu
   * @param  menuFile  menu read from file to be displayed
@@ -59,5 +60,11 @@ public class RestoController {
     }
     
     RestoAppApplication.save();
-  };
+  }
+
+    public static List<Table> getTables()
+    {
+      RestoApp restoApp = RestoAppApplication.getRestoApp();
+      return restoApp.getTables();
+    }
 }
