@@ -16,10 +16,10 @@ import static java.lang.Integer.parseInt;
 
 public class RestoAppPage extends JFrame
 {
-    private final String RESSOURCES_PATH = "RestoApp/ressources/";
+    private final int GUI_WIDTH = 700;
+    private final int GUI_HEIGHT = 550;
     private final String GUI_TITLE = "RestoApp";
-    private final int GUI_WIDTH = 500;
-    private final int GUI_HEIGHT = 450;
+    private final String RESSOURCES_PATH = "RestoApp/ressources/";
 
     private JPanel tablePanel;
 
@@ -46,16 +46,16 @@ public class RestoAppPage extends JFrame
     private void createMenuBar()
     {
         JMenuBar menubar = new JMenuBar();
-        JMenu file = new JMenu("Actions");
+        JMenu actions = new JMenu("Actions");
         JMenuItem addTableMenuItem = createMenuItem(
                 "Add Table", KeyEvent.VK_A, this::addTableAction);
         JMenuItem exitMenuItem = createMenuItem(
                 "Exit", KeyEvent.VK_E, RestoAppActions.EXIT_ACTION);
 
-        file.setMnemonic(KeyEvent.VK_F);
-        file.add(addTableMenuItem);
-        file.add(exitMenuItem);
-        menubar.add(file);
+        actions.setMnemonic(KeyEvent.VK_F);
+        actions.add(addTableMenuItem);
+        actions.add(exitMenuItem);
+        menubar.add(actions);
         setJMenuBar(menubar);
     }
 
@@ -123,25 +123,30 @@ public class RestoAppPage extends JFrame
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION)
         {
-            //TODO validate input
-            int numSeats = parseInt(numSeatsField.getText());
-            int tableNum = parseInt(tableNumField.getText());
-            int x = parseInt(xField.getText());
-            int y = parseInt(yField.getText());
-            int width = parseInt(widthField.getText());
-            int length = parseInt(lengthField.getText());
             try {
+                int numSeats = parseInt(numSeatsField.getText());
+                int tableNum = parseInt(tableNumField.getText());
+                int x = parseInt(xField.getText());
+                int y = parseInt(yField.getText());
+                int width = parseInt(widthField.getText());
+                int length = parseInt(lengthField.getText());
+
                 RestoController.createTableAndSeats(numSeats, tableNum, x, y, width, length);
-            } catch (InvalidInputException e) {
-                e.printStackTrace();
+
+                tablePanel.revalidate();
+                tablePanel.repaint();
+
+                JOptionPane.showMessageDialog(null, "Table added successfully.");
             }
-
-            tablePanel.revalidate();
-            tablePanel.repaint();
-
-            String successMessage = "Added table #" + tableNum + " with " + numSeats + " seats.";
-            JOptionPane.showMessageDialog(null, successMessage);
-
+            catch (NumberFormatException error)
+            {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "All fields must be integers.",
+                        "Invalid Input",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+            catch (InvalidInputException error) { error.printStackTrace(); }
         } else {
             JOptionPane.showMessageDialog(null, "No Table Added.");
         }
