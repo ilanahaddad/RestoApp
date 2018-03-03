@@ -82,7 +82,7 @@ public class TablePanel extends JPanel
         int x = table.getX();
         int y = table.getY();
         int width = table.getWidth();
-        int maxSeatsPerLine = (width*UNIT_LENGTH -seatDiameter)/ seatDiameter;
+        int maxSeatsPerLine = (width*UNIT_LENGTH - 15)/ (seatDiameter);
 
         int seatYOffset = 0;
         int seatXOffset = 0;

@@ -146,7 +146,14 @@ public class RestoAppPage extends JFrame
                         "Invalid Input",
                         JOptionPane.ERROR_MESSAGE);
             }
-            catch (InvalidInputException error) { error.printStackTrace(); }
+            catch (Exception error)
+            {
+                JOptionPane.showMessageDialog(
+                        null,
+                        error.getMessage(),
+                        "Couldn't add Table",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         } else {
             JOptionPane.showMessageDialog(null, "No Table Added.");
         }
