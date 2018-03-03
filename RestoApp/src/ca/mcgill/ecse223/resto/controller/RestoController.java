@@ -58,12 +58,12 @@ public class RestoController
 
   public static List<Table> getTables() {
 	  RestoApp restoApp = RestoAppApplication.getRestoApp();
-	  return restoApp.getTables();
+	  return restoApp.getCurrentTables();
   }
   
-  public static Table getTable(int tableNum){
+  public static Table getCurrentTable(int tableNum){
 	  RestoApp restoApp = RestoAppApplication.getRestoApp();
-	  return restoApp.getTable(tableNum);
+	  return restoApp.getCurrentTable(tableNum);
 	  
   }
   /**
@@ -99,6 +99,7 @@ public class RestoController
    * @throws InvalidInputException If the specified table does not exist
    */
   public static void removeTable(Table table) throws InvalidInputException {
+	  System.out.println("Inside removeTables");
 	String error = "";
 	if (table == null){
 		throw new InvalidInputException("Input table does not exist");
@@ -125,6 +126,7 @@ public class RestoController
 	}
 		  
 	try{
+		System.out.println("entered removal try in controller");
 		r.removeCurrentTable(table);
 		RestoAppApplication.save();  
 	}

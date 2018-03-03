@@ -178,9 +178,10 @@ public class RestoAppPage extends JFrame
         if (result == JOptionPane.OK_OPTION)
         {
             try {
-                int tableNum = parseInt(tableNumField.getText());
-                RestoController.removeTable(RestoController.getTable(tableNum));
-
+                int tableNum = parseInt(tableNumField.getText()) - 1;
+                System.out.println("in UI removal");
+                RestoController.removeTable(RestoController.getCurrentTable(tableNum));
+                System.out.println("removed");
                 tablePanel.revalidate();
                 tablePanel.repaint();
 
