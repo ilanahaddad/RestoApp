@@ -100,7 +100,6 @@ public class RestoController
    * @throws InvalidInputException If the specified table does not exist
    */
   public static void removeTable(Table table) throws InvalidInputException {
-	  System.out.println("Inside removeTables");
 	String error = "";
 	if (table == null){
 		throw new InvalidInputException("Input table does not exist");
@@ -127,7 +126,6 @@ public class RestoController
 	}
 		  
 	try{
-		System.out.println("entered removal try in controller");
 		r.removeCurrentTable(table);
 		RestoAppApplication.save();  
 	}

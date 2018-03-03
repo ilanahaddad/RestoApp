@@ -2,6 +2,7 @@ package ca.mcgill.ecse223.resto.view;
 
 import ca.mcgill.ecse223.resto.controller.InvalidInputException;
 import ca.mcgill.ecse223.resto.controller.RestoController;
+import ca.mcgill.ecse223.resto.model.Table;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import javax.swing.*;
 
 import static java.lang.Integer.parseInt;
@@ -167,22 +169,21 @@ public class RestoAppPage extends JFrame
     private void removeTableAction(ActionEvent event)
     {
         JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
-
-        panel.add(new JLabel("Table Number:"));
-        JTextField tableNumField = new JTextField();
-        panel.add(tableNumField);
-
+        
+        panel.add(new JLabel("Select table to remove"));
+        JComboBox<Table> currentTableList = new JComboBox(RestoController.getTables().toArray());
+        panel.add(currentTableList);
 
         int result = JOptionPane.showConfirmDialog(null, panel, "Remove Table",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION)
         {
             try {
-                int tableNum = parseInt(tableNumField.getText()) - 1;
-                System.out.println("in UI removal");
-                RestoController.removeTable(RestoController.getCurrentTable(tableNum));
-                System.out.println("removed");
-                tablePanel.revalidate();
+                //int tableNum = parseInt(tableNumField.getText()) - 1;
+            	
+                //RestoController.removeTable(RestoController.getCurrentTable(tableNum));
+                RestoController.removeTable((Table)currentTableList.getSelectedItem());
+            	tablePanel.revalidate();
                 tablePanel.repaint();
 
                 JOptionPane.showMessageDialog(null, "Table removed successfully.");
