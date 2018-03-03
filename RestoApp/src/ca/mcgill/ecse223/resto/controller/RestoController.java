@@ -86,4 +86,28 @@ public class RestoController
       RestoApp restoApp = RestoAppApplication.getRestoApp();
       return restoApp.getTables();
     }
+
+    public static int getMaxX()
+    {
+        RestoApp restoApp = RestoAppApplication.getRestoApp();
+        int maxX = 0;
+        for (Table table : restoApp.getTables())
+        {
+            if (maxX < table.getX()) { maxX = table.getX(); }
+        }
+
+        return maxX;
+    }
+
+    public static int getMaxY()
+    {
+        RestoApp restoApp = RestoAppApplication.getRestoApp();
+        int maxY = 0;
+        for (Table table : restoApp.getTables())
+        {
+            if (maxY < table.getY()) { maxY = table.getX(); }
+        }
+
+        return maxY;
+    }
 }

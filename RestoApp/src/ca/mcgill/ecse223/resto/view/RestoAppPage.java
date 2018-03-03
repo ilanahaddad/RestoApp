@@ -1,6 +1,5 @@
 package ca.mcgill.ecse223.resto.view;
 
-import ca.mcgill.ecse223.resto.controller.InvalidInputException;
 import ca.mcgill.ecse223.resto.controller.RestoController;
 
 import java.awt.*;
@@ -16,10 +15,14 @@ import static java.lang.Integer.parseInt;
 
 public class RestoAppPage extends JFrame
 {
+    private final int UNIT_LENGTH = 75;
     private final int GUI_WIDTH = 700;
     private final int GUI_HEIGHT = 550;
     private final String GUI_TITLE = "RestoApp";
     private final String RESSOURCES_PATH = "RestoApp/ressources/";
+
+    private int maxX = GUI_HEIGHT;
+    private int maxY = GUI_WIDTH;
 
     private JPanel tablePanel;
 
@@ -40,7 +43,13 @@ public class RestoAppPage extends JFrame
     private void createTablePanel()
     {
         tablePanel = new TablePanel();
-        add(tablePanel);
+        JScrollPane scrollPane = new JScrollPane(tablePanel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        
+        updateScrollbarMax(RestoController.getMaxX(), RestoController.getMaxY());
+
+        add(scrollPane);
     }
 
     private void createMenuBar()
@@ -133,8 +142,11 @@ public class RestoAppPage extends JFrame
 
                 RestoController.createTableAndSeats(numSeats, tableNum, x, y, width, length);
 
+                updateScrollbarMax(x,y);
+
                 tablePanel.revalidate();
                 tablePanel.repaint();
+
 
                 JOptionPane.showMessageDialog(null, "Table added successfully.");
             }
@@ -157,5 +169,15 @@ public class RestoAppPage extends JFrame
         } else {
             JOptionPane.showMessageDialog(null, "No Table Added.");
         }
+    }
+
+    private void updateScrollbarMax(int x, int y)
+    {
+        if (maxX < x*UNIT_LENGTH) { maxX = x*UNIT_LENGTH; }
+        if (maxY < y*UNIT_LENGTH) { maxY = y*UNIT_LENGTH; }
+
+        int xLimit = (maxX > GUI_WIDTH) ? maxX : GUI_WIDTH;
+        int yLimit = (maxY > GUI_HEIGHT) ? maxY : GUI_HEIGHT;
+        tablePanel.setPreferredSize(new Dimension(xLimit+2*UNIT_LENGTH, yLimit+2*UNIT_LENGTH));
     }
 }
