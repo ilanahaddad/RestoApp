@@ -82,7 +82,8 @@ public class RestoController
     }
 
     Table newTable = new Table(tableNum, x, y, width, length, restoApp);
-    restoApp.addCurrentTableAt(newTable, tableNum);
+    restoApp.addTable(newTable);
+    restoApp.addCurrentTable(newTable);
     
     for (int i=0; i<numSeats; i++)
     {
