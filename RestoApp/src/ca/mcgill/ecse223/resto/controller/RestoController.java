@@ -60,6 +60,12 @@ public class RestoController
 	  RestoApp restoApp = RestoAppApplication.getRestoApp();
 	  return restoApp.getTables();
   }
+  
+  public static Table getTable(int tableNum){
+	  RestoApp restoApp = RestoAppApplication.getRestoApp();
+	  return restoApp.getTable(tableNum);
+	  
+  }
   /**
   * Creates table and its seats and adds them to the application
   * @throws InvalidInputException If the table number already exists
@@ -76,6 +82,7 @@ public class RestoController
     }
 
     Table newTable = new Table(tableNum, x, y, width, length, restoApp);
+    restoApp.addCurrentTableAt(newTable, tableNum);
     
     for (int i=0; i<numSeats; i++)
     {
