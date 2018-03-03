@@ -2,14 +2,15 @@
 /*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.*;
 
 // line 15 "../../../../../../../../ump/tmp842728/model.ump"
 // line 78 "../../../../../../../../ump/tmp842728/model.ump"
-public class Reservation
+public class Reservation implements Serializable
 {
-
+  private static final long serialVersionUID = 2315072607928790501L;
   //------------------------
   // STATIC VARIABLES
   //------------------------

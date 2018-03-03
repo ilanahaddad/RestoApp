@@ -2,13 +2,14 @@
 /*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
+import java.io.Serializable;
 import java.util.*;
 
 // line 35 "../../../../../../../../ump/tmp842728/model.ump"
 // line 88 "../../../../../../../../ump/tmp842728/model.ump"
-public class Seat
+public class Seat implements Serializable
 {
-
+  private static final long serialVersionUID = 386717977557499839L;
   //------------------------
   // MEMBER VARIABLES
   //------------------------
