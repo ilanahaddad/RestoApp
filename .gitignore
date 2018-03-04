@@ -105,3 +105,4 @@ crashlytics-build.properties
 fabric.properties
 RestoApp/.metadata/
 *.gen
+RestoApp/bin/RestoApp.ump
