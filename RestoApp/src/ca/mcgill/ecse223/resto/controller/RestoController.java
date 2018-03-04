@@ -1,6 +1,6 @@
 package ca.mcgill.ecse223.resto.controller;
 
-import java.awt.*;
+import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.List;
@@ -133,26 +133,28 @@ public class RestoController
       throw new InvalidInputException(e.getMessage());
     }
   }
-  
+
+  // get largest Y coordinate of all the app's current tables
   public static int getMaxX()
   {
     RestoApp restoApp = RestoAppApplication.getRestoApp();
     int maxX = 0;
-    for (Table table : restoApp.getTables())
+    for (Table table : restoApp.getCurrentTables())
     {
-      if (maxX < table.getX()) { maxX = table.getX(); }
+      if (maxX < table.getX() + table.getWidth()) { maxX = table.getX() + table.getWidth(); }
     }
     
     return maxX;
   }
-  
+
+  // get largest Y coordinate of all the app's current tables
   public static int getMaxY()
   {
     RestoApp restoApp = RestoAppApplication.getRestoApp();
     int maxY = 0;
-    for (Table table : restoApp.getTables())
+    for (Table table : restoApp.getCurrentTables())
     {
-      if (maxY < table.getY()) { maxY = table.getX(); }
+      if (maxY < table.getY() + table.getLength()) { maxY = table.getY() + table.getLength(); }
     }
     
     return maxY;

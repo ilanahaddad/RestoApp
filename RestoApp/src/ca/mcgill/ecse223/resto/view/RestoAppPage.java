@@ -1,9 +1,10 @@
 package ca.mcgill.ecse223.resto.view;
 
-import ca.mcgill.ecse223.resto.controller.RestoController;
-import ca.mcgill.ecse223.resto.model.Table;
+import static java.lang.Integer.parseInt;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -12,11 +13,15 @@ import java.nio.file.Paths;
 
 import javax.swing.*;
 
-import static java.lang.Integer.parseInt;
+import ca.mcgill.ecse223.resto.controller.InvalidInputException;
+import ca.mcgill.ecse223.resto.controller.RestoController;
+import ca.mcgill.ecse223.resto.model.Table;
 
 
 public class RestoAppPage extends JFrame
 {
+    private static final long serialVersionUID = 6588228649238198455L;
+
     private final int UNIT_LENGTH = 75;
     private final int GUI_WIDTH = 700;
     private final int GUI_HEIGHT = 550;
@@ -26,57 +31,51 @@ public class RestoAppPage extends JFrame
     private int maxX = GUI_HEIGHT;
     private int maxY = GUI_WIDTH;
 
+    private final int SCROLLBAR_SPEED = 16;
+
     private JPanel tablePanel;
 
-    public RestoAppPage() { initUI(); }
+    public RestoAppPage()
+    {
+        setNiceTheme();
+        initUI();
+    }
 
     private void initUI()
     {
+        configureUI();
         createMenuBar();
         createToolBar();
         createTablePanel();
-
-        setTitle(GUI_TITLE);
-        setSize(GUI_WIDTH, GUI_HEIGHT);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
     private void createTablePanel()
     {
         tablePanel = new TablePanel();
-        JScrollPane scrollPane = new JScrollPane(tablePanel);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane scrollbar = new JScrollPane(tablePanel);
 
-        updateScrollbarMax(RestoController.getMaxX(), RestoController.getMaxY());
-
-        add(scrollPane);
+        configureScrollbar(scrollbar);
+        add(scrollbar);
     }
 
     private void createMenuBar()
     {
         JMenuBar menubar = new JMenuBar();
         JMenu actions = new JMenu("Actions");
-        JMenuItem removeTableMenuItem = createMenuItem(
-        		"Remove Table", KeyEvent.VK_D, this::removeTableAction);
-        JMenuItem addTableMenuItem = createMenuItem(
-                "Add Table", KeyEvent.VK_A, this::addTableAction);
-        JMenuItem exitMenuItem = createMenuItem(
-                "Exit", KeyEvent.VK_E, RestoAppActions.EXIT_ACTION);
+        JMenuItem exitMenuItem = createMenuItem("Exit", RestoAppActions.EXIT_ACTION);
+        JMenuItem addTableMenuItem = createMenuItem("Add Table", this::addTableAction);
+        JMenuItem removeTableMenuItem = createMenuItem("Remove Table", this::removeTableAction);
 
-        actions.setMnemonic(KeyEvent.VK_F);
-        actions.add(removeTableMenuItem);
         actions.add(addTableMenuItem);
+        actions.add(removeTableMenuItem);
         actions.add(exitMenuItem);
         menubar.add(actions);
         setJMenuBar(menubar);
     }
 
-    private JMenuItem createMenuItem(String itemName, int keyEvent, ActionListener action)
+    private JMenuItem createMenuItem(String itemName, ActionListener action)
     {
         JMenuItem menuItem = new JMenuItem(itemName);
-        menuItem.setMnemonic(keyEvent);
         menuItem.addActionListener(action);
         return menuItem;
     }
@@ -84,12 +83,9 @@ public class RestoAppPage extends JFrame
     private void createToolBar()
     {
         JToolBar toolbar = new JToolBar();
-        JButton exitButton = createButton(
-                "power.png", "Exit RestoApp", RestoAppActions.EXIT_ACTION);
-        JButton addTableButton = createButton(
-                "addTable.png", "Add Table", this::addTableAction);
-        JButton removeTableButton = createButton(
-        		"removeTable.png", "Remove Table", this::removeTableAction);
+        JButton exitButton = createButton("power.jpg","Exit App [Alt + Q]", KeyEvent.VK_Q, RestoAppActions.EXIT_ACTION);
+        JButton addTableButton = createButton("addTable.jpg", "Add Table [Alt + A]", KeyEvent.VK_A, this::addTableAction);
+        JButton removeTableButton = createButton("removeTable.jpg", "Delete Table [Alt + D]", KeyEvent.VK_D, this::removeTableAction);
 
         toolbar.add(exitButton);
         toolbar.add(addTableButton);
@@ -97,11 +93,13 @@ public class RestoAppPage extends JFrame
         add(toolbar, BorderLayout.NORTH);
     }
 
-    private JButton createButton(String iconName, String buttonTip, ActionListener action)
+    private JButton createButton(String iconName, String buttonTip, int shortcut, ActionListener action)
     {
-        Path iconPath = Paths.get(RESSOURCES_PATH+iconName).toAbsolutePath();
+        Path iconPath = Paths.get(RESSOURCES_PATH + iconName).toAbsolutePath();
         ImageIcon icon = new ImageIcon(iconPath.toString());
         JButton button = new JButton(icon);
+
+        button.setMnemonic(shortcut);
         button.setToolTipText(buttonTip);
         button.addActionListener(action);
         return button;
@@ -135,12 +133,12 @@ public class RestoAppPage extends JFrame
         JTextField lengthField = new JTextField();
         panel.add(lengthField);
 
-
         int result = JOptionPane.showConfirmDialog(null, panel, "Add Table",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION)
         {
-            try {
+            try
+            {
                 int numSeats = parseInt(numSeatsField.getText());
                 int tableNum = parseInt(tableNumField.getText());
                 int x = parseInt(xField.getText());
@@ -148,35 +146,29 @@ public class RestoAppPage extends JFrame
                 int width = parseInt(widthField.getText());
                 int length = parseInt(lengthField.getText());
 
+                if (x<0 || y<0 || tableNum<0 || numSeats<0 || width<=0 || length<=0)
+                {
+                    throw new InvalidInputException("Input must be positive.");
+                }
+
                 RestoController.createTableAndSeats(numSeats, tableNum, x, y, width, length);
 
-                updateScrollbarMax(x,y);
-
+                updateScrollbarMax(x+width, y+length);
                 tablePanel.revalidate();
                 tablePanel.repaint();
-
 
                 JOptionPane.showMessageDialog(null, "Table added successfully.");
             }
             catch (NumberFormatException error)
             {
-                JOptionPane.showMessageDialog(
-                        null,
-                        "All fields must be integers.",
-                        "Invalid Input",
-                        JOptionPane.ERROR_MESSAGE);
+                String errorMessage = "All fields must be integers.";
+                JOptionPane.showMessageDialog(null, errorMessage, "Invalid Input", JOptionPane.ERROR_MESSAGE);
             }
             catch (Exception error)
             {
-                JOptionPane.showMessageDialog(
-                        null,
-                        error.getMessage(),
-                        "Couldn't add Table",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, error.getMessage(), "Invalid Input", JOptionPane.ERROR_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "No Table Added.");
-        }
+        } else { JOptionPane.showMessageDialog(null, "No Table Added."); }
     }
 
     private void updateScrollbarMax(int x, int y)
@@ -186,7 +178,35 @@ public class RestoAppPage extends JFrame
 
         int xLimit = (maxX > GUI_WIDTH) ? maxX : GUI_WIDTH;
         int yLimit = (maxY > GUI_HEIGHT) ? maxY : GUI_HEIGHT;
-        tablePanel.setPreferredSize(new Dimension(xLimit+2*UNIT_LENGTH, yLimit+2*UNIT_LENGTH));
+        tablePanel.setPreferredSize(new Dimension(xLimit+UNIT_LENGTH, yLimit+UNIT_LENGTH));
+    }
+
+    private void setNiceTheme()
+    {
+        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
+        catch (Exception error)
+        {
+            JOptionPane.showMessageDialog(
+                    null, error.getMessage(), "Could not set theme", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void configureUI()
+    {
+        setTitle(GUI_TITLE);
+        setSize(GUI_WIDTH, GUI_HEIGHT);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    private void configureScrollbar(JScrollPane scrollbar)
+    {
+        scrollbar.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollbar.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollbar.getVerticalScrollBar().setUnitIncrement(SCROLLBAR_SPEED);
+        scrollbar.getHorizontalScrollBar().setUnitIncrement(SCROLLBAR_SPEED);
+
+        updateScrollbarMax(RestoController.getMaxX(), RestoController.getMaxY());
     }
 
     private void removeTableAction(ActionEvent event)
