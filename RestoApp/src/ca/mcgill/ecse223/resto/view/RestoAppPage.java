@@ -222,22 +222,11 @@ public class RestoAppPage extends JFrame
         if (result == JOptionPane.OK_OPTION)
         {
             try {
-                //int tableNum = parseInt(tableNumField.getText()) - 1;
-            	
-                //RestoController.removeTable(RestoController.getCurrentTable(tableNum));
                 RestoController.removeTable((Table)currentTableList.getSelectedItem());
             	tablePanel.revalidate();
                 tablePanel.repaint();
 
                 JOptionPane.showMessageDialog(null, "Table removed successfully.");
-            }
-            catch (NumberFormatException error)
-            {
-                JOptionPane.showMessageDialog(
-                        null,
-                        "All fields must be integers.",
-                        "Invalid Input",
-                        JOptionPane.ERROR_MESSAGE);
             }
             catch (Exception error)
             {
