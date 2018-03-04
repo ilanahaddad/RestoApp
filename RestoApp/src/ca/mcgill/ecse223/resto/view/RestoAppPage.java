@@ -64,9 +64,11 @@ public class RestoAppPage extends JFrame
         JMenu actions = new JMenu("Actions");
         JMenuItem exitMenuItem = createMenuItem("Exit", RestoAppActions.EXIT_ACTION);
         JMenuItem addTableMenuItem = createMenuItem("Add Table", this::addTableAction);
+        JMenuItem changeTableMenuItem = createMenuItem("Change Table", null); //TODO ILANA ADD YOUR ACTION HERE
         JMenuItem removeTableMenuItem = createMenuItem("Remove Table", this::removeTableAction);
 
         actions.add(addTableMenuItem);
+        actions.add(changeTableMenuItem);
         actions.add(removeTableMenuItem);
         actions.add(exitMenuItem);
         menubar.add(actions);
@@ -85,10 +87,12 @@ public class RestoAppPage extends JFrame
         JToolBar toolbar = new JToolBar();
         JButton exitButton = createButton("power.jpg","Exit App [Alt + Q]", KeyEvent.VK_Q, RestoAppActions.EXIT_ACTION);
         JButton addTableButton = createButton("addTable.jpg", "Add Table [Alt + A]", KeyEvent.VK_A, this::addTableAction);
+        JButton changeTableButton = createButton("changeTable.jpg", "Change Table [Alt + M]", KeyEvent.VK_M, null); //TODO ILANA ADD YOUR ACTION HERE
         JButton removeTableButton = createButton("removeTable.jpg", "Delete Table [Alt + D]", KeyEvent.VK_D, this::removeTableAction);
 
         toolbar.add(exitButton);
         toolbar.add(addTableButton);
+        toolbar.add(changeTableButton);
         toolbar.add(removeTableButton);
         add(toolbar, BorderLayout.NORTH);
     }

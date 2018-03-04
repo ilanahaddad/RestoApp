@@ -127,6 +127,61 @@ public class RestoController
         }
     }
 
+    /**
+     * Updates table number and number of seats at the table
+     * @param table table to update
+     * @param newNumber new table number to update to
+     * @param numberOfSeats number of seats for updated table to have
+     * @throws InvalidInputException if table with given number doesn't exist, if newNumber and numberOfSeats aren't positive
+     * 		and if table is reserved
+     */
+    public static void updateTable(Table table, int newNumber, int numberOfSeats) throws InvalidInputException{
+        String error = "";
+        RestoApp restoApp = RestoAppApplication.getRestoApp();
+        if(table == null) {
+            error = "A table with this number does not exist. ";
+        }
+        if(newNumber < 0) {
+            error = "New table number must be positive. ";
+        }
+        if(numberOfSeats < 0) {
+            error = "Number of seats must be positive. ";
+        }
+        if(table.hasReservations()) {
+            error = "Can't update a table that is reserved. ";
+        }
+        List<Order> currentOrders = restoApp.getCurrentOrders();
+        boolean inUse = false;
+        for(Order o: currentOrders) { //check if table to update has orders (i.e. inUse)
+            List<Table> tablesWithOrders = o.getTables();
+            inUse = tablesWithOrders.contains(table);
+        }
+        if(inUse) {
+            error = "Can't update a table that is currently in use.";
+        }
+        if(error.length() > 0) {
+            throw new InvalidInputException(error.trim());
+        }
+        try{
+            table.setNumber(newNumber); //throws runtime exception if number is duplicate
+        }
+        catch(RuntimeException e) {
+            throw new InvalidInputException(e.getMessage());
+        }
+        int n = table.numberOfCurrentSeats();
+        //Add seats if new numberOfSeats > numberOfCurrentSeats:
+        for(int i = 1; i <= numberOfSeats - n; i++) {
+            Seat seat = table.addSeat();
+            table.addCurrentSeat(seat);
+        }
+        //Remove seats if new numberOfSeats < numberOfCurrentSeats:
+        for(int i = 1; i <= n - numberOfSeats; i++) {
+            Seat seat = table.getCurrentSeat(0);
+            table.removeCurrentSeat(seat);
+        }
+        RestoAppApplication.save();
+    }
+
     private static Table getTableByNum(int tableNum) throws InvalidInputException {
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         for (Table table : restoApp.getTables())
