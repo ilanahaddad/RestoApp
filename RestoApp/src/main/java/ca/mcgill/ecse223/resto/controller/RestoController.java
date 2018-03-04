@@ -218,7 +218,6 @@ public class RestoController
     // validates if 2 tables are equal (x,y does not matter)
     private static boolean areExactSameTable(Table table, int tableNum, int numSeats, int width, int length)
     {
-        System.out.println("T: " +table.getNumber()+"\tNEW: "+tableNum);
         return table.getNumber() == tableNum && table.getSeats().size() == numSeats &&
                 table.getWidth() == width && table.getLength() == length;
     }

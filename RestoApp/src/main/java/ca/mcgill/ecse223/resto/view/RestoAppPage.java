@@ -26,7 +26,7 @@ public class RestoAppPage extends JFrame
     private final int GUI_WIDTH = 700;
     private final int GUI_HEIGHT = 550;
     private final String GUI_TITLE = "RestoApp";
-    private final String RESSOURCES_PATH = "RestoApp/ressources/";
+    private final String RESSOURCES_PATH = "src/main/ressources/";
 
     private int maxX = GUI_HEIGHT;
     private int maxY = GUI_WIDTH;
