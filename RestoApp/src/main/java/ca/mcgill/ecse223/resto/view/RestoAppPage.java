@@ -216,9 +216,15 @@ public class RestoAppPage extends JFrame
     private void removeTableAction(ActionEvent event)
     {
         JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
+        //create array of current table numbers
+        int currentLength = RestoController.getCurrentTables().size();
+        String currentTableNums[] = new String[currentLength];
+        for (int i = 0; i < currentLength; i++){
+        	currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+        }
         
         panel.add(new JLabel("Select table to remove"));
-        JComboBox<Table> currentTableList = new JComboBox(RestoController.getCurrentTables().toArray());
+        JComboBox<String> currentTableList = new JComboBox<String>(currentTableNums);
         panel.add(currentTableList);
 
         int result = JOptionPane.showConfirmDialog(null, panel, "Remove Table",
@@ -226,7 +232,11 @@ public class RestoAppPage extends JFrame
         if (result == JOptionPane.OK_OPTION)
         {
             try {
-                RestoController.removeTable((Table)currentTableList.getSelectedItem());
+                //RestoController.removeTable((Table)currentTableList.getSelectedItem());
+            	int tableNum = Integer.parseInt((String) currentTableList.getSelectedItem());
+            	Table selectedTable = RestoController.getCurrentTableByNum(tableNum);
+            	RestoController.removeTable(selectedTable);
+            	
             	tablePanel.revalidate();
                 tablePanel.repaint();
 

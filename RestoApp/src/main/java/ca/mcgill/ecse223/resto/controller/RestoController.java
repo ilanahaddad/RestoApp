@@ -190,6 +190,20 @@ public class RestoController
         }
         throw new InvalidInputException("Could not retrieve table number " + tableNum);
     }
+    /**
+     * 
+     * @param tableNum
+     * @return
+     * @throws InvalidInputException
+     */
+    public static Table getCurrentTableByNum(int tableNum) throws InvalidInputException {
+        RestoApp restoApp = RestoAppApplication.getRestoApp();
+        for (Table table : restoApp.getCurrentTables())
+        {
+            if (table.getNumber() == tableNum) { return table; }
+        }
+        throw new InvalidInputException("Could not retrieve table number " + tableNum);
+    }
 
     // checks if the table with given attributes is in the set tables in the app
     private static boolean exactTableInApp(int tableNum, int numSeats, int width, int length)
