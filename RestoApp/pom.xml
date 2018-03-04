@@ -40,6 +40,18 @@
           <mainClass>ca.mcgill.ecse223.resto.application.RestoAppApplication</mainClass>
         </configuration>
       </plugin>
+      <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+        <version>3.0.2</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>ca.mcgill.ecse223.resto.application.RestoAppApplication</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
     </plugins>
   </build>
 </project>
