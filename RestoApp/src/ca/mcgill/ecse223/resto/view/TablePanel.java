@@ -65,7 +65,7 @@ public class TablePanel extends JPanel
 
     private void drawTablePanel(Graphics2D g2d)
     {
-        for (Table table : RestoController.getTables())
+        for (Table table : RestoController.getCurrentTables())
         {
             drawTable(table, g2d);
             drawSeats(table, g2d);

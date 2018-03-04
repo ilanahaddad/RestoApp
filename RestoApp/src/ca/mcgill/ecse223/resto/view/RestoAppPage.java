@@ -105,6 +105,44 @@ public class RestoAppPage extends JFrame
         return button;
     }
 
+    private void updateScrollbarMax(int x, int y)
+    {
+        if (maxX < x*UNIT_LENGTH) { maxX = x*UNIT_LENGTH; }
+        if (maxY < y*UNIT_LENGTH) { maxY = y*UNIT_LENGTH; }
+
+        int xLimit = (maxX > GUI_WIDTH) ? maxX+UNIT_LENGTH : GUI_WIDTH;
+        int yLimit = (maxY > GUI_HEIGHT) ? maxY+UNIT_LENGTH : GUI_HEIGHT;
+        tablePanel.setPreferredSize(new Dimension(xLimit, yLimit));
+    }
+
+    private void setNiceTheme()
+    {
+        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
+        catch (Exception error)
+        {
+            JOptionPane.showMessageDialog(
+                    null, error.getMessage(), "Could not set theme", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void configureUI()
+    {
+        setTitle(GUI_TITLE);
+        setSize(GUI_WIDTH, GUI_HEIGHT);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    private void configureScrollbar(JScrollPane scrollbar)
+    {
+        scrollbar.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollbar.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollbar.getVerticalScrollBar().setUnitIncrement(SCROLLBAR_SPEED);
+        scrollbar.getHorizontalScrollBar().setUnitIncrement(SCROLLBAR_SPEED);
+
+        updateScrollbarMax(RestoController.getMaxX(), RestoController.getMaxY());
+    }
+
     private void addTableAction(ActionEvent event)
     {
         JPanel panel = new JPanel(new GridLayout(6, 2, 5,5));
@@ -171,50 +209,12 @@ public class RestoAppPage extends JFrame
         } else { JOptionPane.showMessageDialog(null, "No Table Added."); }
     }
 
-    private void updateScrollbarMax(int x, int y)
-    {
-        if (maxX < x*UNIT_LENGTH) { maxX = x*UNIT_LENGTH; }
-        if (maxY < y*UNIT_LENGTH) { maxY = y*UNIT_LENGTH; }
-
-        int xLimit = (maxX > GUI_WIDTH) ? maxX : GUI_WIDTH;
-        int yLimit = (maxY > GUI_HEIGHT) ? maxY : GUI_HEIGHT;
-        tablePanel.setPreferredSize(new Dimension(xLimit+UNIT_LENGTH, yLimit+UNIT_LENGTH));
-    }
-
-    private void setNiceTheme()
-    {
-        try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
-        catch (Exception error)
-        {
-            JOptionPane.showMessageDialog(
-                    null, error.getMessage(), "Could not set theme", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void configureUI()
-    {
-        setTitle(GUI_TITLE);
-        setSize(GUI_WIDTH, GUI_HEIGHT);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-    }
-
-    private void configureScrollbar(JScrollPane scrollbar)
-    {
-        scrollbar.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollbar.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollbar.getVerticalScrollBar().setUnitIncrement(SCROLLBAR_SPEED);
-        scrollbar.getHorizontalScrollBar().setUnitIncrement(SCROLLBAR_SPEED);
-
-        updateScrollbarMax(RestoController.getMaxX(), RestoController.getMaxY());
-    }
-
     private void removeTableAction(ActionEvent event)
     {
         JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
         
         panel.add(new JLabel("Select table to remove"));
-        JComboBox<Table> currentTableList = new JComboBox(RestoController.getTables().toArray());
+        JComboBox<Table> currentTableList = new JComboBox(RestoController.getCurrentTables().toArray());
         panel.add(currentTableList);
 
         int result = JOptionPane.showConfirmDialog(null, panel, "Remove Table",
