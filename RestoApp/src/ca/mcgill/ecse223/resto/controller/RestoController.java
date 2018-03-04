@@ -8,6 +8,7 @@ import java.util.List;
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.model.Menu;
 import ca.mcgill.ecse223.resto.model.MenuItem;
+import ca.mcgill.ecse223.resto.model.Order;
 import ca.mcgill.ecse223.resto.model.RestoApp;
 import ca.mcgill.ecse223.resto.model.Seat;
 import ca.mcgill.ecse223.resto.model.Table;
@@ -44,6 +45,27 @@ public class RestoController
   */
   public static void updateMenuItem(MenuItem item) throws InvalidInputException {}
   
+  private static boolean overlapsOtherTables(int x, int y, int width, int length, List<Table> tables) {
+    Shape newTableShape = new Rectangle2D.Float(x, y, width, length);
+    
+    for (Table table : tables)
+    {
+      Shape tableShape = new Rectangle2D.Float(table.getX(), table.getY(), table.getWidth(), table.getLength());
+      if (tableShape.getBounds2D().intersects(newTableShape.getBounds2D())) { return true; }
+    }
+    return false;
+  }
+  
+  public static List<Table> getTables() {
+    RestoApp restoApp = RestoAppApplication.getRestoApp();
+    return restoApp.getCurrentTables();
+  }
+  
+  public static Table getCurrentTable(int tableNum){
+    RestoApp restoApp = RestoAppApplication.getRestoApp();
+    return restoApp.getCurrentTable(tableNum);
+    
+  }
   /**
   * Creates table and its seats and adds them to the application
   * @throws InvalidInputException If the table number already exists
@@ -53,13 +75,15 @@ public class RestoController
   ) throws InvalidInputException 
   {
     RestoApp restoApp = RestoAppApplication.getRestoApp();
-
+    
     if (overlapsOtherTables(x, y, width, length, restoApp.getTables()))
     {
       throw new InvalidInputException("Input table overlaps with another table");
     }
-
+    
     Table newTable = new Table(tableNum, x, y, width, length, restoApp);
+    restoApp.addTable(newTable);
+    restoApp.addCurrentTable(newTable);
     
     for (int i=0; i<numSeats; i++)
     {
@@ -68,46 +92,69 @@ public class RestoController
     }
     
     RestoAppApplication.save();
+  };
+  
+  /**
+  * Removes a table from the current tables
+  * @param Table table to be removed
+  * @throws InvalidInputException If the specified table does not exist
+  */
+  public static void removeTable(Table table) throws InvalidInputException {
+    String error = "";
+    if (table == null){
+      throw new InvalidInputException("Input table does not exist");
+    }
+    
+    boolean reserved = table.hasReservations();
+    if (reserved){
+      error = error + "Table is reserved and cannot be removed.";
+    }
+    RestoApp r = RestoAppApplication.getRestoApp();
+    List<Order> currentOrders = r.getCurrentOrders();
+    
+    List<Table> tables;
+    boolean inUse;
+    for (Order order : currentOrders){
+      tables = order.getTables();
+      inUse = tables.contains(table);
+      if (inUse){
+        error = error + "Cannot remove: Selected table is currently in use.";
+      }
+    }
+    if (error.length() > 0){
+      throw new InvalidInputException(error.trim());
+    }
+    
+    try{
+      r.removeCurrentTable(table);
+      RestoAppApplication.save();  
+    }
+    catch (RuntimeException e){
+      throw new InvalidInputException(e.getMessage());
+    }
   }
-
-  private static boolean overlapsOtherTables(int x, int y, int width, int length, List<Table> tables) {
-    Shape newTableShape = new Rectangle2D.Float(x, y, width, length);
-
-    for (Table table : tables)
+  
+  public static int getMaxX()
+  {
+    RestoApp restoApp = RestoAppApplication.getRestoApp();
+    int maxX = 0;
+    for (Table table : restoApp.getTables())
     {
-      Shape tableShape = new Rectangle2D.Float(table.getX(), table.getY(), table.getWidth(), table.getLength());
-      if (tableShape.getBounds2D().intersects(newTableShape.getBounds2D())) { return true; }
+      if (maxX < table.getX()) { maxX = table.getX(); }
     }
-    return false;
+    
+    return maxX;
   }
-
-  public static List<Table> getTables()
+  
+  public static int getMaxY()
+  {
+    RestoApp restoApp = RestoAppApplication.getRestoApp();
+    int maxY = 0;
+    for (Table table : restoApp.getTables())
     {
-      RestoApp restoApp = RestoAppApplication.getRestoApp();
-      return restoApp.getTables();
+      if (maxY < table.getY()) { maxY = table.getX(); }
     }
-
-    public static int getMaxX()
-    {
-        RestoApp restoApp = RestoAppApplication.getRestoApp();
-        int maxX = 0;
-        for (Table table : restoApp.getTables())
-        {
-            if (maxX < table.getX()) { maxX = table.getX(); }
-        }
-
-        return maxX;
-    }
-
-    public static int getMaxY()
-    {
-        RestoApp restoApp = RestoAppApplication.getRestoApp();
-        int maxY = 0;
-        for (Table table : restoApp.getTables())
-        {
-            if (maxY < table.getY()) { maxY = table.getX(); }
-        }
-
-        return maxY;
-    }
+    
+    return maxY;
+  }
 }
