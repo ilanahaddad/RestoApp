@@ -46,7 +46,7 @@ public class RestoAppPage extends JFrame
         JScrollPane scrollPane = new JScrollPane(tablePanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        
+
         updateScrollbarMax(RestoController.getMaxX(), RestoController.getMaxY());
 
         add(scrollPane);
