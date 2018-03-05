@@ -59,7 +59,13 @@ public class RestoController
         {
             throw new InvalidInputException("Input table overlaps with another table");
         }
-
+       
+        for(Table t: restoApp.getCurrentTables()) {
+        		if(tableNum==t.getNumber()) {
+        			throw new InvalidInputException("A current table already exists with that number.");
+        		}
+        }
+ 
         Table tableToAdd;
         // only bring an existent table to current IFF it has exactly the same attributes
         // if not it is simply not the same table and must have a new table number

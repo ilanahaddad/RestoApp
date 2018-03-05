@@ -267,7 +267,7 @@ public class RestoAppPage extends JFrame
                 }
         } 
         else { 
-        	JOptionPane.showMessageDialog(null, "Unsuccessful change."); 
+        	JOptionPane.showMessageDialog(null, "No tables were changed."); 
         	}
     }
     private void removeTableAction(ActionEvent event)
