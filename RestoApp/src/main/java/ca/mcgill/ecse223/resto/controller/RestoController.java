@@ -60,6 +60,9 @@ public class RestoController
             throw new InvalidInputException("Input table overlaps with another table");
         }
        
+        //this check was added because we noticed the uniqueness check in the Table constructor
+        //only checks the tablesByNumber map which gets reset every time the app is rerun, therefore
+        //not keeping track of tables already created 
         for(Table t: restoApp.getCurrentTables()) {
         		if(tableNum==t.getNumber()) {
         			throw new InvalidInputException("A current table already exists with that number.");
@@ -165,9 +168,16 @@ public class RestoController
         if(inUse) {
             error += "Can't update a table that is currently in use.\n";
         }
+        
+        for(Table t: restoApp.getCurrentTables()) {
+        		if(newNumber==t.getNumber()) {
+        			error += "A current table already exists with that number.\n";
+        		}
+        }
         if(error.length() > 0) {
             throw new InvalidInputException(error.trim());
         }
+        /* 
         try{
             table.setNumber(newNumber); //throws runtime exception if number is duplicate
         }
@@ -177,7 +187,7 @@ public class RestoController
         			error = "A table with this number already exists. Please use a different number.\n"; 
         		}
             throw new InvalidInputException(e.getMessage());
-        }
+        }*/
         int n = table.numberOfCurrentSeats();
         //Add seats if new numberOfSeats > numberOfCurrentSeats:
         for(int i = 1; i <= numberOfSeats - n; i++) {
