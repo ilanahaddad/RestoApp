@@ -19,12 +19,12 @@ public class RestoAppApplication
 
 	public static void main(String[] args)
 	{
-		try {
+		/* try {
             List<MenuItem> mi = RestoController.getMenuItems(MenuItem.ItemCategory.Appetizer);
             System.out.println(mi.size());
         } catch (InvalidInputException e) {
             e.printStackTrace();
-        }
+        } */
 		java.awt.EventQueue.invokeLater(() -> new RestoAppPage().setVisible(true));
 	}
 
