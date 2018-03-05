@@ -223,12 +223,29 @@ public class RestoController
         RestoAppApplication.save();
     }
     
-	public static void moveTable(Table table, int newX, int newY) {
+	public static void moveTable(Table table, int newX, int newY) throws InvalidInputException {
 		// TODO MICHAEL'S FEATURE
 		String error = "";
 		if(table==null) {
-			error+= "Input table does not exist";
+			error+= "Input table does not exist.\n";
 		}
+		if(newX < 0 || newY < 0) {
+			error+= "X and Y must be positive.\n";
+		}
+		int width = table.getWidth();
+		int length = table.getLength();
+		RestoApp r = RestoAppApplication.getRestoApp();
+		List<Table> currentTables = r.getCurrentTables();
+        if (overlapsOtherTables(newX, newY, width, length, currentTables)){
+            error += "Input table overlaps with another table. \n";
+        }
+        if(error.length() > 0) {
+            throw new InvalidInputException(error.trim());
+        }
+        table.setX(newX);
+        table.setY(newY);
+        RestoAppApplication.save();
+        
 	}
     public static Table getTableByNum(int tableNum) throws InvalidInputException {
         RestoApp restoApp = RestoAppApplication.getRestoApp();
