@@ -79,23 +79,21 @@ public class RestoController
             int numSeats, int tableNum, int x, int y, int width, int length
     ) throws InvalidInputException
     {
-    	String error;
+    		String error="";
         RestoApp restoApp = RestoAppApplication.getRestoApp();
 
         if (overlapsOtherTables(x, y, width, length, restoApp.getCurrentTables()))
         {
-            throw new InvalidInputException("Input table overlaps with another table");
+            error += "Input table overlaps with another table";
         }
-       
-        //this check was added because we noticed the uniqueness check in the Table constructor
-        //only checks the tablesByNumber map which gets reset every time the app is rerun, therefore
-        //not keeping track of tables already created 
-        /*for(Table t: restoApp.getCurrentTables()) {
-        		if(tableNum==t.getNumber()) {
-        			throw new InvalidInputException("A current table already exists with that number.");
-        		}
-        }*/
- 
+        if (x<0 || y<0 || tableNum<0 || numSeats<0 || width<=0 || length<=0)
+        {
+            error += "Input must be positive.";
+        }
+        if (error.length() > 0){
+            throw new InvalidInputException(error.trim());
+        }
+        
         Table tableToAdd;
         // only bring an existent table to current IFF it has exactly the same attributes
         // if not it is simply not the same table and must have a new table number
@@ -107,9 +105,7 @@ public class RestoController
             tableToAdd.setY(y);
         }
         // table is new to the application
-        else
-        {
-        	
+        else{
             try{
             	tableToAdd = new Table(tableNum, x, y, width, length, restoApp); //throws runtime exception if number is duplicate
             }
@@ -118,7 +114,7 @@ public class RestoController
             		if(error.equals("Cannot create due to duplicate number")) {
             			error = "A table with this number already exists. Please use a different number.\n"; 
             		}
-                throw new InvalidInputException(e.getMessage());
+                throw new InvalidInputException(error);
             }
             restoApp.addTable(tableToAdd);
 
@@ -206,25 +202,13 @@ public class RestoController
             error += "Can't update a table that is currently in use.\n";
         }
         
-        for(Table t: restoApp.getCurrentTables()) {
-        		if(newNumber==t.getNumber()) {
-        			error += "A current table already exists with that number.\n";
-        		}
+        if(!table.setNumber(newNumber)) {
+    			error+= "A table with this number already exists. Please use a different number.\n";
         }
         if(error.length() > 0) {
             throw new InvalidInputException(error.trim());
         }
-        /* 
-        try{
-            table.setNumber(newNumber); //throws runtime exception if number is duplicate
-        }
-        catch(RuntimeException e) {
-        		error = e.getMessage();
-        		if(error.equals("Cannot create due to duplicate number")) {
-        			error = "A table with this number already exists. Please use a different number.\n"; 
-        		}
-            throw new InvalidInputException(e.getMessage());
-        }*/
+       
         int n = table.numberOfCurrentSeats();
         //Add seats if new numberOfSeats > numberOfCurrentSeats:
         for(int i = 1; i <= numberOfSeats - n; i++) {

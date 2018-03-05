@@ -177,21 +177,14 @@ public class RestoAppPage extends JFrame
 
         int result = JOptionPane.showConfirmDialog(null, panel, "Add Table",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (result == JOptionPane.OK_OPTION)
-        {
-            try
-            {
+        if (result == JOptionPane.OK_OPTION){
+            try{
                 int numSeats = parseInt(numSeatsField.getText());
                 int tableNum = parseInt(tableNumField.getText());
                 int x = parseInt(xField.getText());
                 int y = parseInt(yField.getText());
                 int width = parseInt(widthField.getText());
                 int length = parseInt(lengthField.getText());
-
-                if (x<0 || y<0 || tableNum<0 || numSeats<0 || width<=0 || length<=0)
-                {
-                    throw new InvalidInputException("Input must be positive.");
-                }
 
                 RestoController.createTableAndSeats(numSeats, tableNum, x, y, width, length);
 
@@ -201,16 +194,21 @@ public class RestoAppPage extends JFrame
 
                 JOptionPane.showMessageDialog(null, "Table added successfully.");
             }
-            catch (NumberFormatException error)
-            {
+      /*      catch (NumberFormatException error){
                 String errorMessage = "All fields must be integers.";
                 JOptionPane.showMessageDialog(null, errorMessage, "Invalid Input", JOptionPane.ERROR_MESSAGE);
+            }*/
+            catch (Exception error){
+            	JOptionPane.showMessageDialog(
+                        null,
+                        error.getMessage(),
+                        "Could not add table",
+                        JOptionPane.ERROR_MESSAGE);
             }
-            catch (Exception error)
-            {
-                JOptionPane.showMessageDialog(null, error.getMessage(), "Invalid Input", JOptionPane.ERROR_MESSAGE);
-            }
-        } else { JOptionPane.showMessageDialog(null, "No Table Added."); }
+        } 
+        else { 
+        		JOptionPane.showMessageDialog(null, "No Table Added."); 
+        	}
     }
     private void updateTableAction(ActionEvent event){
         JPanel panel = new JPanel(new GridLayout(6, 2, 5,5));
