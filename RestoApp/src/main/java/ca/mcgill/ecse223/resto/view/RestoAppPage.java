@@ -90,7 +90,7 @@ public class RestoAppPage extends JFrame
         JButton addTableButton = createButton("addTable.png", "Add Table [Alt + A]", KeyEvent.VK_A, this::addTableAction);
         JButton changeTableButton = createButton("updateTable.png", "Change Table [Alt + U]", KeyEvent.VK_U, this::updateTableAction); 
         JButton moveTableButton = createButton("moveTable.png", "Move Table [Alt + M]", KeyEvent.VK_M, this::moveTableAction); 
-        JButton removeTableButton = createButton("removeTable.png", "Delete Table [Alt + D]", KeyEvent.VK_D, this::removeTableAction);
+        JButton removeTableButton = createButton("removeTable.png", "Remove Table [Alt + R]", KeyEvent.VK_D, this::removeTableAction);
 
         toolbar.add(exitButton);
         toolbar.add(addTableButton);
