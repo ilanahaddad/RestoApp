@@ -3,6 +3,8 @@ package ca.mcgill.ecse223.resto.controller;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
@@ -15,6 +17,30 @@ import ca.mcgill.ecse223.resto.model.Table;
 
 public class RestoController
 {
+	public static List<MenuItem.ItemCategory> getItemCategories() {
+	    return Arrays.asList(MenuItem.ItemCategory.values());
+	  }
+
+	  public static List<MenuItem> getMenuItems (MenuItem.ItemCategory itemCategory) throws InvalidInputException {
+	      List<MenuItem> items = new ArrayList<>();
+	    RestoApp restoApp = RestoAppApplication.getRestoApp();
+	    Menu menu = restoApp.getMenu();
+
+	    List<MenuItem> menuItems = menu.getMenuItems();
+
+	    for(MenuItem mi : menuItems) {
+	      boolean current = mi.hasCurrentPricedMenuItem();
+	      MenuItem.ItemCategory category = mi.getItemCategory();
+
+	      if(current && category.equals(itemCategory)){
+	        items.add(mi);
+	      }
+
+	    }
+
+	    return items;
+
+	  }
     /**
      * Updates desired item from the menu
      * @param  menuFile  menu read from file to be displayed
