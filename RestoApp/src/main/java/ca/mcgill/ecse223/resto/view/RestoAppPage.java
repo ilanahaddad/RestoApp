@@ -58,8 +58,7 @@ public class RestoAppPage extends JFrame
         add(scrollbar);
     }
 
-    private void createMenuBar()
-    {
+    private void createMenuBar(){
         JMenuBar menubar = new JMenuBar();
         JMenu actions = new JMenu("Actions");
         JMenuItem exitMenuItem = createMenuItem("Exit", RestoAppActions.EXIT_ACTION);
@@ -273,7 +272,16 @@ public class RestoAppPage extends JFrame
         	}
     }
     private void moveTableAction(ActionEvent event){
-    	
+    		JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
+    		
+    		panel.add(new JLabel("New X:"));
+        JTextField newXField = new JTextField();
+        panel.add(newXField);
+        
+        panel.add(new JLabel("New X:"));
+        JTextField newYField = new JTextField();
+        panel.add(newXField);
+        
     }
     private void removeTableAction(ActionEvent event)
     {
