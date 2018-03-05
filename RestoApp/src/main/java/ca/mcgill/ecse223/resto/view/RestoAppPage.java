@@ -64,7 +64,7 @@ public class RestoAppPage extends JFrame
         JMenu actions = new JMenu("Actions");
         JMenuItem exitMenuItem = createMenuItem("Exit", RestoAppActions.EXIT_ACTION);
         JMenuItem addTableMenuItem = createMenuItem("Add Table", this::addTableAction);
-        JMenuItem changeTableMenuItem = createMenuItem("Change Table", null); //TODO ILANA ADD YOUR ACTION HERE
+        JMenuItem changeTableMenuItem = createMenuItem("Change Table", this::updateTableAction);
         JMenuItem removeTableMenuItem = createMenuItem("Remove Table", this::removeTableAction);
 
         actions.add(addTableMenuItem);
@@ -87,7 +87,7 @@ public class RestoAppPage extends JFrame
         JToolBar toolbar = new JToolBar();
         JButton exitButton = createButton("power.jpg","Exit App [Alt + Q]", KeyEvent.VK_Q, RestoAppActions.EXIT_ACTION);
         JButton addTableButton = createButton("addTable.jpg", "Add Table [Alt + A]", KeyEvent.VK_A, this::addTableAction);
-        JButton changeTableButton = createButton("changeTable.jpg", "Change Table [Alt + M]", KeyEvent.VK_M, null); //TODO ILANA ADD YOUR ACTION HERE
+        JButton changeTableButton = createButton("changeTable.jpg", "Change Table [Alt + M]", KeyEvent.VK_M, this::updateTableAction); 
         JButton removeTableButton = createButton("removeTable.jpg", "Delete Table [Alt + D]", KeyEvent.VK_D, this::removeTableAction);
 
         toolbar.add(exitButton);
@@ -212,7 +212,64 @@ public class RestoAppPage extends JFrame
             }
         } else { JOptionPane.showMessageDialog(null, "No Table Added."); }
     }
+    private void updateTableAction(ActionEvent event){
+        JPanel panel = new JPanel(new GridLayout(6, 2, 5,5));
 
+ /*       //create array of all table numbers in resto app 
+        int allTablesAmount = RestoController.getTables().size();
+        String allTablesNums[] = new String[allTablesAmount];
+        for (int i = 0; i < allTablesAmount; i++){
+        		allTablesNums[i] = "" + RestoController.getTable(i).getNumber();
+        }*/
+        
+        //create array of current table numbers
+        int currentLength = RestoController.getCurrentTables().size();
+        String currentTableNums[] = new String[currentLength];
+        for (int i = 0; i < currentLength; i++){
+        	currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+        }
+
+        panel.add(new JLabel("Select table to change:"));
+        JComboBox<String> allTablesList = new JComboBox<String>(currentTableNums);
+        panel.add(allTablesList);  	
+        	
+        panel.add(new JLabel("New Table Number:"));
+        JTextField newTableNumField = new JTextField();
+        panel.add(newTableNumField);
+
+        panel.add(new JLabel("Number of Seats:"));
+        JTextField numSeatsField = new JTextField();
+        panel.add(numSeatsField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Update Table",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION){
+        		try{
+        			int tableNum = Integer.parseInt((String) allTablesList.getSelectedItem());
+        			Table selectedTable = RestoController.getTableByNum(tableNum);
+        			int newTableNum = parseInt(newTableNumField.getText());
+        			int amountOfSeats = parseInt(numSeatsField.getText());
+    
+                RestoController.updateTable(selectedTable, newTableNum, amountOfSeats);
+            	
+            	tablePanel.revalidate();
+                tablePanel.repaint();
+
+                JOptionPane.showMessageDialog(null, "Table updated successfully.");
+                }
+                catch (Exception error)
+                {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            error.getMessage(),
+                            "Could not update table",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+        } 
+        else { 
+        	JOptionPane.showMessageDialog(null, "Unsuccessful change."); 
+        	}
+    }
     private void removeTableAction(ActionEvent event)
     {
         JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));

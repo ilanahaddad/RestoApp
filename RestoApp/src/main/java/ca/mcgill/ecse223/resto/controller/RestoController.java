@@ -139,16 +139,16 @@ public class RestoController
         String error = "";
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         if(table == null) {
-            error = "A table with this number does not exist. ";
+            error += "A table with this number does not exist.\n";
         }
         if(newNumber < 0) {
-            error = "New table number must be positive. ";
+            error += "New table number must be positive.\n";
         }
         if(numberOfSeats < 0) {
-            error = "Number of seats must be positive. ";
+            error += "Number of seats must be positive.\n";
         }
         if(table.hasReservations()) {
-            error = "Can't update a table that is reserved. ";
+            error += "Can't update a table that is reserved.\n";
         }
         List<Order> currentOrders = restoApp.getCurrentOrders();
         boolean inUse = false;
@@ -157,7 +157,7 @@ public class RestoController
             inUse = tablesWithOrders.contains(table);
         }
         if(inUse) {
-            error = "Can't update a table that is currently in use.";
+            error += "Can't update a table that is currently in use.\n";
         }
         if(error.length() > 0) {
             throw new InvalidInputException(error.trim());
@@ -166,6 +166,10 @@ public class RestoController
             table.setNumber(newNumber); //throws runtime exception if number is duplicate
         }
         catch(RuntimeException e) {
+        		error = e.getMessage();
+        		if(error.equals("Cannot create due to duplicate number")) {
+        			error = "A table with this number already exists. Please use a different number.\n"; 
+        		}
             throw new InvalidInputException(e.getMessage());
         }
         int n = table.numberOfCurrentSeats();
@@ -182,7 +186,7 @@ public class RestoController
         RestoAppApplication.save();
     }
 
-    private static Table getTableByNum(int tableNum) throws InvalidInputException {
+    public static Table getTableByNum(int tableNum) throws InvalidInputException {
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         for (Table table : restoApp.getTables())
         {
@@ -255,7 +259,14 @@ public class RestoController
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         return restoApp.getCurrentTable(tableNum);
     }
-
+    public static List<Table> getTables(){
+      RestoApp restoApp = RestoAppApplication.getRestoApp();
+      return restoApp.getTables();
+    }
+    public static Table getTable(int tableNum){
+        RestoApp restoApp = RestoAppApplication.getRestoApp();
+        return restoApp.getTable(tableNum);
+    }
     // get largest Y coordinate of all the app's current tables
     public static int getMaxX()
     {
