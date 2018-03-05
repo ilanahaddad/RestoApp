@@ -87,11 +87,11 @@ public class RestoAppPage extends JFrame
     private void createToolBar()
     {
         JToolBar toolbar = new JToolBar();
-        JButton exitButton = createButton("power.jpg","Exit App [Alt + Q]", KeyEvent.VK_Q, RestoAppActions.EXIT_ACTION);
-        JButton addTableButton = createButton("addTable.jpg", "Add Table [Alt + A]", KeyEvent.VK_A, this::addTableAction);
-        JButton changeTableButton = createButton("changeTable.jpg", "Change Table [Alt + U]", KeyEvent.VK_U, this::updateTableAction); 
-        JButton moveTableButton = createButton("moveTable.jpg", "Move Table [Alt + M]", KeyEvent.VK_M, this::moveTableAction); 
-        JButton removeTableButton = createButton("removeTable.jpg", "Delete Table [Alt + D]", KeyEvent.VK_D, this::removeTableAction);
+        JButton exitButton = createButton("power.png","Exit App [Alt + Q]", KeyEvent.VK_Q, RestoAppActions.EXIT_ACTION);
+        JButton addTableButton = createButton("addTable.png", "Add Table [Alt + A]", KeyEvent.VK_A, this::addTableAction);
+        JButton changeTableButton = createButton("updateTable.png", "Change Table [Alt + U]", KeyEvent.VK_U, this::updateTableAction); 
+        JButton moveTableButton = createButton("moveTable.png", "Move Table [Alt + M]", KeyEvent.VK_M, this::moveTableAction); 
+        JButton removeTableButton = createButton("removeTable.png", "Delete Table [Alt + D]", KeyEvent.VK_D, this::removeTableAction);
 
         toolbar.add(exitButton);
         toolbar.add(addTableButton);
