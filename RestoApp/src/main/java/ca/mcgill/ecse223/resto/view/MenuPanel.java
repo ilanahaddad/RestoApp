@@ -105,7 +105,6 @@ public class MenuPanel extends JPanel implements ActionListener {
         dessert.setBounds(215, 35, 260, 250);
         alcohol.setBounds(215, 35, 260, 250);
         nonAlcohol.setBounds(215, 35, 260, 250);
-        appetizer.setVisible(false);
         mainDish.setVisible(false);
         dessert.setVisible(false);
         alcohol.setVisible(false);
