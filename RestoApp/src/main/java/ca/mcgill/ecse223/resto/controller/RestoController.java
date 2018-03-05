@@ -79,6 +79,7 @@ public class RestoController
             int numSeats, int tableNum, int x, int y, int width, int length
     ) throws InvalidInputException
     {
+    	String error;
         RestoApp restoApp = RestoAppApplication.getRestoApp();
 
         if (overlapsOtherTables(x, y, width, length, restoApp.getCurrentTables()))
@@ -89,11 +90,11 @@ public class RestoController
         //this check was added because we noticed the uniqueness check in the Table constructor
         //only checks the tablesByNumber map which gets reset every time the app is rerun, therefore
         //not keeping track of tables already created 
-        for(Table t: restoApp.getCurrentTables()) {
+        /*for(Table t: restoApp.getCurrentTables()) {
         		if(tableNum==t.getNumber()) {
         			throw new InvalidInputException("A current table already exists with that number.");
         		}
-        }
+        }*/
  
         Table tableToAdd;
         // only bring an existent table to current IFF it has exactly the same attributes
@@ -108,7 +109,17 @@ public class RestoController
         // table is new to the application
         else
         {
-            tableToAdd = new Table(tableNum, x, y, width, length, restoApp);
+        	
+            try{
+            	tableToAdd = new Table(tableNum, x, y, width, length, restoApp); //throws runtime exception if number is duplicate
+            }
+            catch(RuntimeException e) {
+            		error = e.getMessage();
+            		if(error.equals("Cannot create due to duplicate number")) {
+            			error = "A table with this number already exists. Please use a different number.\n"; 
+            		}
+                throw new InvalidInputException(e.getMessage());
+            }
             restoApp.addTable(tableToAdd);
 
             for (int i=0; i<numSeats; i++)
