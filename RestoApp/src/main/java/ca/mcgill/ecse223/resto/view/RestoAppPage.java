@@ -65,6 +65,8 @@ public class RestoAppPage extends JFrame
         JMenuItem exitMenuItem = createMenuItem("Exit", RestoAppActions.EXIT_ACTION);
         JMenuItem addTableMenuItem = createMenuItem("Add Table", this::addTableAction);
         JMenuItem changeTableMenuItem = createMenuItem("Change Table", this::updateTableAction);
+        JMenuItem moveTableMenuItem = createMenuItem("Move Table", this::moveTableAction);
+
         JMenuItem removeTableMenuItem = createMenuItem("Remove Table", this::removeTableAction);
 
         actions.add(addTableMenuItem);
@@ -87,12 +89,14 @@ public class RestoAppPage extends JFrame
         JToolBar toolbar = new JToolBar();
         JButton exitButton = createButton("power.jpg","Exit App [Alt + Q]", KeyEvent.VK_Q, RestoAppActions.EXIT_ACTION);
         JButton addTableButton = createButton("addTable.jpg", "Add Table [Alt + A]", KeyEvent.VK_A, this::addTableAction);
-        JButton changeTableButton = createButton("changeTable.jpg", "Change Table [Alt + M]", KeyEvent.VK_M, this::updateTableAction); 
+        JButton changeTableButton = createButton("changeTable.jpg", "Change Table [Alt + U]", KeyEvent.VK_U, this::updateTableAction); 
+        JButton moveTableButton = createButton("moveTable.jpg", "Move Table [Alt + M]", KeyEvent.VK_M, this::moveTableAction); 
         JButton removeTableButton = createButton("removeTable.jpg", "Delete Table [Alt + D]", KeyEvent.VK_D, this::removeTableAction);
 
         toolbar.add(exitButton);
         toolbar.add(addTableButton);
         toolbar.add(changeTableButton);
+        toolbar.add(moveTableButton);
         toolbar.add(removeTableButton);
         add(toolbar, BorderLayout.NORTH);
     }
@@ -267,6 +271,9 @@ public class RestoAppPage extends JFrame
         else { 
         	JOptionPane.showMessageDialog(null, "No tables were changed."); 
         	}
+    }
+    private void moveTableAction(ActionEvent event){
+    	
     }
     private void removeTableAction(ActionEvent event)
     {
