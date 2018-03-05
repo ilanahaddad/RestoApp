@@ -174,14 +174,14 @@ public class RestoController
      * @param table table to update
      * @param newNumber new table number to update to
      * @param numberOfSeats number of seats for updated table to have
-     * @throws InvalidInputException if table with given number doesn't exist, if newNumber and numberOfSeats aren't positive
+     * @throws InvalidInputException if table doesn't exist, if newNumber and numberOfSeats aren't positive
      * 		and if table is reserved
      */
     public static void updateTable(Table table, int newNumber, int numberOfSeats) throws InvalidInputException{
         String error = "";
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         if(table == null) {
-            error += "A table with this number does not exist.\n";
+            error += "Input Table does not exist.\n";
         }
         if(newNumber < 0) {
             error += "New table number must be positive.\n";
@@ -222,7 +222,14 @@ public class RestoController
         }
         RestoAppApplication.save();
     }
-
+    
+	public static void moveTable(Table table, int newX, int newY) {
+		// TODO MICHAEL'S FEATURE
+		String error = "";
+		if(table==null) {
+			error+= "Input table does not exist";
+		}
+	}
     public static Table getTableByNum(int tableNum) throws InvalidInputException {
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         for (Table table : restoApp.getTables())
@@ -327,4 +334,6 @@ public class RestoController
         }
         return maxY;
     }
+
+
 }

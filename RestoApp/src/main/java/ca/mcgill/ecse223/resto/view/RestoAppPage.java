@@ -65,12 +65,15 @@ public class RestoAppPage extends JFrame
         JMenuItem addTableMenuItem = createMenuItem("Add Table", this::addTableAction);
         JMenuItem changeTableMenuItem = createMenuItem("Change Table", this::updateTableAction);
         JMenuItem moveTableMenuItem = createMenuItem("Move Table", this::moveTableAction);
-
         JMenuItem removeTableMenuItem = createMenuItem("Remove Table", this::removeTableAction);
+        JMenuItem menuMenuItem = createMenuItem("Display Menu", this::displayMenuAction);
 
+        
         actions.add(addTableMenuItem);
         actions.add(changeTableMenuItem);
+        actions.add(moveTableMenuItem);
         actions.add(removeTableMenuItem);
+        actions.add(menuMenuItem);
         actions.add(exitMenuItem);
         menubar.add(actions);
         setJMenuBar(menubar);
@@ -90,13 +93,15 @@ public class RestoAppPage extends JFrame
         JButton addTableButton = createButton("addTable.png", "Add Table [Alt + A]", KeyEvent.VK_A, this::addTableAction);
         JButton changeTableButton = createButton("updateTable.png", "Change Table [Alt + U]", KeyEvent.VK_U, this::updateTableAction); 
         JButton moveTableButton = createButton("moveTable.png", "Move Table [Alt + M]", KeyEvent.VK_M, this::moveTableAction); 
-        JButton removeTableButton = createButton("removeTable.png", "Remove Table [Alt + R]", KeyEvent.VK_D, this::removeTableAction);
+        JButton removeTableButton = createButton("removeTable.png", "Remove Table [Alt + X]", KeyEvent.VK_X, this::removeTableAction);
+        JButton displayMenuButton = createButton("displayMenu.png", "Display Menu [Alt + D]", KeyEvent.VK_D, this::displayMenuAction);
 
         toolbar.add(exitButton);
         toolbar.add(addTableButton);
         toolbar.add(changeTableButton);
         toolbar.add(moveTableButton);
         toolbar.add(removeTableButton);
+        toolbar.add(displayMenuButton);
         add(toolbar, BorderLayout.NORTH);
     }
 
@@ -272,15 +277,55 @@ public class RestoAppPage extends JFrame
         	}
     }
     private void moveTableAction(ActionEvent event){
-    		JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
-    		
+	    	JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
+	    	
+	    	//create array of current table numbers
+	    	int currentLength = RestoController.getCurrentTables().size();
+	    	String currentTableNums[] = new String[currentLength];
+	    	for (int i = 0; i < currentLength; i++){
+	    		currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+	    	}
+	
+	    	panel.add(new JLabel("Select table to move:"));
+	    	JComboBox<String> allTablesList = new JComboBox<String>(currentTableNums);
+	    	panel.add(allTablesList);  
+	    	
     		panel.add(new JLabel("New X:"));
         JTextField newXField = new JTextField();
         panel.add(newXField);
         
-        panel.add(new JLabel("New X:"));
+        panel.add(new JLabel("New Y:"));
         JTextField newYField = new JTextField();
-        panel.add(newXField);
+        panel.add(newYField);
+        
+        int result = JOptionPane.showConfirmDialog(null, panel, "Move Table",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION){
+        		try{
+        			int tableNum = Integer.parseInt((String) allTablesList.getSelectedItem());
+        			Table selectedTable = RestoController.getTableByNum(tableNum);
+        			int newX = parseInt(newXField.getText());
+        			int newY = parseInt(newYField.getText());
+    
+                RestoController.moveTable(selectedTable,newX, newY);
+            	
+                tablePanel.revalidate();
+                tablePanel.repaint();
+
+                JOptionPane.showMessageDialog(null, "Table moved successfully.");
+                }
+                catch (Exception error)
+                {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            error.getMessage(),
+                            "Could not move table",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+        } 
+        else { 
+        	JOptionPane.showMessageDialog(null, "No tables were moved."); 
+        	}
         
     }
     private void removeTableAction(ActionEvent event)
@@ -324,4 +369,8 @@ public class RestoAppPage extends JFrame
             JOptionPane.showMessageDialog(null, "Unsuccessful removal.");
         }
     }
+    private void displayMenuAction(ActionEvent event){
+    		//TODO: SULEMAN
+    }
+    
 }
