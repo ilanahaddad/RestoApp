@@ -1,16 +1,16 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.*;
 
-// line 38 "../../../../../../../../ump/tmp842728/model.ump"
-// line 93 "../../../../../../../../ump/tmp842728/model.ump"
+// line 54 "../../../../../RestoAppPersistence.ump"
+// line 37 "../../../../../RestoApp.ump"
 public class Order implements Serializable
 {
-  private static final long serialVersionUID = -3900912597282882073L;
+
   //------------------------
   // STATIC VARIABLES
   //------------------------
@@ -77,7 +77,7 @@ public class Order implements Serializable
   {
     return number;
   }
-  /* Code from template association_GetMany */
+
   public Table getTable(int index)
   {
     Table aTable = tables.get(index);
@@ -110,7 +110,7 @@ public class Order implements Serializable
     int index = tables.indexOf(aTable);
     return index;
   }
-  /* Code from template association_GetMany */
+
   public OrderItem getOrderItem(int index)
   {
     OrderItem aOrderItem = orderItems.get(index);
@@ -140,12 +140,12 @@ public class Order implements Serializable
     int index = orderItems.indexOf(aOrderItem);
     return index;
   }
-  /* Code from template association_GetOne */
+
   public RestoApp getRestoApp()
   {
     return restoApp;
   }
-  /* Code from template association_GetMany */
+
   public Bill getBill(int index)
   {
     Bill aBill = bills.get(index);
@@ -175,18 +175,18 @@ public class Order implements Serializable
     int index = bills.indexOf(aBill);
     return index;
   }
-  /* Code from template association_IsNumberOfValidMethod */
+
   public boolean isNumberOfTablesValid()
   {
     boolean isValid = numberOfTables() >= minimumNumberOfTables();
     return isValid;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfTables()
   {
     return 1;
   }
-  /* Code from template association_AddManyToManyMethod */
+
   public boolean addTable(Table aTable)
   {
     boolean wasAdded = false;
@@ -206,7 +206,7 @@ public class Order implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_AddMStarToMany */
+
   public boolean removeTable(Table aTable)
   {
     boolean wasRemoved = false;
@@ -236,7 +236,7 @@ public class Order implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_SetMStarToMany */
+
   public boolean setTables(Table... newTables)
   {
     boolean wasSet = false;
@@ -277,7 +277,7 @@ public class Order implements Serializable
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addTableAt(Table aTable, int index)
   {  
     boolean wasAdded = false;
@@ -309,7 +309,7 @@ public class Order implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfOrderItems()
   {
     return 0;
@@ -349,7 +349,7 @@ public class Order implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addOrderItemAt(OrderItem aOrderItem, int index)
   {  
     boolean wasAdded = false;
@@ -381,7 +381,7 @@ public class Order implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setRestoApp(RestoApp aRestoApp)
   {
     boolean wasSet = false;
@@ -400,7 +400,7 @@ public class Order implements Serializable
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfBills()
   {
     return 0;
@@ -440,7 +440,7 @@ public class Order implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addBillAt(Bill aBill, int index)
   {  
     boolean wasAdded = false;
@@ -508,5 +508,13 @@ public class Order implements Serializable
             "number" + ":" + getNumber()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "dateTime" + "=" + (getDateTime() != null ? !getDateTime().equals(this)  ? getDateTime().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "restoApp = "+(getRestoApp()!=null?Integer.toHexString(System.identityHashCode(getRestoApp())):"null");
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 57 "../../../../../RestoAppPersistence.ump"
+  private static final long serialVersionUID = -3900912597282882073L ;
+
+  
 }

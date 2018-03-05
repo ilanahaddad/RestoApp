@@ -41,7 +41,10 @@ public class RestoAppApplication
 		PersistenceObjectStream.setFilename(filename);
 
 		restoApp = (RestoApp) PersistenceObjectStream.deserialize();
-		if (restoApp == null) { restoApp = new RestoApp(); }
+		if (restoApp == null) { restoApp = new RestoApp();}
+		else {
+			restoApp.reinitialize();
+		}
 
 		return restoApp;
 	}

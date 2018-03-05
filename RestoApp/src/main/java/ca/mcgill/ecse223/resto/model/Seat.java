@@ -1,15 +1,15 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 35 "../../../../../../../../ump/tmp842728/model.ump"
-// line 88 "../../../../../../../../ump/tmp842728/model.ump"
+// line 27 "../../../../../RestoAppPersistence.ump"
+// line 34 "../../../../../RestoApp.ump"
 public class Seat implements Serializable
 {
-  private static final long serialVersionUID = 386717977557499839L;
+
   //------------------------
   // MEMBER VARIABLES
   //------------------------
@@ -37,12 +37,12 @@ public class Seat implements Serializable
   //------------------------
   // INTERFACE
   //------------------------
-  /* Code from template association_GetOne */
+
   public Table getTable()
   {
     return table;
   }
-  /* Code from template association_GetMany */
+
   public OrderItem getOrderItem(int index)
   {
     OrderItem aOrderItem = orderItems.get(index);
@@ -72,7 +72,7 @@ public class Seat implements Serializable
     int index = orderItems.indexOf(aOrderItem);
     return index;
   }
-  /* Code from template association_GetMany */
+
   public Bill getBill(int index)
   {
     Bill aBill = bills.get(index);
@@ -102,7 +102,7 @@ public class Seat implements Serializable
     int index = bills.indexOf(aBill);
     return index;
   }
-  /* Code from template association_SetOneToMandatoryMany */
+
   public boolean setTable(Table aTable)
   {
     boolean wasSet = false;
@@ -132,12 +132,12 @@ public class Seat implements Serializable
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfOrderItems()
   {
     return 0;
   }
-  /* Code from template association_AddManyToManyMethod */
+
   public boolean addOrderItem(OrderItem aOrderItem)
   {
     boolean wasAdded = false;
@@ -157,7 +157,7 @@ public class Seat implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_RemoveMany */
+
   public boolean removeOrderItem(OrderItem aOrderItem)
   {
     boolean wasRemoved = false;
@@ -182,7 +182,7 @@ public class Seat implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addOrderItemAt(OrderItem aOrderItem, int index)
   {  
     boolean wasAdded = false;
@@ -214,12 +214,12 @@ public class Seat implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfBills()
   {
     return 0;
   }
-  /* Code from template association_AddManyToManyMethod */
+
   public boolean addBill(Bill aBill)
   {
     boolean wasAdded = false;
@@ -239,7 +239,7 @@ public class Seat implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_RemoveMany */
+
   public boolean removeBill(Bill aBill)
   {
     boolean wasRemoved = false;
@@ -264,7 +264,7 @@ public class Seat implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addBillAt(Bill aBill, int index)
   {  
     boolean wasAdded = false;
@@ -332,5 +332,13 @@ public class Seat implements Serializable
       }
     }
   }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 30 "../../../../../RestoAppPersistence.ump"
+  private static final long serialVersionUID = 386717977557499839L ;
 
+  
 }

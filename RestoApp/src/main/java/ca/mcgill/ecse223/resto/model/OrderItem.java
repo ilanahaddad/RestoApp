@@ -1,15 +1,15 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 45 "../../../../../../../../ump/tmp842728/model.ump"
-// line 98 "../../../../../../../../ump/tmp842728/model.ump"
+// line 45 "../../../../../RestoAppPersistence.ump"
+// line 44 "../../../../../RestoApp.ump"
 public class OrderItem implements Serializable
 {
-  private static final long serialVersionUID = 2045406856025012133L;
+
   //------------------------
   // MEMBER VARIABLES
   //------------------------
@@ -63,12 +63,12 @@ public class OrderItem implements Serializable
   {
     return quantity;
   }
-  /* Code from template association_GetOne */
+
   public PricedMenuItem getPricedMenuItem()
   {
     return pricedMenuItem;
   }
-  /* Code from template association_GetMany */
+
   public Seat getSeat(int index)
   {
     Seat aSeat = seats.get(index);
@@ -101,12 +101,12 @@ public class OrderItem implements Serializable
     int index = seats.indexOf(aSeat);
     return index;
   }
-  /* Code from template association_GetOne */
+
   public Order getOrder()
   {
     return order;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setPricedMenuItem(PricedMenuItem aPricedMenuItem)
   {
     boolean wasSet = false;
@@ -125,18 +125,18 @@ public class OrderItem implements Serializable
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_IsNumberOfValidMethod */
+
   public boolean isNumberOfSeatsValid()
   {
     boolean isValid = numberOfSeats() >= minimumNumberOfSeats();
     return isValid;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfSeats()
   {
     return 1;
   }
-  /* Code from template association_AddManyToManyMethod */
+
   public boolean addSeat(Seat aSeat)
   {
     boolean wasAdded = false;
@@ -156,7 +156,7 @@ public class OrderItem implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_AddMStarToMany */
+
   public boolean removeSeat(Seat aSeat)
   {
     boolean wasRemoved = false;
@@ -186,7 +186,7 @@ public class OrderItem implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_SetMStarToMany */
+
   public boolean setSeats(Seat... newSeats)
   {
     boolean wasSet = false;
@@ -227,7 +227,7 @@ public class OrderItem implements Serializable
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addSeatAt(Seat aSeat, int index)
   {  
     boolean wasAdded = false;
@@ -259,7 +259,7 @@ public class OrderItem implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setOrder(Order aOrder)
   {
     boolean wasSet = false;
@@ -308,5 +308,13 @@ public class OrderItem implements Serializable
             "quantity" + ":" + getQuantity()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "pricedMenuItem = "+(getPricedMenuItem()!=null?Integer.toHexString(System.identityHashCode(getPricedMenuItem())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "order = "+(getOrder()!=null?Integer.toHexString(System.identityHashCode(getOrder())):"null");
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 48 "../../../../../RestoAppPersistence.ump"
+  private static final long serialVersionUID = 2045406856025012133L ;
+
+  
 }

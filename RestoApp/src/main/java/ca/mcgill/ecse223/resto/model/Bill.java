@@ -1,19 +1,19 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 67 "../../../../../../../../ump/tmp842728/model.ump"
-// line 118 "../../../../../../../../ump/tmp842728/model.ump"
+// line 72 "../../../../../RestoAppPersistence.ump"
+// line 66 "../../../../../RestoApp.ump"
 public class Bill implements Serializable
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
-  private static final long serialVersionUID = 1301576255893682821L;
+
   //Bill Associations
   private Order order;
   private List<Seat> issuedForSeats;
@@ -46,12 +46,12 @@ public class Bill implements Serializable
   //------------------------
   // INTERFACE
   //------------------------
-  /* Code from template association_GetOne */
+
   public Order getOrder()
   {
     return order;
   }
-  /* Code from template association_GetMany */
+
   public Seat getIssuedForSeat(int index)
   {
     Seat aIssuedForSeat = issuedForSeats.get(index);
@@ -84,12 +84,12 @@ public class Bill implements Serializable
     int index = issuedForSeats.indexOf(aIssuedForSeat);
     return index;
   }
-  /* Code from template association_GetOne */
+
   public RestoApp getRestoApp()
   {
     return restoApp;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setOrder(Order aOrder)
   {
     boolean wasSet = false;
@@ -108,18 +108,18 @@ public class Bill implements Serializable
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_IsNumberOfValidMethod */
+
   public boolean isNumberOfIssuedForSeatsValid()
   {
     boolean isValid = numberOfIssuedForSeats() >= minimumNumberOfIssuedForSeats();
     return isValid;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfIssuedForSeats()
   {
     return 1;
   }
-  /* Code from template association_AddManyToManyMethod */
+
   public boolean addIssuedForSeat(Seat aIssuedForSeat)
   {
     boolean wasAdded = false;
@@ -139,7 +139,7 @@ public class Bill implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_AddMStarToMany */
+
   public boolean removeIssuedForSeat(Seat aIssuedForSeat)
   {
     boolean wasRemoved = false;
@@ -169,7 +169,7 @@ public class Bill implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_SetMStarToMany */
+
   public boolean setIssuedForSeats(Seat... newIssuedForSeats)
   {
     boolean wasSet = false;
@@ -210,7 +210,7 @@ public class Bill implements Serializable
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addIssuedForSeatAt(Seat aIssuedForSeat, int index)
   {  
     boolean wasAdded = false;
@@ -242,7 +242,7 @@ public class Bill implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setRestoApp(RestoApp aRestoApp)
   {
     boolean wasSet = false;
@@ -283,5 +283,13 @@ public class Bill implements Serializable
       placeholderRestoApp.removeBill(this);
     }
   }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 75 "../../../../../RestoAppPersistence.ump"
+  private static final long serialVersionUID = 1301576255893682821L ;
 
+  
 }
