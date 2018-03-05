@@ -2,9 +2,7 @@ package ca.mcgill.ecse223.resto.view;
 
 import static java.lang.Integer.parseInt;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -153,6 +151,24 @@ public class RestoAppPage extends JFrame
         scrollbar.getHorizontalScrollBar().setUnitIncrement(SCROLLBAR_SPEED);
 
         updateScrollbarMax(RestoController.getMaxX(), RestoController.getMaxY());
+    }
+
+    private void displayMenuAction(ActionEvent event){
+        JFrame f = new JFrame("menu");
+        JPanel menuPanel = new MenuPanel();
+        //JPanel p = new MenuPanel();
+
+        f.add(menuPanel);
+        f.setSize(400,150);
+        f.setLayout(new FlowLayout());
+        f.pack();
+        f.setLocationRelativeTo(null);
+        f.setVisible(true);
+
+        menuPanel.validate();
+        menuPanel.repaint();
+
+
     }
 
     private void addTableAction(ActionEvent event)
@@ -369,8 +385,6 @@ public class RestoAppPage extends JFrame
             JOptionPane.showMessageDialog(null, "Unsuccessful removal.");
         }
     }
-    private void displayMenuAction(ActionEvent event){
-    		//TODO: SULEMAN
-    }
+
     
 }
