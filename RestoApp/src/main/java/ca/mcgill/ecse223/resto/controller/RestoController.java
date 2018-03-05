@@ -84,7 +84,7 @@ public class RestoController
 
         if (overlapsOtherTables(x, y, width, length, restoApp.getCurrentTables()))
         {
-            error += "Input table overlaps with another table";
+            error += "Input table overlaps with another table. \n";
         }
         if (x<0 || y<0 || tableNum<0 || numSeats<0 || width<=0 || length<=0)
         {
@@ -142,7 +142,7 @@ public class RestoController
 
         boolean reserved = table.hasReservations();
         if (reserved){
-            error = error + "Table is reserved and cannot be removed.";
+            error += "Table is reserved and cannot be removed.\n";
         }
         RestoApp r = RestoAppApplication.getRestoApp();
         List<Order> currentOrders = r.getCurrentOrders();
@@ -153,7 +153,7 @@ public class RestoController
             tables = order.getTables();
             inUse = tables.contains(table);
             if (inUse){
-                error = error + "Cannot remove: Selected table is currently in use.";
+                error += "Cannot remove: Selected table is currently in use.\n";
             }
         }
         if (error.length() > 0){
