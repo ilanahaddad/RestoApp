@@ -236,8 +236,13 @@ public class RestoController
 		int length = table.getLength();
 		RestoApp r = RestoAppApplication.getRestoApp();
 		List<Table> currentTables = r.getCurrentTables();
-        if (overlapsOtherTables(newX, newY, width, length, currentTables)){
-            error += "Input table overlaps with another table. \n";
+		List<Table> currentStationaryTables = new ArrayList<>();
+		for(Table i : currentTables) {
+			if (table.equals(i) == false) {
+				currentStationaryTables.add(i);
+			}
+		}
+        if (overlapsOtherTables(newX, newY, width, length, currentStationaryTables)){    error += "Input table overlaps with another table. \n";
         }
         if(error.length() > 0) {
             throw new InvalidInputException(error.trim());
