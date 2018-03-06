@@ -224,7 +224,6 @@ public class RestoController
     }
     
 	public static void moveTable(Table table, int newX, int newY) throws InvalidInputException {
-		// TODO MICHAEL'S FEATURE
 		String error = "";
 		if(table==null) {
 			error+= "Input table does not exist.\n";

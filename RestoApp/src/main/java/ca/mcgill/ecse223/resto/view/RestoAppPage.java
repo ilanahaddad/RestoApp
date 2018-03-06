@@ -218,10 +218,6 @@ public class RestoAppPage extends JFrame
 
                 JOptionPane.showMessageDialog(null, "Table added successfully.");
             }
-      /*      catch (NumberFormatException error){
-                String errorMessage = "All fields must be integers.";
-                JOptionPane.showMessageDialog(null, errorMessage, "Invalid Input", JOptionPane.ERROR_MESSAGE);
-            }*/
             catch (Exception error){
             	JOptionPane.showMessageDialog(
                         null,
@@ -236,13 +232,6 @@ public class RestoAppPage extends JFrame
     }
     private void updateTableAction(ActionEvent event){
         JPanel panel = new JPanel(new GridLayout(6, 2, 5,5));
-
- /*       //create array of all table numbers in resto app 
-        int allTablesAmount = RestoController.getTables().size();
-        String allTablesNums[] = new String[allTablesAmount];
-        for (int i = 0; i < allTablesAmount; i++){
-        		allTablesNums[i] = "" + RestoController.getTable(i).getNumber();
-        }*/
         
         //create array of current table numbers
         int currentLength = RestoController.getCurrentTables().size();
