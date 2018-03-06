@@ -242,7 +242,8 @@ public class RestoController
 				currentStationaryTables.add(i);
 			}
 		}
-        if (overlapsOtherTables(newX, newY, width, length, currentStationaryTables)){    error += "Input table overlaps with another table. \n";
+        if (overlapsOtherTables(newX, newY, width, length, currentStationaryTables)){
+        	error += "Input table overlaps with another table. \n";
         }
         if(error.length() > 0) {
             throw new InvalidInputException(error.trim());
