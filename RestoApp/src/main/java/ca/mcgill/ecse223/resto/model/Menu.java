@@ -1,19 +1,19 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 51 "../../../../../../../../ump/tmp842728/model.ump"
-// line 103 "../../../../../../../../ump/tmp842728/model.ump"
+// line 66 "../../../../../RestoAppPersistence.ump"
+// line 50 "../../../../../RestoApp.ump"
 public class Menu implements Serializable
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
-  private static final long serialVersionUID = -7403802774454467836L;
+
   //Menu Associations
   private List<MenuItem> menuItems;
   private RestoApp restoApp;
@@ -41,7 +41,7 @@ public class Menu implements Serializable
   //------------------------
   // INTERFACE
   //------------------------
-  /* Code from template association_GetMany */
+
   public MenuItem getMenuItem(int index)
   {
     MenuItem aMenuItem = menuItems.get(index);
@@ -71,12 +71,12 @@ public class Menu implements Serializable
     int index = menuItems.indexOf(aMenuItem);
     return index;
   }
-  /* Code from template association_GetOne */
+
   public RestoApp getRestoApp()
   {
     return restoApp;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfMenuItems()
   {
     return 0;
@@ -116,7 +116,7 @@ public class Menu implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addMenuItemAt(MenuItem aMenuItem, int index)
   {  
     boolean wasAdded = false;
@@ -165,5 +165,13 @@ public class Menu implements Serializable
       existingRestoApp.delete();
     }
   }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 69 "../../../../../RestoAppPersistence.ump"
+  private static final long serialVersionUID = -7403802774454467836L ;
 
+  
 }

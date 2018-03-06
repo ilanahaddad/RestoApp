@@ -1,15 +1,15 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 25 "../../../../../../../../ump/tmp842728/model.ump"
-// line 83 "../../../../../../../../ump/tmp842728/model.ump"
+// line 13 "../../../../../RestoAppPersistence.ump"
+// line 24 "../../../../../RestoApp.ump"
 public class Table implements Serializable
 {
-  private static final long serialVersionUID = 8896099581655989380L;
+
   //------------------------
   // STATIC VARIABLES
   //------------------------
@@ -115,12 +115,12 @@ public class Table implements Serializable
   {
     return number;
   }
-  /* Code from template attribute_GetUnique */
+
   public static Table getWithNumber(int aNumber)
   {
     return tablesByNumber.get(aNumber);
   }
-  /* Code from template attribute_HasUnique */
+
   public static boolean hasWithNumber(int aNumber)
   {
     return getWithNumber(aNumber) != null;
@@ -145,7 +145,7 @@ public class Table implements Serializable
   {
     return length;
   }
-  /* Code from template association_GetMany */
+
   public Seat getSeat(int index)
   {
     Seat aSeat = seats.get(index);
@@ -175,7 +175,7 @@ public class Table implements Serializable
     int index = seats.indexOf(aSeat);
     return index;
   }
-  /* Code from template association_GetMany */
+
   public Seat getCurrentSeat(int index)
   {
     Seat aCurrentSeat = currentSeats.get(index);
@@ -208,12 +208,12 @@ public class Table implements Serializable
     int index = currentSeats.indexOf(aCurrentSeat);
     return index;
   }
-  /* Code from template association_GetOne */
+
   public RestoApp getRestoApp()
   {
     return restoApp;
   }
-  /* Code from template association_GetMany */
+
   public Reservation getReservation(int index)
   {
     Reservation aReservation = reservations.get(index);
@@ -243,7 +243,7 @@ public class Table implements Serializable
     int index = reservations.indexOf(aReservation);
     return index;
   }
-  /* Code from template association_GetMany */
+
   public Order getOrder(int index)
   {
     Order aOrder = orders.get(index);
@@ -273,18 +273,18 @@ public class Table implements Serializable
     int index = orders.indexOf(aOrder);
     return index;
   }
-  /* Code from template association_IsNumberOfValidMethod */
+
   public boolean isNumberOfSeatsValid()
   {
     boolean isValid = numberOfSeats() >= minimumNumberOfSeats();
     return isValid;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfSeats()
   {
     return 1;
   }
-  /* Code from template association_AddMandatoryManyToOne */
+
   public Seat addSeat()
   {
     Seat aNewSeat = new Seat(this);
@@ -333,7 +333,7 @@ public class Table implements Serializable
     wasRemoved = true;
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addSeatAt(Seat aSeat, int index)
   {  
     boolean wasAdded = false;
@@ -365,12 +365,12 @@ public class Table implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfCurrentSeats()
   {
     return 0;
   }
-  /* Code from template association_AddUnidirectionalMany */
+
   public boolean addCurrentSeat(Seat aCurrentSeat)
   {
     boolean wasAdded = false;
@@ -390,7 +390,7 @@ public class Table implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addCurrentSeatAt(Seat aCurrentSeat, int index)
   {  
     boolean wasAdded = false;
@@ -422,7 +422,7 @@ public class Table implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setRestoApp(RestoApp aRestoApp)
   {
     boolean wasSet = false;
@@ -441,12 +441,12 @@ public class Table implements Serializable
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfReservations()
   {
     return 0;
   }
-  /* Code from template association_AddManyToManyMethod */
+
   public boolean addReservation(Reservation aReservation)
   {
     boolean wasAdded = false;
@@ -466,7 +466,7 @@ public class Table implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_RemoveMany */
+
   public boolean removeReservation(Reservation aReservation)
   {
     boolean wasRemoved = false;
@@ -491,7 +491,7 @@ public class Table implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addReservationAt(Reservation aReservation, int index)
   {  
     boolean wasAdded = false;
@@ -523,12 +523,12 @@ public class Table implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfOrders()
   {
     return 0;
   }
-  /* Code from template association_AddManyToManyMethod */
+
   public boolean addOrder(Order aOrder)
   {
     boolean wasAdded = false;
@@ -548,7 +548,7 @@ public class Table implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_RemoveMany */
+
   public boolean removeOrder(Order aOrder)
   {
     boolean wasRemoved = false;
@@ -573,7 +573,7 @@ public class Table implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addOrderAt(Order aOrder, int index)
   {  
     boolean wasAdded = false;
@@ -651,6 +651,14 @@ public class Table implements Serializable
     }
   }
 
+  // line 19 "../../../../../RestoAppPersistence.ump"
+   public static  void reinitializeUniqueNumber(List<Table> tables){
+    tablesByNumber = new HashMap<Integer, Table>();
+	    for (Table table : tables) {
+	      tablesByNumber.put(table.getNumber(), table);
+	    }
+  }
+
 
   public String toString()
   {
@@ -661,5 +669,13 @@ public class Table implements Serializable
             "width" + ":" + getWidth()+ "," +
             "length" + ":" + getLength()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "restoApp = "+(getRestoApp()!=null?Integer.toHexString(System.identityHashCode(getRestoApp())):"null");
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 16 "../../../../../RestoAppPersistence.ump"
+  private static final long serialVersionUID = 8896099581655989380L ;
+
+  
 }

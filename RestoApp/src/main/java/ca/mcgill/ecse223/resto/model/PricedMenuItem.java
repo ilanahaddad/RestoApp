@@ -1,15 +1,15 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 63 "../../../../../../../../ump/tmp842728/model.ump"
-// line 113 "../../../../../../../../ump/tmp842728/model.ump"
+// line 39 "../../../../../RestoAppPersistence.ump"
+// line 62 "../../../../../RestoApp.ump"
 public class PricedMenuItem implements Serializable
 {
-  private static final long serialVersionUID = -4855219931984388104L;
+
   //------------------------
   // MEMBER VARIABLES
   //------------------------
@@ -58,12 +58,12 @@ public class PricedMenuItem implements Serializable
   {
     return price;
   }
-  /* Code from template association_GetOne */
+
   public RestoApp getRestoApp()
   {
     return restoApp;
   }
-  /* Code from template association_GetMany */
+
   public OrderItem getOrderItem(int index)
   {
     OrderItem aOrderItem = orderItems.get(index);
@@ -93,12 +93,12 @@ public class PricedMenuItem implements Serializable
     int index = orderItems.indexOf(aOrderItem);
     return index;
   }
-  /* Code from template association_GetOne */
+
   public MenuItem getMenuItem()
   {
     return menuItem;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setRestoApp(RestoApp aRestoApp)
   {
     boolean wasSet = false;
@@ -117,7 +117,7 @@ public class PricedMenuItem implements Serializable
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfOrderItems()
   {
     return 0;
@@ -157,7 +157,7 @@ public class PricedMenuItem implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addOrderItemAt(OrderItem aOrderItem, int index)
   {  
     boolean wasAdded = false;
@@ -189,7 +189,7 @@ public class PricedMenuItem implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_SetOneToMandatoryMany */
+
   public boolean setMenuItem(MenuItem aMenuItem)
   {
     boolean wasSet = false;
@@ -248,5 +248,13 @@ public class PricedMenuItem implements Serializable
             "price" + ":" + getPrice()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "restoApp = "+(getRestoApp()!=null?Integer.toHexString(System.identityHashCode(getRestoApp())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "menuItem = "+(getMenuItem()!=null?Integer.toHexString(System.identityHashCode(getMenuItem())):"null");
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 42 "../../../../../RestoAppPersistence.ump"
+  private static final long serialVersionUID = -4855219931984388104L ;
+
+  
 }

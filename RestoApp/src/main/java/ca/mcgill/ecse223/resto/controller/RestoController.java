@@ -3,6 +3,8 @@ package ca.mcgill.ecse223.resto.controller;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
@@ -15,6 +17,30 @@ import ca.mcgill.ecse223.resto.model.Table;
 
 public class RestoController
 {
+	public static List<MenuItem.ItemCategory> getItemCategories() {
+	    return Arrays.asList(MenuItem.ItemCategory.values());
+	  }
+
+	  public static List<MenuItem> getMenuItems (MenuItem.ItemCategory itemCategory) throws InvalidInputException {
+	      List<MenuItem> items = new ArrayList<>();
+	    RestoApp restoApp = RestoAppApplication.getRestoApp();
+	    Menu menu = restoApp.getMenu();
+
+	    List<MenuItem> menuItems = menu.getMenuItems();
+
+	    for(MenuItem mi : menuItems) {
+	      boolean current = mi.hasCurrentPricedMenuItem();
+	      MenuItem.ItemCategory category = mi.getItemCategory();
+
+	      if(current && category.equals(itemCategory)){
+	        items.add(mi);
+	      }
+
+	    }
+
+	    return items;
+
+	  }
     /**
      * Updates desired item from the menu
      * @param  menuFile  menu read from file to be displayed
@@ -53,13 +79,21 @@ public class RestoController
             int numSeats, int tableNum, int x, int y, int width, int length
     ) throws InvalidInputException
     {
+    		String error="";
         RestoApp restoApp = RestoAppApplication.getRestoApp();
 
         if (overlapsOtherTables(x, y, width, length, restoApp.getCurrentTables()))
         {
-            throw new InvalidInputException("Input table overlaps with another table");
+            error += "Input table overlaps with another table. \n";
         }
-
+        if (x<0 || y<0 || tableNum<0 || numSeats<0 || width<=0 || length<=0)
+        {
+            error += "Input must be positive.";
+        }
+        if (error.length() > 0){
+            throw new InvalidInputException(error.trim());
+        }
+        
         Table tableToAdd;
         // only bring an existent table to current IFF it has exactly the same attributes
         // if not it is simply not the same table and must have a new table number
@@ -71,9 +105,17 @@ public class RestoController
             tableToAdd.setY(y);
         }
         // table is new to the application
-        else
-        {
-            tableToAdd = new Table(tableNum, x, y, width, length, restoApp);
+        else{
+            try{
+            	tableToAdd = new Table(tableNum, x, y, width, length, restoApp); //throws runtime exception if number is duplicate
+            }
+            catch(RuntimeException e) {
+            		error = e.getMessage();
+            		if(error.equals("Cannot create due to duplicate number")) {
+            			error = "A table with this number already exists. Please use a different number.\n"; 
+            		}
+                throw new InvalidInputException(error);
+            }
             restoApp.addTable(tableToAdd);
 
             for (int i=0; i<numSeats; i++)
@@ -100,7 +142,7 @@ public class RestoController
 
         boolean reserved = table.hasReservations();
         if (reserved){
-            error = error + "Table is reserved and cannot be removed.";
+            error += "Table is reserved and cannot be removed.\n";
         }
         RestoApp r = RestoAppApplication.getRestoApp();
         List<Order> currentOrders = r.getCurrentOrders();
@@ -111,7 +153,7 @@ public class RestoController
             tables = order.getTables();
             inUse = tables.contains(table);
             if (inUse){
-                error = error + "Cannot remove: Selected table is currently in use.";
+                error += "Cannot remove: Selected table is currently in use.\n";
             }
         }
         if (error.length() > 0){
@@ -132,23 +174,23 @@ public class RestoController
      * @param table table to update
      * @param newNumber new table number to update to
      * @param numberOfSeats number of seats for updated table to have
-     * @throws InvalidInputException if table with given number doesn't exist, if newNumber and numberOfSeats aren't positive
+     * @throws InvalidInputException if table doesn't exist, if newNumber and numberOfSeats aren't positive
      * 		and if table is reserved
      */
     public static void updateTable(Table table, int newNumber, int numberOfSeats) throws InvalidInputException{
         String error = "";
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         if(table == null) {
-            error = "A table with this number does not exist. ";
+            error += "Input Table does not exist.\n";
         }
         if(newNumber < 0) {
-            error = "New table number must be positive. ";
+            error += "New table number must be positive.\n";
         }
         if(numberOfSeats < 0) {
-            error = "Number of seats must be positive. ";
+            error += "Number of seats must be positive.\n";
         }
         if(table.hasReservations()) {
-            error = "Can't update a table that is reserved. ";
+            error += "Can't update a table that is reserved.\n";
         }
         List<Order> currentOrders = restoApp.getCurrentOrders();
         boolean inUse = false;
@@ -157,17 +199,16 @@ public class RestoController
             inUse = tablesWithOrders.contains(table);
         }
         if(inUse) {
-            error = "Can't update a table that is currently in use.";
+            error += "Can't update a table that is currently in use.\n";
+        }
+        
+        if(!table.setNumber(newNumber)) {
+    			error+= "A table with this number already exists. Please use a different number.\n";
         }
         if(error.length() > 0) {
             throw new InvalidInputException(error.trim());
         }
-        try{
-            table.setNumber(newNumber); //throws runtime exception if number is duplicate
-        }
-        catch(RuntimeException e) {
-            throw new InvalidInputException(e.getMessage());
-        }
+       
         int n = table.numberOfCurrentSeats();
         //Add seats if new numberOfSeats > numberOfCurrentSeats:
         for(int i = 1; i <= numberOfSeats - n; i++) {
@@ -181,8 +222,37 @@ public class RestoController
         }
         RestoAppApplication.save();
     }
-
-    private static Table getTableByNum(int tableNum) throws InvalidInputException {
+    
+	public static void moveTable(Table table, int newX, int newY) throws InvalidInputException {
+		String error = "";
+		if(table==null) {
+			error+= "Input table does not exist.\n";
+		}
+		if(newX < 0 || newY < 0) {
+			error+= "X and Y must be positive.\n";
+		}
+		int width = table.getWidth();
+		int length = table.getLength();
+		RestoApp r = RestoAppApplication.getRestoApp();
+		List<Table> currentTables = r.getCurrentTables();
+		List<Table> currentStationaryTables = new ArrayList<>();
+		for(Table i : currentTables) {
+			if (table.equals(i) == false) {
+				currentStationaryTables.add(i);
+			}
+		}
+        if (overlapsOtherTables(newX, newY, width, length, currentStationaryTables)){
+        	error += "Input table overlaps with another table. \n";
+        }
+        if(error.length() > 0) {
+            throw new InvalidInputException(error.trim());
+        }
+        table.setX(newX);
+        table.setY(newY);
+        RestoAppApplication.save();
+        
+	}
+    public static Table getTableByNum(int tableNum) throws InvalidInputException {
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         for (Table table : restoApp.getTables())
         {
@@ -255,7 +325,14 @@ public class RestoController
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         return restoApp.getCurrentTable(tableNum);
     }
-
+    public static List<Table> getTables(){
+      RestoApp restoApp = RestoAppApplication.getRestoApp();
+      return restoApp.getTables();
+    }
+    public static Table getTable(int tableNum){
+        RestoApp restoApp = RestoAppApplication.getRestoApp();
+        return restoApp.getTable(tableNum);
+    }
     // get largest Y coordinate of all the app's current tables
     public static int getMaxX()
     {
@@ -279,4 +356,6 @@ public class RestoController
         }
         return maxY;
     }
+
+
 }

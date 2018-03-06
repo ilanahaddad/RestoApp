@@ -89,7 +89,7 @@ public class TablePanel extends JPanel
 
     private void drawSeats(Table table, Graphics2D g2d)
     {
-        int totalNumSeats = table.getSeats().size();
+        int totalNumSeats = table.getCurrentSeats().size();
 
         if (table.getWidth() >= table.getLength())
         {

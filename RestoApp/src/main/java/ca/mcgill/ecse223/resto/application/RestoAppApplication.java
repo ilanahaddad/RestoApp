@@ -1,5 +1,10 @@
 package ca.mcgill.ecse223.resto.application;
 
+import java.util.List;
+
+import ca.mcgill.ecse223.resto.controller.InvalidInputException;
+import ca.mcgill.ecse223.resto.controller.RestoController;
+import ca.mcgill.ecse223.resto.model.MenuItem;
 import ca.mcgill.ecse223.resto.model.RestoApp;
 import ca.mcgill.ecse223.resto.persistence.PersistenceObjectStream;
 import ca.mcgill.ecse223.resto.view.RestoAppPage;
@@ -9,11 +14,17 @@ public class RestoAppApplication
 {
 
 	private static RestoApp restoApp;
-	private static String filename = "data.resto";
+	private static String filename = "menu.resto";
 
 
 	public static void main(String[] args)
 	{
+		/* try {
+            List<MenuItem> mi = RestoController.getMenuItems(MenuItem.ItemCategory.Appetizer);
+            System.out.println(mi.size());
+        } catch (InvalidInputException e) {
+            e.printStackTrace();
+        } */
 		java.awt.EventQueue.invokeLater(() -> new RestoAppPage().setVisible(true));
 	}
 
@@ -30,7 +41,10 @@ public class RestoAppApplication
 		PersistenceObjectStream.setFilename(filename);
 
 		restoApp = (RestoApp) PersistenceObjectStream.deserialize();
-		if (restoApp == null) { restoApp = new RestoApp(); }
+		if (restoApp == null) { restoApp = new RestoApp();}
+		else {
+			restoApp.reinitialize();
+		}
 
 		return restoApp;
 	}

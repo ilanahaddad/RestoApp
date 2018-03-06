@@ -1,16 +1,16 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
 import java.io.Serializable;
 import java.util.*;
 import java.sql.Date;
 
-// line 4 "../../../../../../../../ump/tmp842728/model.ump"
-// line 73 "../../../../../../../../ump/tmp842728/model.ump"
+// line 3 "../../../../../RestoAppPersistence.ump"
+// line 3 "../../../../../RestoApp.ump"
 public class RestoApp implements Serializable
 {
-  private static final long serialVersionUID = -2683593616927798071L;
+
   //------------------------
   // MEMBER VARIABLES
   //------------------------
@@ -60,7 +60,7 @@ public class RestoApp implements Serializable
   //------------------------
   // INTERFACE
   //------------------------
-  /* Code from template association_GetMany */
+
   public Reservation getReservation(int index)
   {
     Reservation aReservation = reservations.get(index);
@@ -93,7 +93,7 @@ public class RestoApp implements Serializable
     int index = reservations.indexOf(aReservation);
     return index;
   }
-  /* Code from template association_GetMany */
+
   public Table getTable(int index)
   {
     Table aTable = tables.get(index);
@@ -123,7 +123,7 @@ public class RestoApp implements Serializable
     int index = tables.indexOf(aTable);
     return index;
   }
-  /* Code from template association_GetMany */
+
   public Table getCurrentTable(int index)
   {
     Table aCurrentTable = currentTables.get(index);
@@ -156,7 +156,7 @@ public class RestoApp implements Serializable
     int index = currentTables.indexOf(aCurrentTable);
     return index;
   }
-  /* Code from template association_GetMany */
+
   public Order getOrder(int index)
   {
     Order aOrder = orders.get(index);
@@ -186,7 +186,7 @@ public class RestoApp implements Serializable
     int index = orders.indexOf(aOrder);
     return index;
   }
-  /* Code from template association_GetMany */
+
   public Order getCurrentOrder(int index)
   {
     Order aCurrentOrder = currentOrders.get(index);
@@ -219,12 +219,12 @@ public class RestoApp implements Serializable
     int index = currentOrders.indexOf(aCurrentOrder);
     return index;
   }
-  /* Code from template association_GetOne */
+
   public Menu getMenu()
   {
     return menu;
   }
-  /* Code from template association_GetMany */
+
   public PricedMenuItem getPricedMenuItem(int index)
   {
     PricedMenuItem aPricedMenuItem = pricedMenuItems.get(index);
@@ -254,7 +254,7 @@ public class RestoApp implements Serializable
     int index = pricedMenuItems.indexOf(aPricedMenuItem);
     return index;
   }
-  /* Code from template association_GetMany */
+
   public Bill getBill(int index)
   {
     Bill aBill = bills.get(index);
@@ -284,7 +284,7 @@ public class RestoApp implements Serializable
     int index = bills.indexOf(aBill);
     return index;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfReservations()
   {
     return 0;
@@ -324,7 +324,7 @@ public class RestoApp implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addReservationAt(Reservation aReservation, int index)
   {  
     boolean wasAdded = false;
@@ -356,7 +356,7 @@ public class RestoApp implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfTables()
   {
     return 0;
@@ -396,7 +396,7 @@ public class RestoApp implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addTableAt(Table aTable, int index)
   {  
     boolean wasAdded = false;
@@ -428,12 +428,12 @@ public class RestoApp implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfCurrentTables()
   {
     return 0;
   }
-  /* Code from template association_AddUnidirectionalMany */
+
   public boolean addCurrentTable(Table aCurrentTable)
   {
     boolean wasAdded = false;
@@ -453,7 +453,7 @@ public class RestoApp implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addCurrentTableAt(Table aCurrentTable, int index)
   {  
     boolean wasAdded = false;
@@ -485,7 +485,7 @@ public class RestoApp implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfOrders()
   {
     return 0;
@@ -525,7 +525,7 @@ public class RestoApp implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addOrderAt(Order aOrder, int index)
   {  
     boolean wasAdded = false;
@@ -557,12 +557,12 @@ public class RestoApp implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfCurrentOrders()
   {
     return 0;
   }
-  /* Code from template association_AddUnidirectionalMany */
+
   public boolean addCurrentOrder(Order aCurrentOrder)
   {
     boolean wasAdded = false;
@@ -582,7 +582,7 @@ public class RestoApp implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addCurrentOrderAt(Order aCurrentOrder, int index)
   {  
     boolean wasAdded = false;
@@ -614,7 +614,7 @@ public class RestoApp implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfPricedMenuItems()
   {
     return 0;
@@ -654,7 +654,7 @@ public class RestoApp implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addPricedMenuItemAt(PricedMenuItem aPricedMenuItem, int index)
   {  
     boolean wasAdded = false;
@@ -686,7 +686,7 @@ public class RestoApp implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfBills()
   {
     return 0;
@@ -726,7 +726,7 @@ public class RestoApp implements Serializable
     }
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addBillAt(Bill aBill, int index)
   {  
     boolean wasAdded = false;
@@ -806,4 +806,17 @@ public class RestoApp implements Serializable
     
   }
 
+  // line 9 "../../../../../RestoAppPersistence.ump"
+   public void reinitialize(){
+    Table.reinitializeUniqueNumber(this.getTables());
+  }
+  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 6 "../../../../../RestoAppPersistence.ump"
+  private static final long serialVersionUID = -2683593616927798071L ;
+
+  
 }

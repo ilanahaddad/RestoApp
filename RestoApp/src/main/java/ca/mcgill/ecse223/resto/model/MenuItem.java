@@ -1,15 +1,15 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.27.0.3781.8b4a64e modeling language!*/
+/*This code was generated using the UMPLE 1.27.0.3728.d139ed893 modeling language!*/
 
 package ca.mcgill.ecse223.resto.model;
 import java.io.Serializable;
 import java.util.*;
 
-// line 55 "../../../../../../../../ump/tmp842728/model.ump"
-// line 108 "../../../../../../../../ump/tmp842728/model.ump"
+// line 60 "../../../../../RestoAppPersistence.ump"
+// line 54 "../../../../../RestoApp.ump"
 public class MenuItem implements Serializable
 {
-  private static final long serialVersionUID = -1776230320092632776L;
+
   //------------------------
   // ENUMERATIONS
   //------------------------
@@ -85,12 +85,12 @@ public class MenuItem implements Serializable
   {
     return name;
   }
-  /* Code from template attribute_GetUnique */
+
   public static MenuItem getWithName(String aName)
   {
     return menuitemsByName.get(aName);
   }
-  /* Code from template attribute_HasUnique */
+
   public static boolean hasWithName(String aName)
   {
     return getWithName(aName) != null;
@@ -100,7 +100,7 @@ public class MenuItem implements Serializable
   {
     return itemCategory;
   }
-  /* Code from template association_GetMany */
+
   public PricedMenuItem getPricedMenuItem(int index)
   {
     PricedMenuItem aPricedMenuItem = pricedMenuItems.get(index);
@@ -130,7 +130,7 @@ public class MenuItem implements Serializable
     int index = pricedMenuItems.indexOf(aPricedMenuItem);
     return index;
   }
-  /* Code from template association_GetOne */
+
   public PricedMenuItem getCurrentPricedMenuItem()
   {
     return currentPricedMenuItem;
@@ -141,23 +141,23 @@ public class MenuItem implements Serializable
     boolean has = currentPricedMenuItem != null;
     return has;
   }
-  /* Code from template association_GetOne */
+
   public Menu getMenu()
   {
     return menu;
   }
-  /* Code from template association_IsNumberOfValidMethod */
+
   public boolean isNumberOfPricedMenuItemsValid()
   {
     boolean isValid = numberOfPricedMenuItems() >= minimumNumberOfPricedMenuItems();
     return isValid;
   }
-  /* Code from template association_MinimumNumberOfMethod */
+
   public static int minimumNumberOfPricedMenuItems()
   {
     return 1;
   }
-  /* Code from template association_AddMandatoryManyToOne */
+
   public PricedMenuItem addPricedMenuItem(double aPrice, RestoApp aRestoApp)
   {
     PricedMenuItem aNewPricedMenuItem = new PricedMenuItem(aPrice, aRestoApp, this);
@@ -206,7 +206,7 @@ public class MenuItem implements Serializable
     wasRemoved = true;
     return wasRemoved;
   }
-  /* Code from template association_AddIndexControlFunctions */
+
   public boolean addPricedMenuItemAt(PricedMenuItem aPricedMenuItem, int index)
   {  
     boolean wasAdded = false;
@@ -238,7 +238,7 @@ public class MenuItem implements Serializable
     }
     return wasAdded;
   }
-  /* Code from template association_SetUnidirectionalOptionalOne */
+
   public boolean setCurrentPricedMenuItem(PricedMenuItem aNewCurrentPricedMenuItem)
   {
     boolean wasSet = false;
@@ -246,7 +246,7 @@ public class MenuItem implements Serializable
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_SetOneToMany */
+
   public boolean setMenu(Menu aMenu)
   {
     boolean wasSet = false;
@@ -291,5 +291,13 @@ public class MenuItem implements Serializable
             "  " + "itemCategory" + "=" + (getItemCategory() != null ? !getItemCategory().equals(this)  ? getItemCategory().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "currentPricedMenuItem = "+(getCurrentPricedMenuItem()!=null?Integer.toHexString(System.identityHashCode(getCurrentPricedMenuItem())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "menu = "+(getMenu()!=null?Integer.toHexString(System.identityHashCode(getMenu())):"null");
-  }
+  }  
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+  
+  // line 63 "../../../../../RestoAppPersistence.ump"
+  private static final long serialVersionUID = -1776230320092632776L ;
+
+  
 }
