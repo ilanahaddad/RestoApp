@@ -66,11 +66,11 @@ public class MenuPanel extends JPanel implements ActionListener {
 		String[] appetizerItems = aplist.stream().toArray(String[]::new);// get from controller
 		String[] mainDishItems = mainlist.stream().toArray(String[]::new);// get from controller
 		String[] dessertItems = deslist.stream().toArray(String[]::new);
-		;// get from controller
+		// get from controller
 		String[] alcoholItems = abevlist.stream().toArray(String[]::new);
-		;// get from controller
+		// get from controller
 		String[] nonAlcoholItems = nabevlist.stream().toArray(String[]::new);
-		;// get from controller
+		// get from controller
 
 		// Components constructors
 
