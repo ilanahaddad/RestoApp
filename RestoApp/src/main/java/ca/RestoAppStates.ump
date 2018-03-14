@@ -1,0 +1,44 @@
+namespace ca.mcgill.ecse223.resto;  
+  
+class Table  
+{  
+  states  
+  {  
+    Available 
+    {  
+      reserveTable (tableNum, numSeats) [hasEnoughSeats]  -> Reserved;
+      useTable (tableNum, numSeats) [hasEnoughSeats] -> InUse;
+    }  
+    
+    Unavailable 
+    {
+      Reserved 
+      {
+        useTable (tableNum, numSeats) [hasEnoughSeats] -> InUse;
+        cancelReservation (tableNum) -> Available;
+      }
+
+      InUse 
+      {
+        WaitingForOrder
+        {
+          orderItems (orderedItems) -> WaitingForFood;
+          freeTable (tableNum) -> 
+        }
+        WaitingForFood 
+        {
+          orderItems (orderedItems) -> WaitingForFood;
+          orderBill (tableNum) -> IssuedBill;
+          cancelItems (canceledItems) [!hasMoreItems] -> WaitingForOrder;
+          cancelItems (canceledItems) [hasMoreItems] -> WaitingForFood;
+        }
+        
+        IssuedBill 
+        {
+          freeTable (tableNum) -> Available;
+          orderFood (orderedItems)  /{ deleteBill() }  -> WaitingForFood;
+        }
+      }
+    }
+  }  
+}  
