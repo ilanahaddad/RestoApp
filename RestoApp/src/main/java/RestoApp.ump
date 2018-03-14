@@ -1,4 +1,6 @@
 namespace ca.mcgill.ecse223.resto.model;
+use RestoAppPersistence.ump;
+use RestoAppStates.ump;
 
 class RestoApp {
    1 <@>- * Reservation reservations; // sorted by date and time
