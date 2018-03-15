@@ -1,20 +1,18 @@
-namespace ca.mcgill.ecse223.resto;  
-  
 class Table  
 {  
   states  
   {  
     Available 
     {  
-      reserveTable (tableNum, numSeats) [hasEnoughSeats]  -> Reserved;
-      useTable (tableNum, numSeats) [hasEnoughSeats] -> InUse;
+      reserveTable (tableNum, numSeats) [hasEnoughSeats(tableNum, numSeatsRequired)]  -> Reserved;
+      useTable (tableNum, numSeats) [hasEnoughSeats(tableNum, numSeatsRequired)] -> InUse;
     }  
     
     Unavailable 
     {
       Reserved 
       {
-        useTable (tableNum, numSeats) [hasEnoughSeats] -> InUse;
+        useTable (tableNum, numSeats) [hasEnoughSeats(tableNum, numSeatsRequired)] -> InUse;
         cancelReservation (tableNum) -> Available;
       }
 
@@ -36,9 +34,17 @@ class Table
         IssuedBill 
         {
           freeTable (tableNum) -> Available;
-          orderFood (orderedItems)  /{ deleteBill() }  -> WaitingForFood;
+          //orderFood (orderedItems)  /{ deleteBill(); }  -> WaitingForFood;
+          orderFood (orderedItems) -> WaitingForFood;
         }
       }
     }
+  }
+  private boolean hasEnoughSeats(int tableNum, int numSeatsRequired){
+  	Table table = null;
+    try { table = getTableByNum(tableNum); }
+    catch (InvalidInputException err) { return false; }
+        
+    return (table.getCurrentSeats().size() >= numSeatsRequired);
   }  
 }  

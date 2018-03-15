@@ -6,7 +6,8 @@ import java.io.Serializable;
 import java.util.*;
 
 // line 13 "../../../../../RestoAppPersistence.ump"
-// line 24 "../../../../../RestoApp.ump"
+// line 3 "../../../../../RestoAppStates.ump"
+// line 26 "../../../../../RestoApp.ump"
 public class Table implements Serializable
 {
 
@@ -26,6 +27,14 @@ public class Table implements Serializable
   private int y;
   private int width;
   private int length;
+
+  //Table State Machines
+  public enum States { Available, Unavailable }
+  public enum StatesUnavailable { Null, Reserved, InUse }
+  public enum StatesUnavailableInUse { Null, WaitingForOrder, WaitingForFood, IssuedBill }
+  private States states;
+  private StatesUnavailable statesUnavailable;
+  private StatesUnavailableInUse statesUnavailableInUse;
 
   //Table Associations
   private List<Seat> seats;
@@ -57,6 +66,9 @@ public class Table implements Serializable
     }
     reservations = new ArrayList<Reservation>();
     orders = new ArrayList<Order>();
+    setStatesUnavailable(StatesUnavailable.Null);
+    setStatesUnavailableInUse(StatesUnavailableInUse.Null);
+    setStates(States.Available);
   }
 
   //------------------------
@@ -144,6 +156,292 @@ public class Table implements Serializable
   public int getLength()
   {
     return length;
+  }
+
+  public String getStatesFullName()
+  {
+    String answer = states.toString();
+    if (statesUnavailable != StatesUnavailable.Null) { answer += "." + statesUnavailable.toString(); }
+    if (statesUnavailableInUse != StatesUnavailableInUse.Null) { answer += "." + statesUnavailableInUse.toString(); }
+    return answer;
+  }
+
+  public States getStates()
+  {
+    return states;
+  }
+
+  public StatesUnavailable getStatesUnavailable()
+  {
+    return statesUnavailable;
+  }
+
+  public StatesUnavailableInUse getStatesUnavailableInUse()
+  {
+    return statesUnavailableInUse;
+  }
+
+  public boolean reserveTable(String tableNum,String numSeats)
+  {
+    boolean wasEventProcessed = false;
+    
+    States aStates = states;
+    switch (aStates)
+    {
+      case Available:
+        if (hasEnoughSeats)
+        {
+          setStatesUnavailable(StatesUnavailable.Reserved);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean useTable(String tableNum,String numSeats)
+  {
+    boolean wasEventProcessed = false;
+    
+    States aStates = states;
+    StatesUnavailable aStatesUnavailable = statesUnavailable;
+    switch (aStates)
+    {
+      case Available:
+        if (hasEnoughSeats)
+        {
+          setStatesUnavailable(StatesUnavailable.InUse);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    switch (aStatesUnavailable)
+    {
+      case Reserved:
+        if (hasEnoughSeats)
+        {
+          exitStatesUnavailable();
+          setStatesUnavailable(StatesUnavailable.InUse);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean cancelReservation(String tableNum)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesUnavailable aStatesUnavailable = statesUnavailable;
+    switch (aStatesUnavailable)
+    {
+      case Reserved:
+        exitStates();
+        setStates(States.Available);
+        wasEventProcessed = true;
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean orderItems(String orderedItems)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesUnavailableInUse aStatesUnavailableInUse = statesUnavailableInUse;
+    switch (aStatesUnavailableInUse)
+    {
+      case WaitingForOrder:
+        exitStatesUnavailableInUse();
+        setStatesUnavailableInUse(StatesUnavailableInUse.WaitingForFood);
+        wasEventProcessed = true;
+        break;
+      case WaitingForFood:
+        exitStatesUnavailableInUse();
+        setStatesUnavailableInUse(StatesUnavailableInUse.WaitingForFood);
+        wasEventProcessed = true;
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean orderBill(String tableNum)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesUnavailableInUse aStatesUnavailableInUse = statesUnavailableInUse;
+    switch (aStatesUnavailableInUse)
+    {
+      case WaitingForFood:
+        exitStatesUnavailableInUse();
+        setStatesUnavailableInUse(StatesUnavailableInUse.IssuedBill);
+        wasEventProcessed = true;
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean cancelItems(String canceledItems)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesUnavailableInUse aStatesUnavailableInUse = statesUnavailableInUse;
+    switch (aStatesUnavailableInUse)
+    {
+      case WaitingForFood:
+        if (!hasMoreItems)
+        {
+          exitStatesUnavailableInUse();
+          setStatesUnavailableInUse(StatesUnavailableInUse.WaitingForOrder);
+          wasEventProcessed = true;
+          break;
+        }
+        if (hasMoreItems)
+        {
+          exitStatesUnavailableInUse();
+          setStatesUnavailableInUse(StatesUnavailableInUse.WaitingForFood);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean freeTable(String tableNum)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesUnavailableInUse aStatesUnavailableInUse = statesUnavailableInUse;
+    switch (aStatesUnavailableInUse)
+    {
+      case IssuedBill:
+        exitStates();
+        setStates(States.Available);
+        wasEventProcessed = true;
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean orderFood(String orderedItems)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesUnavailableInUse aStatesUnavailableInUse = statesUnavailableInUse;
+    switch (aStatesUnavailableInUse)
+    {
+      case IssuedBill:
+        exitStatesUnavailableInUse();
+        setStatesUnavailableInUse(StatesUnavailableInUse.WaitingForFood);
+        wasEventProcessed = true;
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  private void exitStates()
+  {
+    switch(states)
+    {
+      case Unavailable:
+        exitStatesUnavailable();
+        break;
+    }
+  }
+
+  private void setStates(States aStates)
+  {
+    states = aStates;
+
+    // entry actions and do activities
+    switch(states)
+    {
+      case Unavailable:
+        if (statesUnavailable == StatesUnavailable.Null) { setStatesUnavailable(StatesUnavailable.Reserved); }
+        break;
+    }
+  }
+
+  private void exitStatesUnavailable()
+  {
+    switch(statesUnavailable)
+    {
+      case Reserved:
+        setStatesUnavailable(StatesUnavailable.Null);
+        break;
+      case InUse:
+        exitStatesUnavailableInUse();
+        setStatesUnavailable(StatesUnavailable.Null);
+        break;
+    }
+  }
+
+  private void setStatesUnavailable(StatesUnavailable aStatesUnavailable)
+  {
+    statesUnavailable = aStatesUnavailable;
+    if (states != States.Unavailable && aStatesUnavailable != StatesUnavailable.Null) { setStates(States.Unavailable); }
+
+    // entry actions and do activities
+    switch(statesUnavailable)
+    {
+      case InUse:
+        if (statesUnavailableInUse == StatesUnavailableInUse.Null) { setStatesUnavailableInUse(StatesUnavailableInUse.WaitingForOrder); }
+        break;
+    }
+  }
+
+  private void exitStatesUnavailableInUse()
+  {
+    switch(statesUnavailableInUse)
+    {
+      case WaitingForOrder:
+        setStatesUnavailableInUse(StatesUnavailableInUse.Null);
+        break;
+      case WaitingForFood:
+        setStatesUnavailableInUse(StatesUnavailableInUse.Null);
+        break;
+      case IssuedBill:
+        setStatesUnavailableInUse(StatesUnavailableInUse.Null);
+        break;
+    }
+  }
+
+  private void setStatesUnavailableInUse(StatesUnavailableInUse aStatesUnavailableInUse)
+  {
+    statesUnavailableInUse = aStatesUnavailableInUse;
+    if (statesUnavailable != StatesUnavailable.InUse && aStatesUnavailableInUse != StatesUnavailableInUse.Null) { setStatesUnavailable(StatesUnavailable.InUse); }
   }
 
   public Seat getSeat(int index)
