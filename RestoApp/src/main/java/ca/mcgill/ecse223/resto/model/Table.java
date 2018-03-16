@@ -219,7 +219,7 @@ public class Table implements Serializable
     return wasEventProcessed;
   }
 
-  public boolean cancelReservation(Table table,Date resTime)
+  public boolean cancelReservation(int resNum)
   {
     boolean wasEventProcessed = false;
     
