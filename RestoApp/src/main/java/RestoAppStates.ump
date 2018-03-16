@@ -25,7 +25,11 @@ class Table
      {
 	   ReadyToOrder 
 	   {
-	     addToOrder(Seat seat, OrderItem itemToOrder) / { setSeatInUse(seat); } -> ReadyToOrder;
+	     addToOrder(Seat seat, OrderItem itemToOrder) / {
+	     	if(seat.getOrderItems().size()==0){ 
+	     		setSeatInUse(seat);
+	     	} 
+	     } -> ReadyToOrder;
 	     cancelItem(Seat seat, OrderItem itemToCancel) / {
 	     	if(seat.getOrderItems().size()==1){
 	     		setSeatAvailable();
@@ -36,7 +40,7 @@ class Table
 	   }
     	   IssuedBill 
 	   {
-	     freeTableAndSeats(Table table, Order order) [allItemsOrderedWereBilled()] -> Available; //FIX
+	     freeTableAndSeats(Table table, Order order) [allItemsOrderedWereBilled()] -> Available; 
 	     createBill(Seat seat, List<OrderItem> itemsToBill) -> IssuedBill;
 	     cancelBill(Table table, Seat seat) [tableHasMoreThanOneBillLeft(table)]-> IssuedBill;
 		 cancelBill(Table table, Seat seat) [tableHasOneBillLeft(table)]-> ReadyToOrder;
@@ -79,7 +83,8 @@ class Table
 	return (numBillsForTable == 1);
   }
   private boolean allItemsOrderedWereBilled(){
-  	return false;
+    //TODO: implement this in iteration 5
+    return false;
   }
   private boolean setSeatInUse(Seat seat){
   //TODO: implement this in iteration 5

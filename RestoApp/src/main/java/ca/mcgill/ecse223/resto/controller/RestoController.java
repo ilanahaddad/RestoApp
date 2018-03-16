@@ -277,7 +277,7 @@ public class RestoController
         }
         throw new InvalidInputException("Could not retrieve table number " + tableNum);
     }
-
+/*
     // checks if the table has enough seats to accommodate the number of clients
     private static boolean hasEnoughSeats(int tableNum) 
     {//int numSeatsRequired
@@ -313,6 +313,7 @@ public class RestoController
     		}
     		return numBillsForTable == 1;
     }
+    
     private boolean allItemsOrderedWereBilled(Table table){
     		boolean allItemsOrderedWereBilled = false;
     		List<Seat> currSeats = table.getCurrentSeats();
@@ -322,13 +323,13 @@ public class RestoController
 		for(Seat s: currSeats) { //for every current seat at that table
 			List<Bill> billsForSeat = s.getBills();
 			for(Bill b: billsForSeat) {
-				/*if(b.get == orderedItemsForTable) {
+				if(b.get == orderedItemsForTable) {
 					allItemsOrderedWereBilled = true;
-				}*/
+				}
 			}
 		}
       	return false;
-    }
+    }*/
     // checks if the table with given attributes is in the set tables in the app
     private static boolean exactTableInApp(int tableNum, int numSeats, int width, int length)
     {
