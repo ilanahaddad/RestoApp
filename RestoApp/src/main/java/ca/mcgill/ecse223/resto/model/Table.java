@@ -3,6 +3,8 @@
 
 package ca.mcgill.ecse223.resto.model;
 import java.io.Serializable;
+import ca.mcgill.ecse223.resto.controller.RestoController;
+import ca.mcgill.ecse223.resto.controller.InvalidInputException;
 import java.util.*;
 
 // line 13 "../../../../../RestoAppPersistence.ump"
@@ -29,12 +31,10 @@ public class Table implements Serializable
   private int length;
 
   //Table State Machines
-  public enum States { Available, Unavailable }
-  public enum StatesUnavailable { Null, Reserved, InUse }
-  public enum StatesUnavailableInUse { Null, WaitingForOrder, WaitingForFood, IssuedBill }
+  public enum States { Available, InUse }
+  public enum StatesInUse { Null, ReadyToOrder, IssuedBill }
   private States states;
-  private StatesUnavailable statesUnavailable;
-  private StatesUnavailableInUse statesUnavailableInUse;
+  private StatesInUse statesInUse;
 
   //Table Associations
   private List<Seat> seats;
@@ -66,8 +66,7 @@ public class Table implements Serializable
     }
     reservations = new ArrayList<Reservation>();
     orders = new ArrayList<Order>();
-    setStatesUnavailable(StatesUnavailable.Null);
-    setStatesUnavailableInUse(StatesUnavailableInUse.Null);
+    setStatesInUse(StatesInUse.Null);
     setStates(States.Available);
   }
 
@@ -161,8 +160,7 @@ public class Table implements Serializable
   public String getStatesFullName()
   {
     String answer = states.toString();
-    if (statesUnavailable != StatesUnavailable.Null) { answer += "." + statesUnavailable.toString(); }
-    if (statesUnavailableInUse != StatesUnavailableInUse.Null) { answer += "." + statesUnavailableInUse.toString(); }
+    if (statesInUse != StatesInUse.Null) { answer += "." + statesInUse.toString(); }
     return answer;
   }
 
@@ -171,17 +169,12 @@ public class Table implements Serializable
     return states;
   }
 
-  public StatesUnavailable getStatesUnavailable()
+  public StatesInUse getStatesInUse()
   {
-    return statesUnavailable;
+    return statesInUse;
   }
 
-  public StatesUnavailableInUse getStatesUnavailableInUse()
-  {
-    return statesUnavailableInUse;
-  }
-
-  public boolean reserveTable(String tableNum,String numSeats)
+  public boolean createReservation(Table table,int numSeatsRequested,Date resTime,String contactName,String contactEmail,String contactPhone)
   {
     boolean wasEventProcessed = false;
     
@@ -189,9 +182,32 @@ public class Table implements Serializable
     switch (aStates)
     {
       case Available:
-        if (hasEnoughSeats)
+        if (table.getCurrentSeats().size()>=numSeatsRequested)
         {
-          setStatesUnavailable(StatesUnavailable.Reserved);
+        // line 12 "../../../../../RestoAppStates.ump"
+          List<Reservation> allRes = table.getReservations();
+    			for(Reservation res: allRes) {
+    				if(res.getDateTime()==resTime) {
+    					return false;
+    				}
+    			}
+          setStates(States.Available);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      case InUse:
+        if (table.getCurrentSeats().size()>=numSeatsRequested)
+        {
+          exitStates();
+        // line 47 "../../../../../RestoAppStates.ump"
+          List<Reservation> allRes = table.getReservations();
+    			for(Reservation res: allRes) {
+    				if(res.getDateTime()==resTime) {
+    					return false;
+    				}
+    			}
+          setStates(States.InUse);
           wasEventProcessed = true;
           break;
         }
@@ -203,146 +219,20 @@ public class Table implements Serializable
     return wasEventProcessed;
   }
 
-  public boolean useTable(String tableNum,String numSeats)
+  public boolean cancelReservation(Table table,Date resTime)
   {
     boolean wasEventProcessed = false;
     
     States aStates = states;
-    StatesUnavailable aStatesUnavailable = statesUnavailable;
     switch (aStates)
     {
       case Available:
-        if (hasEnoughSeats)
-        {
-          setStatesUnavailable(StatesUnavailable.InUse);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
-
-    switch (aStatesUnavailable)
-    {
-      case Reserved:
-        if (hasEnoughSeats)
-        {
-          exitStatesUnavailable();
-          setStatesUnavailable(StatesUnavailable.InUse);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
-
-    return wasEventProcessed;
-  }
-
-  public boolean cancelReservation(String tableNum)
-  {
-    boolean wasEventProcessed = false;
-    
-    StatesUnavailable aStatesUnavailable = statesUnavailable;
-    switch (aStatesUnavailable)
-    {
-      case Reserved:
-        exitStates();
         setStates(States.Available);
         wasEventProcessed = true;
         break;
-      default:
-        // Other states do respond to this event
-    }
-
-    return wasEventProcessed;
-  }
-
-  public boolean orderItems(String orderedItems)
-  {
-    boolean wasEventProcessed = false;
-    
-    StatesUnavailableInUse aStatesUnavailableInUse = statesUnavailableInUse;
-    switch (aStatesUnavailableInUse)
-    {
-      case WaitingForOrder:
-        exitStatesUnavailableInUse();
-        setStatesUnavailableInUse(StatesUnavailableInUse.WaitingForFood);
-        wasEventProcessed = true;
-        break;
-      case WaitingForFood:
-        exitStatesUnavailableInUse();
-        setStatesUnavailableInUse(StatesUnavailableInUse.WaitingForFood);
-        wasEventProcessed = true;
-        break;
-      default:
-        // Other states do respond to this event
-    }
-
-    return wasEventProcessed;
-  }
-
-  public boolean orderBill(String tableNum)
-  {
-    boolean wasEventProcessed = false;
-    
-    StatesUnavailableInUse aStatesUnavailableInUse = statesUnavailableInUse;
-    switch (aStatesUnavailableInUse)
-    {
-      case WaitingForFood:
-        exitStatesUnavailableInUse();
-        setStatesUnavailableInUse(StatesUnavailableInUse.IssuedBill);
-        wasEventProcessed = true;
-        break;
-      default:
-        // Other states do respond to this event
-    }
-
-    return wasEventProcessed;
-  }
-
-  public boolean cancelItems(String canceledItems)
-  {
-    boolean wasEventProcessed = false;
-    
-    StatesUnavailableInUse aStatesUnavailableInUse = statesUnavailableInUse;
-    switch (aStatesUnavailableInUse)
-    {
-      case WaitingForFood:
-        if (!hasMoreItems)
-        {
-          exitStatesUnavailableInUse();
-          setStatesUnavailableInUse(StatesUnavailableInUse.WaitingForOrder);
-          wasEventProcessed = true;
-          break;
-        }
-        if (hasMoreItems)
-        {
-          exitStatesUnavailableInUse();
-          setStatesUnavailableInUse(StatesUnavailableInUse.WaitingForFood);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
-
-    return wasEventProcessed;
-  }
-
-  public boolean freeTable(String tableNum)
-  {
-    boolean wasEventProcessed = false;
-    
-    StatesUnavailableInUse aStatesUnavailableInUse = statesUnavailableInUse;
-    switch (aStatesUnavailableInUse)
-    {
-      case IssuedBill:
+      case InUse:
         exitStates();
-        setStates(States.Available);
+        setStates(States.InUse);
         wasEventProcessed = true;
         break;
       default:
@@ -352,17 +242,173 @@ public class Table implements Serializable
     return wasEventProcessed;
   }
 
-  public boolean orderFood(String orderedItems)
+  public boolean createOrder(Table table,int numSeatsNeeded)
   {
     boolean wasEventProcessed = false;
     
-    StatesUnavailableInUse aStatesUnavailableInUse = statesUnavailableInUse;
-    switch (aStatesUnavailableInUse)
+    States aStates = states;
+    switch (aStates)
+    {
+      case Available:
+        if (table.getCurrentSeats().size()>=numSeatsNeeded)
+        {
+          setStates(States.InUse);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean addToOrder(Seat seat,OrderItem itemToOrder)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesInUse aStatesInUse = statesInUse;
+    switch (aStatesInUse)
+    {
+      case ReadyToOrder:
+        exitStatesInUse();
+        // line 28 "../../../../../RestoAppStates.ump"
+        setSeatInUse(seat);
+        setStatesInUse(StatesInUse.ReadyToOrder);
+        wasEventProcessed = true;
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean cancelItem(Seat seat,OrderItem itemToCancel)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesInUse aStatesInUse = statesInUse;
+    switch (aStatesInUse)
+    {
+      case ReadyToOrder:
+        exitStatesInUse();
+        // line 29 "../../../../../RestoAppStates.ump"
+        if(seat.getOrderItems().size()==1){
+	     		setSeatAvailable();
+	     	}
+        setStatesInUse(StatesInUse.ReadyToOrder);
+        wasEventProcessed = true;
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean freeTableAndSeats(Table table,Order order)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesInUse aStatesInUse = statesInUse;
+    switch (aStatesInUse)
+    {
+      case ReadyToOrder:
+        if (order.getOrderItems().size()==0)
+        {
+          exitStates();
+          setStates(States.Available);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      case IssuedBill:
+        if (allItemsOrderedWereBilled())
+        {
+          exitStates();
+          setStates(States.Available);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean createBill(Seat seat,List<OrderItem> itemsToBill)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesInUse aStatesInUse = statesInUse;
+    switch (aStatesInUse)
+    {
+      case ReadyToOrder:
+        exitStatesInUse();
+        setStatesInUse(StatesInUse.IssuedBill);
+        wasEventProcessed = true;
+        break;
+      case IssuedBill:
+        exitStatesInUse();
+        setStatesInUse(StatesInUse.IssuedBill);
+        wasEventProcessed = true;
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean cancelBill(Table table,Seat seat)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesInUse aStatesInUse = statesInUse;
+    switch (aStatesInUse)
     {
       case IssuedBill:
-        exitStatesUnavailableInUse();
-        setStatesUnavailableInUse(StatesUnavailableInUse.WaitingForFood);
-        wasEventProcessed = true;
+        if (tableHasMoreThanOneBillLeft(table))
+        {
+          exitStatesInUse();
+          setStatesInUse(StatesInUse.IssuedBill);
+          wasEventProcessed = true;
+          break;
+        }
+        if (tableHasOneBillLeft(table))
+        {
+          exitStatesInUse();
+          setStatesInUse(StatesInUse.ReadyToOrder);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean addItemToOrderAndBillSeat(Seat seat,OrderItem itemToAdd)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesInUse aStatesInUse = statesInUse;
+    switch (aStatesInUse)
+    {
+      case IssuedBill:
+        if (seat.getBills().size()==0)
+        {
+          exitStatesInUse();
+          setStatesInUse(StatesInUse.IssuedBill);
+          wasEventProcessed = true;
+          break;
+        }
         break;
       default:
         // Other states do respond to this event
@@ -375,8 +421,8 @@ public class Table implements Serializable
   {
     switch(states)
     {
-      case Unavailable:
-        exitStatesUnavailable();
+      case InUse:
+        exitStatesInUse();
         break;
     }
   }
@@ -388,60 +434,29 @@ public class Table implements Serializable
     // entry actions and do activities
     switch(states)
     {
-      case Unavailable:
-        if (statesUnavailable == StatesUnavailable.Null) { setStatesUnavailable(StatesUnavailable.Reserved); }
-        break;
-    }
-  }
-
-  private void exitStatesUnavailable()
-  {
-    switch(statesUnavailable)
-    {
-      case Reserved:
-        setStatesUnavailable(StatesUnavailable.Null);
-        break;
       case InUse:
-        exitStatesUnavailableInUse();
-        setStatesUnavailable(StatesUnavailable.Null);
+        if (statesInUse == StatesInUse.Null) { setStatesInUse(StatesInUse.ReadyToOrder); }
         break;
     }
   }
 
-  private void setStatesUnavailable(StatesUnavailable aStatesUnavailable)
+  private void exitStatesInUse()
   {
-    statesUnavailable = aStatesUnavailable;
-    if (states != States.Unavailable && aStatesUnavailable != StatesUnavailable.Null) { setStates(States.Unavailable); }
-
-    // entry actions and do activities
-    switch(statesUnavailable)
+    switch(statesInUse)
     {
-      case InUse:
-        if (statesUnavailableInUse == StatesUnavailableInUse.Null) { setStatesUnavailableInUse(StatesUnavailableInUse.WaitingForOrder); }
-        break;
-    }
-  }
-
-  private void exitStatesUnavailableInUse()
-  {
-    switch(statesUnavailableInUse)
-    {
-      case WaitingForOrder:
-        setStatesUnavailableInUse(StatesUnavailableInUse.Null);
-        break;
-      case WaitingForFood:
-        setStatesUnavailableInUse(StatesUnavailableInUse.Null);
+      case ReadyToOrder:
+        setStatesInUse(StatesInUse.Null);
         break;
       case IssuedBill:
-        setStatesUnavailableInUse(StatesUnavailableInUse.Null);
+        setStatesInUse(StatesInUse.Null);
         break;
     }
   }
 
-  private void setStatesUnavailableInUse(StatesUnavailableInUse aStatesUnavailableInUse)
+  private void setStatesInUse(StatesInUse aStatesInUse)
   {
-    statesUnavailableInUse = aStatesUnavailableInUse;
-    if (statesUnavailable != StatesUnavailable.InUse && aStatesUnavailableInUse != StatesUnavailableInUse.Null) { setStatesUnavailable(StatesUnavailable.InUse); }
+    statesInUse = aStatesInUse;
+    if (states != States.InUse && aStatesInUse != StatesInUse.Null) { setStates(States.InUse); }
   }
 
   public Seat getSeat(int index)
@@ -955,6 +970,47 @@ public class Table implements Serializable
 	    for (Table table : tables) {
 	      tablesByNumber.put(table.getNumber(), table);
 	    }
+  }
+
+  // line 62 "../../../../../RestoAppStates.ump"
+   private boolean tableHasMoreThanOneBillLeft(Table table){
+    List<Seat> currSeats = table.getCurrentSeats();
+	int numBillsForTable = 0;
+	for(Seat s: currSeats) { //for every current seat at that table
+		if(s.getBills().size() >0) { 
+			numBillsForTable ++; //add up bills per seat if any
+		}
+	}
+	return (numBillsForTable > 1);
+  }
+
+  // line 72 "../../../../../RestoAppStates.ump"
+   private boolean tableHasOneBillLeft(Table table){
+    List<Seat> currSeats = table.getCurrentSeats();
+	int numBillsForTable = 0;
+	for(Seat s: currSeats) { //for every current seat at that table
+		if(s.getBills().size() >0) { 
+			numBillsForTable ++; //add up bills per seat if any
+		}
+	}
+	return (numBillsForTable == 1);
+  }
+
+  // line 82 "../../../../../RestoAppStates.ump"
+   private boolean allItemsOrderedWereBilled(){
+    return false;
+  }
+
+  // line 85 "../../../../../RestoAppStates.ump"
+   private boolean setSeatInUse(Seat seat){
+    //TODO: implement this in iteration 5
+  	return false;
+  }
+
+  // line 89 "../../../../../RestoAppStates.ump"
+   private boolean setSeatAvailable(){
+    //TODO: implement this in iteration 5
+  	return false;
   }
 
 

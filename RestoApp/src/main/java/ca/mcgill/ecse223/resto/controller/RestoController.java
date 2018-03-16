@@ -3,14 +3,17 @@ package ca.mcgill.ecse223.resto.controller;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
+import ca.mcgill.ecse223.resto.model.Bill;
 import ca.mcgill.ecse223.resto.model.Menu;
 import ca.mcgill.ecse223.resto.model.MenuItem;
 import ca.mcgill.ecse223.resto.model.Order;
+import ca.mcgill.ecse223.resto.model.Reservation;
 import ca.mcgill.ecse223.resto.model.RestoApp;
 import ca.mcgill.ecse223.resto.model.Seat;
 import ca.mcgill.ecse223.resto.model.Table;
@@ -276,15 +279,56 @@ public class RestoController
     }
 
     // checks if the table has enough seats to accommodate the number of clients
-    private static boolean hasEnoughSeats(int tableNum, int numSeatsRequired) 
-    {
+    private static boolean hasEnoughSeats(int tableNum) 
+    {//int numSeatsRequired
         Table table = null;
         try { table = getTableByNum(tableNum); }
         catch (InvalidInputException err) { return false; }
+        int seatsAtTable = table.getCurrentSeats().size();
+        int seatsRequested = 0;
         
-        return (table.getCurrentSeats().size() >= numSeatsRequired);
+        return (seatsAtTable >= seatsRequested);
     }
-
+    public static boolean reservationTimeAvailable(Table table, Date resTime) {
+    		//table.getSeats()
+    		List<Reservation> allRes = table.getReservations();
+    		for(Reservation res: allRes) {
+    			if(res.getDateTime()==resTime) {
+    				return false;
+    			}
+    		}
+    		return true;
+    }
+    public static boolean orderOnlyHasOneItem(Seat seat) {
+    		
+		return seat.getOrderItems().size() == 1;
+    }
+    public static boolean tableHasOneBill(Table table) {
+    		List<Seat> currSeats = table.getCurrentSeats();
+    		int numBillsForTable = 0;
+    		for(Seat s: currSeats) { //for every current seat at that table
+    			if(s.getBills().size() >0) { 
+    				numBillsForTable ++; //add up bills per seat if any
+    			}
+    		}
+    		return numBillsForTable == 1;
+    }
+    private boolean allItemsOrderedWereBilled(Table table){
+    		boolean allItemsOrderedWereBilled = false;
+    		List<Seat> currSeats = table.getCurrentSeats();
+    		int orderedItemsForTable = table.getOrders().size();
+    		
+		int numBillsForTable = 0;
+		for(Seat s: currSeats) { //for every current seat at that table
+			List<Bill> billsForSeat = s.getBills();
+			for(Bill b: billsForSeat) {
+				/*if(b.get == orderedItemsForTable) {
+					allItemsOrderedWereBilled = true;
+				}*/
+			}
+		}
+      	return false;
+    }
     // checks if the table with given attributes is in the set tables in the app
     private static boolean exactTableInApp(int tableNum, int numSeats, int width, int length)
     {

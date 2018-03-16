@@ -1,50 +1,93 @@
+external RestoController {}
+external InvalidInputException {}
 class Table  
 {  
+	depend ca.mcgill.ecse223.resto.controller.RestoController;
+	depend ca.mcgill.ecse223.resto.controller.InvalidInputException;
   states  
   {  
     Available 
     {  
-      reserveTable (tableNum, numSeats) [hasEnoughSeats(tableNum, numSeatsRequired)]  -> Reserved;
-      useTable (tableNum, numSeats) [hasEnoughSeats(tableNum, numSeatsRequired)] -> InUse;
+      createReservation(Table table, int numSeatsRequested, Date resTime, String contactName, String contactEmail, 
+       	String contactPhone) [table.getCurrentSeats().size() >= numSeatsRequested] -> /{
+       		List<Reservation> allRes = table.getReservations();
+    			for(Reservation res: allRes) {
+    				if(res.getDateTime()==resTime) {
+    					return false;
+    				}
+    			}
+       } Available;
+      cancelReservation(Table table, Date resTime) -> Available;
+      createOrder(Table table, int numSeatsNeeded) [table.getCurrentSeats().size() >= numSeatsNeeded] -> InUse;
     }  
-    
-    Unavailable 
-    {
-      Reserved 
-      {
-        useTable (tableNum, numSeats) [hasEnoughSeats(tableNum, numSeatsRequired)] -> InUse;
-        cancelReservation (tableNum) -> Available;
-      }
 
-      InUse 
-      {
-        WaitingForOrder
-        {
-          orderItems (orderedItems) -> WaitingForFood;
-          freeTable (tableNum) -> 
-        }
-        WaitingForFood 
-        {
-          orderItems (orderedItems) -> WaitingForFood;
-          orderBill (tableNum) -> IssuedBill;
-          cancelItems (canceledItems) [!hasMoreItems] -> WaitingForOrder;
-          cancelItems (canceledItems) [hasMoreItems] -> WaitingForFood;
-        }
-        
-        IssuedBill 
-        {
-          freeTable (tableNum) -> Available;
-          //orderFood (orderedItems)  /{ deleteBill(); }  -> WaitingForFood;
-          orderFood (orderedItems) -> WaitingForFood;
-        }
-      }
-    }
+     InUse 
+     {
+	   ReadyToOrder 
+	   {
+	     addToOrder(Seat seat, OrderItem itemToOrder) / { setSeatInUse(seat); } -> ReadyToOrder;
+	     cancelItem(Seat seat, OrderItem itemToCancel) / {
+	     	if(seat.getOrderItems().size()==1){
+	     		setSeatAvailable();
+	     	}
+	     } -> ReadyToOrder;
+	     freeTableAndSeats(Table table, Order order) [order.getOrderItems().size()==0] -> Available;
+	     createBill(Seat seat, List<OrderItem> itemsToBill) -> IssuedBill;
+	   }
+    	   IssuedBill 
+	   {
+	     freeTableAndSeats(Table table, Order order) [allItemsOrderedWereBilled()] -> Available; //FIX
+	     createBill(Seat seat, List<OrderItem> itemsToBill) -> IssuedBill;
+	     cancelBill(Table table, Seat seat) [tableHasMoreThanOneBillLeft(table)]-> IssuedBill;
+		 cancelBill(Table table, Seat seat) [tableHasOneBillLeft(table)]-> ReadyToOrder;
+		 addItemToOrderAndBillSeat(Seat seat, OrderItem itemToAdd) [seat.getBills().size()==0] -> IssuedBill;
+       }
+       
+       createReservation(Table table, int numSeatsRequested, Date resTime, String contactName, String contactEmail, 
+       	String contactPhone) [table.getCurrentSeats().size() >= numSeatsRequested] -> /{
+       		List<Reservation> allRes = table.getReservations();
+    			for(Reservation res: allRes) {
+    				if(res.getDateTime()==resTime) {
+    					return false;
+    				}
+    			}
+       } InUse;
+       cancelReservation(Table table, Date resTime) -> InUse;
+       
+     }
+    
   }
-  private boolean hasEnoughSeats(int tableNum, int numSeatsRequired){
-  	Table table = null;
-    try { table = getTableByNum(tableNum); }
-    catch (InvalidInputException err) { return false; }
-        
-    return (table.getCurrentSeats().size() >= numSeatsRequired);
+
+  private boolean tableHasMoreThanOneBillLeft(Table table){
+  	List<Seat> currSeats = table.getCurrentSeats();
+	int numBillsForTable = 0;
+	for(Seat s: currSeats) { //for every current seat at that table
+		if(s.getBills().size() >0) { 
+			numBillsForTable ++; //add up bills per seat if any
+		}
+	}
+	return (numBillsForTable > 1);
+  }
+  private boolean tableHasOneBillLeft(Table table){
+  	List<Seat> currSeats = table.getCurrentSeats();
+	int numBillsForTable = 0;
+	for(Seat s: currSeats) { //for every current seat at that table
+		if(s.getBills().size() >0) { 
+			numBillsForTable ++; //add up bills per seat if any
+		}
+	}
+	return (numBillsForTable == 1);
+  }
+  private boolean allItemsOrderedWereBilled(){
+  	return false;
+  }
+  private boolean setSeatInUse(Seat seat){
+  //TODO: implement this in iteration 5
+  	return false;
   }  
+  private boolean setSeatAvailable(){
+  //TODO: implement this in iteration 5
+  	return false;
+  }
+
 }  
