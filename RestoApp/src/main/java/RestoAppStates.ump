@@ -1,14 +1,10 @@
-external RestoController {}
-external InvalidInputException {}
 class Table  
 {  
-	depend ca.mcgill.ecse223.resto.controller.RestoController;
-	depend ca.mcgill.ecse223.resto.controller.InvalidInputException;
   states  
   {  
     Available 
     {  
-      setTableInUse(Table table, int numSeatsNeeded) [table.getCurrentSeats().size() >= numSeatsNeeded] -> InUse;
+      createOrder(Table table, int numSeatsNeeded, Date orderDate, Time orderTime) [table.getCurrentSeats().size() >= numSeatsNeeded] -> InUse;
     }  
 
      InUse 
@@ -25,19 +21,17 @@ class Table
 	     		setSeatAvailable();
 	     	}
 	     } -> ReadyToOrder;
-	     setTableAndSeatsAvailable(Table table, Order order) [order.getOrderItems().size()==0] -> Available;
+	     freeTableAndSeats(Table table, Order order) [order.getOrderItems().size()==0] -> Available;
 	     createBill(Seat seat, List<OrderItem> itemsToBill) -> IssuedBill;
 	   }
     	   IssuedBill 
 	   {
-	     setTableAndSeatsAvailable(Table table, Order order) [allItemsOrderedWereBilled()] -> Available; 
+	     freeTableAndSeats(Table table, Order order) [allItemsOrderedWereBilled()] -> Available; 
 	     createBill(Seat seat, List<OrderItem> itemsToBill) -> IssuedBill;
 	     cancelBill(Table table, Seat seat) [tableHasMoreThanOneBillLeft(table)]-> IssuedBill;
 		 cancelBill(Table table, Seat seat) [tableHasOneBillLeft(table)]-> ReadyToOrder;
 		 addItemToOrderAndBillSeat(Seat seat, OrderItem itemToAdd) [seat.getBills().size()==0] -> IssuedBill;
        }
-       
-       
      }
     
   }

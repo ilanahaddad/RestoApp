@@ -3,12 +3,11 @@
 
 package ca.mcgill.ecse223.resto.model;
 import java.io.Serializable;
-import ca.mcgill.ecse223.resto.controller.RestoController;
-import ca.mcgill.ecse223.resto.controller.InvalidInputException;
+import java.sql.Time;
 import java.util.*;
 
 // line 13 "../../../../../RestoAppPersistence.ump"
-// line 3 "../../../../../RestoAppStates.ump"
+// line 1 "../../../../../RestoAppStates.ump"
 // line 26 "../../../../../RestoApp.ump"
 public class Table implements Serializable
 {
@@ -174,7 +173,7 @@ public class Table implements Serializable
     return statesInUse;
   }
 
-  public boolean setTableInUse(Table table,int numSeatsNeeded)
+  public boolean createOrder(Table table,int numSeatsNeeded,Date orderDate,Time orderTime)
   {
     boolean wasEventProcessed = false;
     
@@ -205,7 +204,7 @@ public class Table implements Serializable
     {
       case ReadyToOrder:
         exitStatesInUse();
-        // line 18 "../../../../../RestoAppStates.ump"
+        // line 14 "../../../../../RestoAppStates.ump"
         if(seat.getOrderItems().size()==0){ 
 	     		setSeatInUse(seat);
 	     	}
@@ -228,7 +227,7 @@ public class Table implements Serializable
     {
       case ReadyToOrder:
         exitStatesInUse();
-        // line 23 "../../../../../RestoAppStates.ump"
+        // line 19 "../../../../../RestoAppStates.ump"
         if(seat.getOrderItems().size()==1){
 	     		setSeatAvailable();
 	     	}
@@ -242,7 +241,7 @@ public class Table implements Serializable
     return wasEventProcessed;
   }
 
-  public boolean setTableAndSeatsAvailable(Table table,Order order)
+  public boolean freeTableAndSeats(Table table,Order order)
   {
     boolean wasEventProcessed = false;
     
@@ -906,7 +905,7 @@ public class Table implements Serializable
 	    }
   }
 
-  // line 46 "../../../../../RestoAppStates.ump"
+  // line 40 "../../../../../RestoAppStates.ump"
    private boolean tableHasMoreThanOneBillLeft(Table table){
     List<Seat> currSeats = table.getCurrentSeats();
 	int numBillsForTable = 0;
@@ -918,7 +917,7 @@ public class Table implements Serializable
 	return (numBillsForTable > 1);
   }
 
-  // line 56 "../../../../../RestoAppStates.ump"
+  // line 50 "../../../../../RestoAppStates.ump"
    private boolean tableHasOneBillLeft(Table table){
     List<Seat> currSeats = table.getCurrentSeats();
 	int numBillsForTable = 0;
@@ -930,19 +929,19 @@ public class Table implements Serializable
 	return (numBillsForTable == 1);
   }
 
-  // line 66 "../../../../../RestoAppStates.ump"
+  // line 60 "../../../../../RestoAppStates.ump"
    private boolean allItemsOrderedWereBilled(){
     //TODO: implement this in iteration 5
     return false;
   }
 
-  // line 70 "../../../../../RestoAppStates.ump"
+  // line 64 "../../../../../RestoAppStates.ump"
    private boolean setSeatInUse(Seat seat){
     //TODO: implement this in iteration 5
   	return false;
   }
 
-  // line 74 "../../../../../RestoAppStates.ump"
+  // line 68 "../../../../../RestoAppStates.ump"
    private boolean setSeatAvailable(){
     //TODO: implement this in iteration 5
   	return false;
