@@ -8,17 +8,7 @@ class Table
   {  
     Available 
     {  
-      createReservation(Table table, int numSeatsRequested, Date resTime, String contactName, String contactEmail, 
-       	String contactPhone) [table.getCurrentSeats().size() >= numSeatsRequested] -> /{
-       		List<Reservation> allRes = table.getReservations();
-    			for(Reservation res: allRes) {
-    				if(res.getDateTime()==resTime) {
-    					return false;
-    				}
-    			}
-       } Available;
-      cancelReservation(int resNum) -> Available;
-      createOrder(Table table, int numSeatsNeeded) [table.getCurrentSeats().size() >= numSeatsNeeded] -> InUse;
+      setTableInUse(Table table, int numSeatsNeeded) [table.getCurrentSeats().size() >= numSeatsNeeded] -> InUse;
     }  
 
      InUse 
@@ -35,28 +25,18 @@ class Table
 	     		setSeatAvailable();
 	     	}
 	     } -> ReadyToOrder;
-	     freeTableAndSeats(Table table, Order order) [order.getOrderItems().size()==0] -> Available;
+	     setTableAndSeatsAvailable(Table table, Order order) [order.getOrderItems().size()==0] -> Available;
 	     createBill(Seat seat, List<OrderItem> itemsToBill) -> IssuedBill;
 	   }
     	   IssuedBill 
 	   {
-	     freeTableAndSeats(Table table, Order order) [allItemsOrderedWereBilled()] -> Available; 
+	     setTableAndSeatsAvailable(Table table, Order order) [allItemsOrderedWereBilled()] -> Available; 
 	     createBill(Seat seat, List<OrderItem> itemsToBill) -> IssuedBill;
 	     cancelBill(Table table, Seat seat) [tableHasMoreThanOneBillLeft(table)]-> IssuedBill;
 		 cancelBill(Table table, Seat seat) [tableHasOneBillLeft(table)]-> ReadyToOrder;
 		 addItemToOrderAndBillSeat(Seat seat, OrderItem itemToAdd) [seat.getBills().size()==0] -> IssuedBill;
        }
        
-       createReservation(Table table, int numSeatsRequested, Date resTime, String contactName, String contactEmail, 
-       	String contactPhone) [table.getCurrentSeats().size() >= numSeatsRequested] -> /{
-       		List<Reservation> allRes = table.getReservations();
-    			for(Reservation res: allRes) {
-    				if(res.getDateTime()==resTime) {
-    					return false;
-    				}
-    			}
-       } InUse;
-       cancelReservation(int resNum) -> InUse;
        
      }
     

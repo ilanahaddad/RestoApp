@@ -174,75 +174,7 @@ public class Table implements Serializable
     return statesInUse;
   }
 
-  public boolean createReservation(Table table,int numSeatsRequested,Date resTime,String contactName,String contactEmail,String contactPhone)
-  {
-    boolean wasEventProcessed = false;
-    
-    States aStates = states;
-    switch (aStates)
-    {
-      case Available:
-        if (table.getCurrentSeats().size()>=numSeatsRequested)
-        {
-        // line 12 "../../../../../RestoAppStates.ump"
-          List<Reservation> allRes = table.getReservations();
-    			for(Reservation res: allRes) {
-    				if(res.getDateTime()==resTime) {
-    					return false;
-    				}
-    			}
-          setStates(States.Available);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      case InUse:
-        if (table.getCurrentSeats().size()>=numSeatsRequested)
-        {
-          exitStates();
-        // line 51 "../../../../../RestoAppStates.ump"
-          List<Reservation> allRes = table.getReservations();
-    			for(Reservation res: allRes) {
-    				if(res.getDateTime()==resTime) {
-    					return false;
-    				}
-    			}
-          setStates(States.InUse);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
-
-    return wasEventProcessed;
-  }
-
-  public boolean cancelReservation(int resNum)
-  {
-    boolean wasEventProcessed = false;
-    
-    States aStates = states;
-    switch (aStates)
-    {
-      case Available:
-        setStates(States.Available);
-        wasEventProcessed = true;
-        break;
-      case InUse:
-        exitStates();
-        setStates(States.InUse);
-        wasEventProcessed = true;
-        break;
-      default:
-        // Other states do respond to this event
-    }
-
-    return wasEventProcessed;
-  }
-
-  public boolean createOrder(Table table,int numSeatsNeeded)
+  public boolean setTableInUse(Table table,int numSeatsNeeded)
   {
     boolean wasEventProcessed = false;
     
@@ -273,7 +205,7 @@ public class Table implements Serializable
     {
       case ReadyToOrder:
         exitStatesInUse();
-        // line 28 "../../../../../RestoAppStates.ump"
+        // line 18 "../../../../../RestoAppStates.ump"
         if(seat.getOrderItems().size()==0){ 
 	     		setSeatInUse(seat);
 	     	}
@@ -296,7 +228,7 @@ public class Table implements Serializable
     {
       case ReadyToOrder:
         exitStatesInUse();
-        // line 33 "../../../../../RestoAppStates.ump"
+        // line 23 "../../../../../RestoAppStates.ump"
         if(seat.getOrderItems().size()==1){
 	     		setSeatAvailable();
 	     	}
@@ -310,7 +242,7 @@ public class Table implements Serializable
     return wasEventProcessed;
   }
 
-  public boolean freeTableAndSeats(Table table,Order order)
+  public boolean setTableAndSeatsAvailable(Table table,Order order)
   {
     boolean wasEventProcessed = false;
     
@@ -974,7 +906,7 @@ public class Table implements Serializable
 	    }
   }
 
-  // line 66 "../../../../../RestoAppStates.ump"
+  // line 46 "../../../../../RestoAppStates.ump"
    private boolean tableHasMoreThanOneBillLeft(Table table){
     List<Seat> currSeats = table.getCurrentSeats();
 	int numBillsForTable = 0;
@@ -986,7 +918,7 @@ public class Table implements Serializable
 	return (numBillsForTable > 1);
   }
 
-  // line 76 "../../../../../RestoAppStates.ump"
+  // line 56 "../../../../../RestoAppStates.ump"
    private boolean tableHasOneBillLeft(Table table){
     List<Seat> currSeats = table.getCurrentSeats();
 	int numBillsForTable = 0;
@@ -998,19 +930,19 @@ public class Table implements Serializable
 	return (numBillsForTable == 1);
   }
 
-  // line 86 "../../../../../RestoAppStates.ump"
+  // line 66 "../../../../../RestoAppStates.ump"
    private boolean allItemsOrderedWereBilled(){
     //TODO: implement this in iteration 5
     return false;
   }
 
-  // line 90 "../../../../../RestoAppStates.ump"
+  // line 70 "../../../../../RestoAppStates.ump"
    private boolean setSeatInUse(Seat seat){
     //TODO: implement this in iteration 5
   	return false;
   }
 
-  // line 94 "../../../../../RestoAppStates.ump"
+  // line 74 "../../../../../RestoAppStates.ump"
    private boolean setSeatAvailable(){
     //TODO: implement this in iteration 5
   	return false;
