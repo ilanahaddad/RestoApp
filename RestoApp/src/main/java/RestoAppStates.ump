@@ -17,7 +17,7 @@ class Table
     				}
     			}
        } Available;
-      cancelReservation(Table table, Date resTime) -> Available;
+      cancelReservation(int resNum) -> Available;
       createOrder(Table table, int numSeatsNeeded) [table.getCurrentSeats().size() >= numSeatsNeeded] -> InUse;
     }  
 
@@ -52,7 +52,7 @@ class Table
     				}
     			}
        } InUse;
-       cancelReservation(Table table, Date resTime) -> InUse;
+       cancelReservation(int resNum) -> InUse;
        
      }
     
