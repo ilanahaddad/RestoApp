@@ -277,59 +277,8 @@ public class RestoController
         }
         throw new InvalidInputException("Could not retrieve table number " + tableNum);
     }
-/*
-    // checks if the table has enough seats to accommodate the number of clients
-    private static boolean hasEnoughSeats(int tableNum) 
-    {//int numSeatsRequired
-        Table table = null;
-        try { table = getTableByNum(tableNum); }
-        catch (InvalidInputException err) { return false; }
-        int seatsAtTable = table.getCurrentSeats().size();
-        int seatsRequested = 0;
-        
-        return (seatsAtTable >= seatsRequested);
-    }
-    public static boolean reservationTimeAvailable(Table table, Date resTime) {
-    		//table.getSeats()
-    		List<Reservation> allRes = table.getReservations();
-    		for(Reservation res: allRes) {
-    			if(res.getDateTime()==resTime) {
-    				return false;
-    			}
-    		}
-    		return true;
-    }
-    public static boolean orderOnlyHasOneItem(Seat seat) {
-    		
-		return seat.getOrderItems().size() == 1;
-    }
-    public static boolean tableHasOneBill(Table table) {
-    		List<Seat> currSeats = table.getCurrentSeats();
-    		int numBillsForTable = 0;
-    		for(Seat s: currSeats) { //for every current seat at that table
-    			if(s.getBills().size() >0) { 
-    				numBillsForTable ++; //add up bills per seat if any
-    			}
-    		}
-    		return numBillsForTable == 1;
-    }
     
-    private boolean allItemsOrderedWereBilled(Table table){
-    		boolean allItemsOrderedWereBilled = false;
-    		List<Seat> currSeats = table.getCurrentSeats();
-    		int orderedItemsForTable = table.getOrders().size();
-    		
-		int numBillsForTable = 0;
-		for(Seat s: currSeats) { //for every current seat at that table
-			List<Bill> billsForSeat = s.getBills();
-			for(Bill b: billsForSeat) {
-				if(b.get == orderedItemsForTable) {
-					allItemsOrderedWereBilled = true;
-				}
-			}
-		}
-      	return false;
-    }*/
+//to here
     // checks if the table with given attributes is in the set tables in the app
     private static boolean exactTableInApp(int tableNum, int numSeats, int width, int length)
     {

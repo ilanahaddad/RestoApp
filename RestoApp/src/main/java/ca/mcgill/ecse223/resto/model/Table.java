@@ -3,7 +3,6 @@
 
 package ca.mcgill.ecse223.resto.model;
 import java.io.Serializable;
-import java.sql.Time;
 import java.util.*;
 
 // line 13 "../../../../../RestoAppPersistence.ump"
@@ -173,7 +172,7 @@ public class Table implements Serializable
     return statesInUse;
   }
 
-  public boolean createOrder(Table table,int numSeatsNeeded,Date orderDate,Time orderTime)
+  public boolean setTableInUse(Table table)
   {
     boolean wasEventProcessed = false;
     
@@ -181,9 +180,41 @@ public class Table implements Serializable
     switch (aStates)
     {
       case Available:
-        if (table.getCurrentSeats().size()>=numSeatsNeeded)
+        setStates(States.InUse);
+        wasEventProcessed = true;
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean addOrderItem(Seat seat,OrderItem itemToOrder)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesInUse aStatesInUse = statesInUse;
+    switch (aStatesInUse)
+    {
+      case ReadyToOrder:
+        exitStatesInUse();
+        // line 14 "../../../../../RestoAppStates.ump"
+        if(seat.numberOfOrderItems()==0){ 
+	     		setSeatInUse(seat);
+	     	}
+        setStatesInUse(StatesInUse.ReadyToOrder);
+        wasEventProcessed = true;
+        break;
+      case IssuedBill:
+        if (seatHasNoExistingBill(seat))
         {
-          setStates(States.InUse);
+          exitStatesInUse();
+        // line 38 "../../../../../RestoAppStates.ump"
+          if(seat.numberOfOrderItems()==0){ 
+	     		setSeatInUse(seat);
+	     	}
+          setStatesInUse(StatesInUse.IssuedBill);
           wasEventProcessed = true;
           break;
         }
@@ -195,30 +226,7 @@ public class Table implements Serializable
     return wasEventProcessed;
   }
 
-  public boolean addToOrder(Seat seat,OrderItem itemToOrder)
-  {
-    boolean wasEventProcessed = false;
-    
-    StatesInUse aStatesInUse = statesInUse;
-    switch (aStatesInUse)
-    {
-      case ReadyToOrder:
-        exitStatesInUse();
-        // line 14 "../../../../../RestoAppStates.ump"
-        if(seat.getOrderItems().size()==0){ 
-	     		setSeatInUse(seat);
-	     	}
-        setStatesInUse(StatesInUse.ReadyToOrder);
-        wasEventProcessed = true;
-        break;
-      default:
-        // Other states do respond to this event
-    }
-
-    return wasEventProcessed;
-  }
-
-  public boolean cancelItem(Seat seat,OrderItem itemToCancel)
+  public boolean cancelOrderItem(Seat seat,OrderItem itemToCancel)
   {
     boolean wasEventProcessed = false;
     
@@ -228,11 +236,24 @@ public class Table implements Serializable
       case ReadyToOrder:
         exitStatesInUse();
         // line 19 "../../../../../RestoAppStates.ump"
-        if(seat.getOrderItems().size()==1){
+        if(seat.numberOfOrderItems()==1){
 	     		setSeatAvailable();
 	     	}
         setStatesInUse(StatesInUse.ReadyToOrder);
         wasEventProcessed = true;
+        break;
+      case IssuedBill:
+        if (seatHasNoExistingBill(seat))
+        {
+          exitStatesInUse();
+        // line 43 "../../../../../RestoAppStates.ump"
+          if(seat.numberOfOrderItems()==1){
+	     		setSeatAvailable();
+	     	}
+          setStatesInUse(StatesInUse.IssuedBill);
+          wasEventProcessed = true;
+          break;
+        }
         break;
       default:
         // Other states do respond to this event
@@ -249,7 +270,7 @@ public class Table implements Serializable
     switch (aStatesInUse)
     {
       case ReadyToOrder:
-        if (order.getOrderItems().size()==0)
+        if (order.numberOfOrderItems()==0)
         {
           exitStates();
           setStates(States.Available);
@@ -258,13 +279,13 @@ public class Table implements Serializable
         }
         break;
       case IssuedBill:
-        if (allItemsOrderedWereBilled())
-        {
-          exitStates();
-          setStates(States.Available);
-          wasEventProcessed = true;
-          break;
-        }
+        exitStates();
+        // line 29 "../../../../../RestoAppStates.ump"
+        if(order.numberOfOrderItems() == numBillsForTable(table)){
+	     		return false;
+	     	}
+        setStates(States.Available);
+        wasEventProcessed = true;
         break;
       default:
         // Other states do respond to this event
@@ -273,7 +294,7 @@ public class Table implements Serializable
     return wasEventProcessed;
   }
 
-  public boolean createBill(Seat seat,List<OrderItem> itemsToBill)
+  public boolean createBill(List<Seat> seats)
   {
     boolean wasEventProcessed = false;
     
@@ -286,9 +307,13 @@ public class Table implements Serializable
         wasEventProcessed = true;
         break;
       case IssuedBill:
-        exitStatesInUse();
-        setStatesInUse(StatesInUse.IssuedBill);
-        wasEventProcessed = true;
+        if (eachSeatHasNoExistingBill(seats))
+        {
+          exitStatesInUse();
+          setStatesInUse(StatesInUse.IssuedBill);
+          wasEventProcessed = true;
+          break;
+        }
         break;
       default:
         // Other states do respond to this event
@@ -297,7 +322,7 @@ public class Table implements Serializable
     return wasEventProcessed;
   }
 
-  public boolean cancelBill(Table table,Seat seat)
+  public boolean addSeatToExistingBill(Seat seat,Bill bill)
   {
     boolean wasEventProcessed = false;
     
@@ -305,40 +330,40 @@ public class Table implements Serializable
     switch (aStatesInUse)
     {
       case IssuedBill:
-        if (tableHasMoreThanOneBillLeft(table))
+        if (seatHasNoExistingBill(seat))
         {
           exitStatesInUse();
           setStatesInUse(StatesInUse.IssuedBill);
           wasEventProcessed = true;
           break;
         }
-        if (tableHasOneBillLeft(table))
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean cancelBill(Table table,Bill billToCancel)
+  {
+    boolean wasEventProcessed = false;
+    
+    StatesInUse aStatesInUse = statesInUse;
+    switch (aStatesInUse)
+    {
+      case IssuedBill:
+        if (numBillsForTable(table)>1)
+        {
+          exitStatesInUse();
+          setStatesInUse(StatesInUse.IssuedBill);
+          wasEventProcessed = true;
+          break;
+        }
+        if (numBillsForTable(table)==1)
         {
           exitStatesInUse();
           setStatesInUse(StatesInUse.ReadyToOrder);
-          wasEventProcessed = true;
-          break;
-        }
-        break;
-      default:
-        // Other states do respond to this event
-    }
-
-    return wasEventProcessed;
-  }
-
-  public boolean addItemToOrderAndBillSeat(Seat seat,OrderItem itemToAdd)
-  {
-    boolean wasEventProcessed = false;
-    
-    StatesInUse aStatesInUse = statesInUse;
-    switch (aStatesInUse)
-    {
-      case IssuedBill:
-        if (seat.getBills().size()==0)
-        {
-          exitStatesInUse();
-          setStatesInUse(StatesInUse.IssuedBill);
           wasEventProcessed = true;
           break;
         }
@@ -905,43 +930,49 @@ public class Table implements Serializable
 	    }
   }
 
-  // line 40 "../../../../../RestoAppStates.ump"
-   private boolean tableHasMoreThanOneBillLeft(Table table){
+  // line 54 "../../../../../RestoAppStates.ump"
+   private boolean allItemsOrderedWereBilled(Table table, Order order){
+    int numberOfOrderedItemsForTable = order.numberOfOrderItems();
+    		int numberOfBillsForTable= numBillsForTable(table); 
+      	return numberOfBillsForTable == numberOfOrderedItemsForTable;
+  }
+
+  // line 59 "../../../../../RestoAppStates.ump"
+   private int numBillsForTable(Table table){
     List<Seat> currSeats = table.getCurrentSeats();
 	int numBillsForTable = 0;
 	for(Seat s: currSeats) { //for every current seat at that table
-		if(s.getBills().size() >0) { 
+		if(s.numberOfBills() >0) { 
 			numBillsForTable ++; //add up bills per seat if any
 		}
 	}
-	return (numBillsForTable > 1);
+	return numBillsForTable;
   }
 
-  // line 50 "../../../../../RestoAppStates.ump"
-   private boolean tableHasOneBillLeft(Table table){
-    List<Seat> currSeats = table.getCurrentSeats();
-	int numBillsForTable = 0;
-	for(Seat s: currSeats) { //for every current seat at that table
-		if(s.getBills().size() >0) { 
-			numBillsForTable ++; //add up bills per seat if any
-		}
-	}
-	return (numBillsForTable == 1);
+  // line 69 "../../../../../RestoAppStates.ump"
+   private boolean eachSeatHasNoExistingBill(List<Seat> seatsToBill){
+    int result = 0;
+  	for(Seat s: seatsToBill){
+  		if(!seatHasNoExistingBill(s)){
+  			result++;
+  		}
+  	}
+  	return result==0;
   }
 
-  // line 60 "../../../../../RestoAppStates.ump"
-   private boolean allItemsOrderedWereBilled(){
-    //TODO: implement this in iteration 5
-    return false;
+  // line 79 "../../../../../RestoAppStates.ump"
+   private boolean seatHasNoExistingBill(Seat seat){
+    //implement this is iteration 5
+  	return false;
   }
 
-  // line 64 "../../../../../RestoAppStates.ump"
+  // line 84 "../../../../../RestoAppStates.ump"
    private boolean setSeatInUse(Seat seat){
     //TODO: implement this in iteration 5
   	return false;
   }
 
-  // line 68 "../../../../../RestoAppStates.ump"
+  // line 88 "../../../../../RestoAppStates.ump"
    private boolean setSeatAvailable(){
     //TODO: implement this in iteration 5
   	return false;
