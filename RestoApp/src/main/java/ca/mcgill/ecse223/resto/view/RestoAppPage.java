@@ -18,8 +18,14 @@ import ca.mcgill.ecse223.resto.controller.InvalidInputException;
 import ca.mcgill.ecse223.resto.controller.RestoController;
 import ca.mcgill.ecse223.resto.model.Table;
 import ca.mcgill.ecse223.resto.model.Order;
+import com.github.lgooddatepicker.components.TimePicker;
+import com.github.lgooddatepicker.components.TimePickerSettings;
+import org.jdesktop.swingx.JXDatePicker;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -183,7 +189,7 @@ public class RestoAppPage extends JFrame
     }
     
     private void reserveTableAction(ActionEvent event) {
-    	JPanel panel = new JPanel(new GridLayout(7, 2, 5, 5));
+    	JPanel panel = new JPanel(new GridLayout(9, 4, 5, 5));
         
         //create array of current table numbers
         int currentLength = RestoController.getCurrentTables().size();
@@ -201,15 +207,22 @@ public class RestoAppPage extends JFrame
         allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         
         panel.add(allTablesList);
-        
-    	panel.add(new JLabel("Date:"));
-    	JTextField resDateField = new JTextField();
-        //JDateChooser resDateField = new JDateChooser();
-        panel.add(resDateField);
+
+        panel.add(new JLabel("Date:"));
+        JXDatePicker picker = new JXDatePicker();
+        picker.setDate(Calendar.getInstance().getTime());
+        picker.setFormats(new SimpleDateFormat("dd.MM.yyyy"));
+        panel.add(picker);
+
+
 
         panel.add(new JLabel("Time:"));
-        JTextField resTimeField = new JTextField();
-        panel.add(resTimeField);
+        TimePickerSettings timeSettings = new TimePickerSettings();
+        timeSettings.setColor(TimePickerSettings.TimeArea.TimePickerTextValidTime, Color.blue);
+        timeSettings.initialTime = LocalTime.now();
+        TimePicker timePicker = new TimePicker(timeSettings);
+        add(timePicker);
+        panel.add(timePicker);
 
         panel.add(new JLabel("Number of people:"));
         JTextField numPeopleField = new JTextField();
