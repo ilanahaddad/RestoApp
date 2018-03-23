@@ -1,5 +1,6 @@
 package ca.mcgill.ecse223.resto.controller;
 
+import java.awt.Component;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -430,6 +431,17 @@ public class RestoController
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         return restoApp.getTable(tableNum);
     }
+
+    public static List<Order> getCurrentOrders() {
+        RestoApp restoApp = RestoAppApplication.getRestoApp();
+        return restoApp.getCurrentOrders();
+    }
+
+    public static Order getCurrentOrder(int orderNum){
+        RestoApp restoApp = RestoAppApplication.getRestoApp();
+        return restoApp.getCurrentOrder(orderNum);
+    }
+
     // get largest Y coordinate of all the app's current tables
     public static int getMaxX()
     {
@@ -453,6 +465,7 @@ public class RestoController
         }
         return maxY;
     }
+
     public static void startOrder(List<Table> tables) throws InvalidInputException{
     		if(tables == null) {
     			throw new InvalidInputException("Error: Tables can't be null.\n");
@@ -493,22 +506,44 @@ public class RestoController
     		r.addCurrentOrder(newOrder); //added newly created order to list of current orders
     		RestoAppApplication.save();
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
+    public static void endOrder(Order orderToEnd) throws InvalidInputException
+    {
+        RestoApp r = RestoAppApplication.getRestoApp();
 
+        List<Order> currOrders = r.getCurrentOrders();
+        if (!currOrders.contains(orderToEnd))
+        {
+            throw new InvalidInputException("Order to end is not part of current orders");
+        }
+
+        List<Table> tablesInOrder = orderToEnd.getTables();
+
+        for (Table table : tablesInOrder)
+        {
+            if (orderBelongsToTable(orderToEnd, table)) { table.endOrder(orderToEnd); }
+        }
+
+        if (allTablesAvailableOrDifferentCurrentOrder(orderToEnd, tablesInOrder))
+        {
+            r.removeCurrentOrder(orderToEnd);
+        }
+
+        RestoAppApplication.save();
+    }
+
+	private static boolean allTablesAvailableOrDifferentCurrentOrder(Order orderToEnd, List<Table> tablesInOrder) {
+        for (Table table: tablesInOrder)
+        {
+            if (table.getStatus() == Table.Status.Available || !table.getOrder(table.numberOfOrders() -1).equals(orderToEnd))
+            {
+                return false;
+            }
+        }
+        return true;
+	}
+
+	private static boolean orderBelongsToTable(Order orderToEnd, Table table) {
+		return table.numberOfOrders() > 0 && table.getOrder(table.numberOfOrders() - 1).equals(orderToEnd);
+	}
 }
