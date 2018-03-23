@@ -177,6 +177,63 @@ public class RestoAppPage extends JFrame
     
     private void reserveTableAction(ActionEvent event) {
     	JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
+    	panel.add(new JLabel("Date:"));
+        JTextField resDateField = new JTextField();
+        panel.add(resDateField);
+
+        panel.add(new JLabel("Time:"));
+        JTextField resTimeField = new JTextField();
+        panel.add(resTimeField);
+
+        panel.add(new JLabel("Number of people:"));
+        JTextField numPeopleField = new JTextField();
+        panel.add(numPeopleField);
+
+        panel.add(new JLabel("Contact name:"));
+        JTextField nameField = new JTextField();
+        panel.add(nameField);
+
+        panel.add(new JLabel("Contact e-mail:"));
+        JTextField emailField = new JTextField();
+        panel.add(emailField);
+
+        panel.add(new JLabel("Contact phone number:"));
+        JTextField phoneField = new JTextField();
+        panel.add(phoneField);
+        
+        
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Add Table",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION){
+            try{
+                /* TODO: making a reservation through the UI
+                int numSeats = parseInt(numSeatsField.getText());
+                int tableNum = parseInt(tableNumField.getText());
+                int x = parseInt(xField.getText());
+                int y = parseInt(yField.getText());
+                int width = parseInt(widthField.getText());
+                int length = parseInt(lengthField.getText());
+
+                RestoController.reserveTable();
+
+                
+                tablePanel.revalidate();
+                tablePanel.repaint(); */
+
+                JOptionPane.showMessageDialog(null, "Reservation made successfully.");
+            }
+            catch (Exception error){
+            	JOptionPane.showMessageDialog(
+                        null,
+                        error.getMessage(),
+                        "Reservation was not made.",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        } 
+        else { 
+        		JOptionPane.showMessageDialog(null, "No reservation made."); 
+        	}
     	
     }
     private void startOrderAction(ActionEvent event){

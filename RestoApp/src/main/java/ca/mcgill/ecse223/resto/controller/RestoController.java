@@ -318,9 +318,17 @@ public class RestoController
 			tableArray[i] = tables.get(i);
 		}
 		Reservation res = new Reservation(date, time, numberInParty, contactName, contactEmailAddress, contactPhoneNumber, r, tableArray);
+		r.addReservation(res); //not in seq diagram? should I remove? (PotassiumK)
 		RestoAppApplication.save();
 	}
 	
+	/**
+	 * Compare the date and time of two reservations to see if they overlap
+	 * @param existingReservation the reservation that needs comparing to
+	 * @param date date of new reservation to be compared
+	 * @param time time of new reservation to be compared
+	 * @return
+	 */
 	public static boolean reservationDoesOverlap(Reservation existingReservation, Date date, Time time) {
 		boolean overlapStatus = false;
 		
