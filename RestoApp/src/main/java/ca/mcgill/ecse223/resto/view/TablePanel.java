@@ -97,11 +97,14 @@ public class TablePanel extends JPanel
         }// draw rectangle
         g2d.fillRect(x*UNIT_LENGTH, y*UNIT_LENGTH, table.getWidth()*UNIT_LENGTH, table.getLength()*UNIT_LENGTH);
 
-        // write table number
+        // write table number, state and latest reservation
         g2d.setColor(Color.black);
         g2d.setFont(new Font("Purisa", Font.BOLD, 13));
         g2d.drawString(table.getNumber()+"", x*UNIT_LENGTH + tableNumXPadding, y*UNIT_LENGTH + tableNumYPadding - 7);
         g2d.drawString(table.getStatus()+"", x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 7);
+        if (!table.getReservations().isEmpty()) {
+        	g2d.drawString(table.getReservation(0)+"", x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 7);
+        }
     }
 
     private void drawSeats(Table table, Graphics2D g2d)
