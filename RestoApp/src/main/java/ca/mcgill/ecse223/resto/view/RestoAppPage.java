@@ -20,6 +20,7 @@ import ca.mcgill.ecse223.resto.model.Table;
 import ca.mcgill.ecse223.resto.model.Order;
 import com.github.lgooddatepicker.components.TimePicker;
 import com.github.lgooddatepicker.components.TimePickerSettings;
+import jdk.vm.ci.meta.Local;
 import org.jdesktop.swingx.JXDatePicker;
 
 import java.text.SimpleDateFormat;
@@ -219,7 +220,8 @@ public class RestoAppPage extends JFrame
 
         panel.add(new JLabel("Time:"));
         TimePickerSettings timeSettings = new TimePickerSettings();
-        timeSettings.setColor(TimePickerSettings.TimeArea.TimePickerTextValidTime, Color.blue);
+        timeSettings.setColor(TimePickerSettings.TimeArea.TimePickerTextValidTime, Color.black);
+        timeSettings.generatePotentialMenuTimes(TimePickerSettings.TimeIncrement.OneHour, LocalTime.of(9, 0), LocalTime.of(23,0));
         timeSettings.initialTime = LocalTime.now();
         TimePicker timePicker = new TimePicker(timeSettings);
         add(timePicker);
@@ -249,8 +251,7 @@ public class RestoAppPage extends JFrame
             try{
             	System.out.println(picker.getDate());
             	Date date = new Date(picker.getDate().getTime());
-            	//Date date = inputDate;
-            	Time time = new Time(3);
+            	Time time = Time.valueOf(timePicker.getTime());
             	int numberInParty = parseInt(numPeopleField.getText());
             	String contactName = nameField.getText();
             	String contactEmailAddress = emailField.getText();

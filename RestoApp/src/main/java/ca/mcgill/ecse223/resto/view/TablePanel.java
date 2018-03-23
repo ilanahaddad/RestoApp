@@ -104,7 +104,7 @@ public class TablePanel extends JPanel
         g2d.drawString(table.getStatus()+"", x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 7);
         //table.getReservations().sort();
         if (!table.getReservations().isEmpty()) {
-        	g2d.drawString("#" + table.getReservation(0).getReservationNumber()+" at "+table.getReservation(0).getTime(), x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 20);
+        	g2d.drawString("#" + table.getReservation(0).getReservationNumber()+" at "+ table.getReservation(0).getTime(), x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 20);
         }
     }
 
