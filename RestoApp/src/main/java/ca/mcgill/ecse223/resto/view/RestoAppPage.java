@@ -321,14 +321,30 @@ public class RestoAppPage extends JFrame
         
         //create array of current orders
         int numOrders = RestoController.getCurrentOrders().size();
-        String currOrderNums[] = new String[numOrders];
-        for (int i = 0; i < numOrders; i++){
-        		currOrderNums[i] = "" + RestoController.getCurrentOrder(i).getNumber();
+        if (numOrders > 0)
+        {
+            displayEndOrderAction(panel, numOrders);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(
+                            null,
+                            "RestoApp currently has no table with orders",
+                            "No Orders currently available",
+                            JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+	private void displayEndOrderAction(JPanel panel, int numOrders) {
+		String currOrderNums[] = new String[numOrders];
+        int i = 0;
+        for (Order o : RestoController.getCurrentOrders()){
+        		currOrderNums[i++] = "" + o.getNumber();
         }
 
         panel.add(new JLabel("Select order to end:"));
         DefaultListModel<String> orderNumList = new DefaultListModel<>();
-        for(int i=0; i<currOrderNums.length;i++) { 
+        for(i=0; i<currOrderNums.length;i++) { 
         		orderNumList.addElement(currOrderNums[i]);
         }
         JList<String> activeOrders  = new JList<>(orderNumList);
@@ -357,15 +373,13 @@ public class RestoAppPage extends JFrame
                             error.getMessage(),
                             "Could not end order",
                             JOptionPane.ERROR_MESSAGE);
-                    System.out.println(error.getMessage());
+                    error.printStackTrace();
                 }
         } 
         else { 
         	JOptionPane.showMessageDialog(null, "No order was ended."); 
         	}
-    }
-
-
+	}
 
     private void displayMenuAction(ActionEvent event){
         JFrame f = new JFrame("menu");

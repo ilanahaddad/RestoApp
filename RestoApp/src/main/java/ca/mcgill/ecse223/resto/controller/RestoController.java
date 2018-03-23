@@ -439,7 +439,12 @@ public class RestoController
 
     public static Order getCurrentOrder(int orderNum){
         RestoApp restoApp = RestoAppApplication.getRestoApp();
-        return restoApp.getCurrentOrder(orderNum);
+        List<Order> currOrders = restoApp.getCurrentOrders();
+        for (Order o : currOrders)
+        {
+            if (o.getNumber() == orderNum) { return o; }
+        }
+        return null;
     }
 
     // get largest Y coordinate of all the app's current tables
@@ -518,11 +523,17 @@ public class RestoController
         }
 
         List<Table> tablesInOrder = orderToEnd.getTables();
-
+        
+        List<Table> tablesMarked = new ArrayList<Table>();
         for (Table table : tablesInOrder)
-        {
-            if (orderBelongsToTable(orderToEnd, table)) { table.endOrder(orderToEnd); }
+        {   
+            if (orderBelongsToTable(orderToEnd, table)) { tablesMarked.add(table); }
         }
+
+        for (Table table: tablesMarked){
+            table.endOrder(orderToEnd);
+        }
+        
 
         if (allTablesAvailableOrDifferentCurrentOrder(orderToEnd, tablesInOrder))
         {
