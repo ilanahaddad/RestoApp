@@ -3,9 +3,6 @@ namespace ca.mcgill.ecse223.resto.model;
 use RestoAppPersistence.ump;
 use RestoAppTableStateMachine.ump;
 
-use RestoAppPersistence.ump;
-use RestoAppTableStateMachine.ump;
-
 class RestoApp {
    1 <@>- * Reservation reservations; // sorted by date and time
    1 <@>- * Table tables;
