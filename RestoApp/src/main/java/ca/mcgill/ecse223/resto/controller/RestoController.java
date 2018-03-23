@@ -280,8 +280,20 @@ public class RestoController
 	public static void reserveTable(Date date, Time time, int numberInParty, String contactName, String contactEmailAddress, String contactPhoneNumber, List<Table> tables) throws InvalidInputException {
 		
 		String error = "";
-		if (date == null || time == null || contactName.equals("") || contactName == null || contactEmailAddress == null || contactEmailAddress.equals("")||contactPhoneNumber.equals("")||contactPhoneNumber == null) {
-			error += "An input was left empty. Please fill out all sections.\n";
+		if (date == null || time == null ) {
+			error += "Date cannot be null.\n";
+		}
+		if (time == null) {
+			error += "Time cannot be null.\n";
+		}
+		if (contactName.equals("") || contactName == null) {
+			error += "Please enter a contact name.\n";
+		}
+		if (contactEmailAddress == null || contactEmailAddress.equals("")) {
+			error += "Please enter a contact e-mail address.\n";
+		}
+		if (contactPhoneNumber.equals("")||contactPhoneNumber == null) {
+			error += "Please enter a contact phone number.\n";
 		}
 		Date currentDate = new Date(Calendar.getInstance().getTime().getTime());
 		if (date.before(currentDate) || (date.equals(currentDate) && time.before(currentDate))) {
@@ -302,6 +314,7 @@ public class RestoController
 		
 		for (Table table : tables) {
 			current = currentTables.contains(table);
+			if (current == false) throw new InvalidInputException("The table you are trying to reserve is not currently in the restaurant.\n");
 			seatCapacity += table.numberOfCurrentSeats();
 			reservations = table.getReservations();
 			
