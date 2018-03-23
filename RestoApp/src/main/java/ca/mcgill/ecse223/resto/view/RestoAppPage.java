@@ -15,6 +15,7 @@ import javax.swing.event.ListSelectionEvent;
 import ca.mcgill.ecse223.resto.controller.InvalidInputException;
 import ca.mcgill.ecse223.resto.controller.RestoController;
 import ca.mcgill.ecse223.resto.model.Table;
+import ca.mcgill.ecse223.resto.model.Order;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,7 @@ public class RestoAppPage extends JFrame
     }
 
     private void createMenuBar(){
+        //TODO before submitting split  into different tabs (system, table, menu)
         JMenuBar menubar = new JMenuBar();
         JMenu actions = new JMenu("Actions");
         JMenuItem exitMenuItem = createMenuItem("Exit", RestoAppActions.EXIT_ACTION);
@@ -69,10 +71,11 @@ public class RestoAppPage extends JFrame
         JMenuItem moveTableMenuItem = createMenuItem("Move Table", this::moveTableAction);
         JMenuItem removeTableMenuItem = createMenuItem("Remove Table", this::removeTableAction);
         JMenuItem menuMenuItem = createMenuItem("Display Menu", this::displayMenuAction);
-        JMenuItem reservationMenuItem = createMenuItem("Make Reservation", this::displayMenuAction);
-        JMenuItem startOrderMenuItem = createMenuItem("Start Order", this::displayMenuAction);
+        JMenuItem reservationMenuItem = createMenuItem("Make Reservation", this::reserveTableAction);
+        JMenuItem startOrderMenuItem = createMenuItem("Start Order", this::startOrderAction);
+        JMenuItem endOrderMenuItem = createMenuItem("End Order", this::endOrderAction);
         
-        
+        actions.add(endOrderMenuItem);
         actions.add(startOrderMenuItem);
         actions.add(reservationMenuItem);
         actions.add(addTableMenuItem);
@@ -103,7 +106,8 @@ public class RestoAppPage extends JFrame
         JButton displayMenuButton = createButton("displayMenu.png", "Display Menu [Alt + D]", KeyEvent.VK_D, this::displayMenuAction);
         JButton reserveTableButton = createButton("reserveTable.png", "Make Reservation [Alt + R]", KeyEvent.VK_R, this::reserveTableAction);
         JButton startOrderButton = createButton("startOrder.png", "Start Order [Alt + O]", KeyEvent.VK_O, this::startOrderAction);
-        
+        JButton endOrderButton = createButton("endOrder.png", "Start Order [Alt + E]", KeyEvent.VK_E, this::endOrderAction);
+
         toolbar.add(exitButton);
         toolbar.add(addTableButton);
         toolbar.add(changeTableButton);
@@ -112,6 +116,7 @@ public class RestoAppPage extends JFrame
         toolbar.add(displayMenuButton);
         toolbar.add(reserveTableButton);
         toolbar.add(startOrderButton);
+        toolbar.add(endOrderButton);
         add(toolbar, BorderLayout.NORTH);
     }
 
@@ -255,6 +260,7 @@ public class RestoAppPage extends JFrame
         	}
     	
     }
+
     private void startOrderAction(ActionEvent event){
         JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
         
@@ -309,6 +315,72 @@ public class RestoAppPage extends JFrame
         	}
     	
     }
+
+    private void endOrderAction(ActionEvent event){
+        JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+        
+        //create array of current orders
+        int numOrders = RestoController.getCurrentOrders().size();
+        if (numOrders > 0)
+        {
+            displayEndOrderAction(panel, numOrders);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(
+                            null,
+                            "RestoApp currently has no table with orders",
+                            "No Orders currently available",
+                            JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+	private void displayEndOrderAction(JPanel panel, int numOrders) {
+		String currOrderNums[] = new String[numOrders];
+        int i = 0;
+        for (Order o : RestoController.getCurrentOrders()){
+        		currOrderNums[i++] = "" + o.getNumber();
+        }
+
+        panel.add(new JLabel("Select order to end:"));
+        DefaultListModel<String> orderNumList = new DefaultListModel<>();
+        for(i=0; i<currOrderNums.length;i++) { 
+        		orderNumList.addElement(currOrderNums[i]);
+        }
+        JList<String> activeOrders  = new JList<>(orderNumList);
+        activeOrders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        panel.add(activeOrders);  	
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "End Order",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION){
+        		try{
+        			int selectedNum = Integer.parseInt(activeOrders.getSelectedValuesList().get(0));
+        			Order selectedOrder = RestoController.getCurrentOrder(selectedNum);
+                
+                    RestoController.endOrder(selectedOrder);
+                    
+                    tablePanel.revalidate();
+                    tablePanel.repaint();
+
+                    JOptionPane.showMessageDialog(null, "Order ended successfully.");
+                }
+                catch (Exception error)
+                {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            error.getMessage(),
+                            "Could not end order",
+                            JOptionPane.ERROR_MESSAGE);
+                    error.printStackTrace();
+                }
+        } 
+        else { 
+        	JOptionPane.showMessageDialog(null, "No order was ended."); 
+        	}
+	}
+
     private void displayMenuAction(ActionEvent event){
         JFrame f = new JFrame("menu");
         JPanel menuPanel = new MenuPanel();
