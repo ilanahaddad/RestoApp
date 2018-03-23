@@ -362,6 +362,22 @@ public class RestoController
 		return overlapStatus;
 	}
 	
+	public static Reservation getEarliestRes(List<Reservation> reservations) {
+		if (reservations.isEmpty()) return null;
+		
+		Reservation earliest = reservations.get(0);
+		for (Reservation r : reservations) {
+			if(r.getDate().equals(earliest.getDate()) || r.getDate().before(earliest.getDate())) {
+				if(r.getTime().before(earliest.getTime())) {
+					earliest = r;
+				}
+			}
+		}
+		
+		
+		return earliest;
+	}
+	
     public static Table getTableByNum(int tableNum) throws InvalidInputException {
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         for (Table table : restoApp.getTables())

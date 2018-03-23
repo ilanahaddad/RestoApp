@@ -9,7 +9,10 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.controller.RestoController;
+import ca.mcgill.ecse223.resto.model.Reservation;
+import ca.mcgill.ecse223.resto.model.RestoApp;
 import ca.mcgill.ecse223.resto.model.Table;
 
 public class TablePanel extends JPanel
@@ -102,9 +105,13 @@ public class TablePanel extends JPanel
         g2d.setFont(new Font("Purisa", Font.BOLD, 13));
         g2d.drawString(table.getNumber()+"", x*UNIT_LENGTH + tableNumXPadding, y*UNIT_LENGTH + tableNumYPadding - 7);
         g2d.drawString(table.getStatus()+"", x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 7);
+        
         //table.getReservations().sort();
+        
         if (!table.getReservations().isEmpty()) {
-        	g2d.drawString("#" + table.getReservation(0).getReservationNumber()+" at "+table.getReservation(0).getTime(), x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 20);
+
+        	Reservation earliest = RestoController.getEarliestRes(table.getReservations());
+        	g2d.drawString(earliest.getDate()+" at "+earliest.getTime(), x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 20);
         }
     }
 

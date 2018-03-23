@@ -266,7 +266,7 @@ public class RestoAppPage extends JFrame
     			}
             	
             	RestoController.reserveTable(date, time, numberInParty, contactName, contactEmailAddress, contactPhoneNumber, selectedTables);
-    			//TODO: DISPLAY LATEST RESERVATION
+    			
                 
                 tablePanel.revalidate();
                 tablePanel.repaint();
