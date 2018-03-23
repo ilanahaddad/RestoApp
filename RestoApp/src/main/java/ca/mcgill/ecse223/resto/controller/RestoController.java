@@ -4,8 +4,10 @@ import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.sql.Date;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
@@ -226,6 +228,13 @@ public class RestoController
         RestoAppApplication.save();
     }
     
+    /**
+     * TODO: Fill moveTable api comment
+     * @param table
+     * @param newX
+     * @param newY
+     * @throws InvalidInputException
+     */
 	public static void moveTable(Table table, int newX, int newY) throws InvalidInputException {
 		String error = "";
 		if(table==null) {
@@ -255,6 +264,53 @@ public class RestoController
         RestoAppApplication.save();
         
 	}
+	
+	/**
+	 * Make a reservation of one or more tables under a single name
+	 * @param date date of the reservation
+	 * @param time time of the reservation
+	 * @param numberInParty number of people that are in the same reservation group
+	 * @param contactName name of the reservation client
+	 * @param contactEmailAddress e-mail
+	 * @param contactPhoneNumber phone number
+	 * @param tables list of tables of type Table
+	 * @throws InvalidInputException
+	 */
+	public static void reserveTable(Date date, Time time, int numberInParty, String contactName, String contactEmailAddress, String contactPhoneNumber, List<Table> tables) throws InvalidInputException {
+		
+		String error = "";
+		if (date == null || time == null || contactName.equals("") || contactName == null || contactEmailAddress == null || contactEmailAddress.equals("")||contactPhoneNumber.equals("")||contactPhoneNumber == null) {
+			error += "An input was left empty. Please fill out all sections.\n";
+		}
+		Date currentDate = new Date(Calendar.getInstance().getTime().getTime());
+		if (date.before(currentDate) || (date.equals(currentDate) && time.before(currentDate))) {
+			error += "Cannot make reservation in the past.\n";
+		}
+		if (numberInParty < 1) {
+			error += "Members in a party cannot be negative and must be at least 1.\n";
+		}
+		if(error.length() > 0) {
+            throw new InvalidInputException(error.trim());
+        }
+		RestoApp r = RestoAppApplication.getRestoApp();
+		List<Table> currentTables = r.getCurrentTables();
+		int seatCapacity = 0;
+		boolean current;
+		List<Reservation> reservations;
+		int overlaps;
+		
+		for (Table table : tables) {
+			current = currentTables.contains(table);
+			seatCapacity += table.numberOfCurrentSeats();
+			reservations = table.getReservations();
+			
+			for (Reservation reservation : reservations) {
+				//overlaps = reservation.doesOverlap(date, time);
+			}
+		}
+		
+	}
+	
     public static Table getTableByNum(int tableNum) throws InvalidInputException {
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         for (Table table : restoApp.getTables())
