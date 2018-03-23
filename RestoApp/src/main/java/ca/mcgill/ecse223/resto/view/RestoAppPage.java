@@ -187,9 +187,18 @@ public class RestoAppPage extends JFrame
         JList<String> allTablesList  = new JList<>(listTableNums); //now list has table nums of current tables
         allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         
-        panel.add(allTablesList);  	
-        	
-
+        //SCROLLBAR:
+        allTablesList.setVisibleRowCount(3);
+        JScrollPane scrollPane = new JScrollPane(allTablesList);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+      /*  JViewport viewport = scrollPane.getViewport();
+        int w = 100;
+        int h = viewport.getPreferredSize().height;
+        Dimension preferredSize = new Dimension(w, h);
+        viewport.setPreferredSize(preferredSize);*/
+        
+        //panel.add(allTablesList); 
+        panel.add(scrollPane);
         int result = JOptionPane.showConfirmDialog(null, panel, "Start Order",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION){
