@@ -360,6 +360,62 @@ public class RestoController
         }
         return maxY;
     }
+    public static void startOrder(List<Table> tables) throws InvalidInputException{
+    		if(tables == null) {
+    			throw new InvalidInputException("Error: Tables can't be null.\n");
+    		}
+    		RestoApp r = RestoAppApplication.getRestoApp();
+    		List<Table> currentTables = r.getCurrentTables();
+    		boolean current =false;
+    		for(Table t: tables) { //loop through tables given 
+    			current = currentTables.contains(t); //check if each table given is contained in currentTables
+    			if(!current) {
+    				throw new InvalidInputException("Error: One of the tables is not current");
+    			}
+    		}
+    		boolean orderCreated = false;
+    		Order newOrder = null;
+    		for(Table t: tables) { 
+    			if(orderCreated) { 
+    				t.addToOrder(newOrder);
+    			}
+    			else { //new Order: 
+    				Order lastOrder = null;
+    				if(t.numberOfOrders() >0) { //if table has order(s), get last one 
+    					lastOrder = t.getOrder(t.numberOfOrders()-1);
+    				}
+    				t.startOrder(); //now lastOrder is secondToLast (or null if new order was first one)
+    				if(t.numberOfOrders() > 0 && !t.getOrder(t.numberOfOrders()-1).equals(lastOrder)) {
+    				//checks that order just created is not equal to previous last order from tables orders 
+    					//(checks that t.startOrder successfully added order to table)
+    					orderCreated = true; 
+    					newOrder = t.getOrder(t.numberOfOrders()-1); //pass last order of table to newOrder object 
+    				}
+    			}
+    		}
+    		if(!orderCreated) {
+    			//went through loop for all tables and an order was never created 
+    			throw new InvalidInputException("Order not created: failed for all tables.\n");
+    		}
+    		r.addCurrentOrder(newOrder); //added newly created order to list of current orders
+    		RestoAppApplication.save();
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 
 }

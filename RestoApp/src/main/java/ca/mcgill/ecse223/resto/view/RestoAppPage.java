@@ -10,10 +10,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
 
 import ca.mcgill.ecse223.resto.controller.InvalidInputException;
 import ca.mcgill.ecse223.resto.controller.RestoController;
 import ca.mcgill.ecse223.resto.model.Table;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class RestoAppPage extends JFrame
@@ -65,7 +69,7 @@ public class RestoAppPage extends JFrame
         JMenuItem moveTableMenuItem = createMenuItem("Move Table", this::moveTableAction);
         JMenuItem removeTableMenuItem = createMenuItem("Remove Table", this::removeTableAction);
         JMenuItem menuMenuItem = createMenuItem("Display Menu", this::displayMenuAction);
-
+        JMenuItem startOrderMenuItem = createMenuItem("Start Order", this::displayMenuAction);
         
         actions.add(addTableMenuItem);
         actions.add(changeTableMenuItem);
@@ -75,6 +79,7 @@ public class RestoAppPage extends JFrame
         actions.add(exitMenuItem);
         menubar.add(actions);
         setJMenuBar(menubar);
+        actions.add(startOrderMenuItem);
     }
 
     private JMenuItem createMenuItem(String itemName, ActionListener action)
@@ -93,13 +98,15 @@ public class RestoAppPage extends JFrame
         JButton moveTableButton = createButton("moveTable.png", "Move Table [Alt + M]", KeyEvent.VK_M, this::moveTableAction); 
         JButton removeTableButton = createButton("removeTable.png", "Remove Table [Alt + X]", KeyEvent.VK_X, this::removeTableAction);
         JButton displayMenuButton = createButton("displayMenu.png", "Display Menu [Alt + D]", KeyEvent.VK_D, this::displayMenuAction);
-
+        JButton startOrderButton = createButton("startOrder.png", "Start Order [Alt + O]", KeyEvent.VK_O, this::startOrderAction);
+        
         toolbar.add(exitButton);
         toolbar.add(addTableButton);
         toolbar.add(changeTableButton);
         toolbar.add(moveTableButton);
         toolbar.add(removeTableButton);
         toolbar.add(displayMenuButton);
+        toolbar.add(startOrderButton);
         add(toolbar, BorderLayout.NORTH);
     }
 
@@ -108,13 +115,23 @@ public class RestoAppPage extends JFrame
         Path iconPath = Paths.get(RESSOURCES_PATH + iconName).toAbsolutePath();
         ImageIcon icon = new ImageIcon(iconPath.toString());
         JButton button = new JButton(icon);
-
+        
         button.setMnemonic(shortcut);
         button.setToolTipText(buttonTip);
         button.addActionListener(action);
         return button;
     }
-
+    private JButton createButtonText(String text, String buttonTip, int shortcut, ActionListener action) {
+    		//Path iconPath = Paths.get(RESSOURCES_PATH + iconName).toAbsolutePath();
+       // ImageIcon icon = new ImageIcon(iconPath.toString());
+        JButton button = new JButton(text);
+        
+        button.setMnemonic(shortcut);
+        button.setToolTipText(buttonTip);
+        button.addActionListener(action);
+        return button;
+    	
+    }
     private void updateScrollbarMax(int x, int y)
     {
         if (maxX < x*UNIT_LENGTH) { maxX = x*UNIT_LENGTH; }
@@ -152,7 +169,60 @@ public class RestoAppPage extends JFrame
 
         updateScrollbarMax(RestoController.getMaxX(), RestoController.getMaxY());
     }
+    private void startOrderAction(ActionEvent event){
+        JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+        
+        //create array of current table numbers
+        int currentLength = RestoController.getCurrentTables().size();
+        String currentTableNums[] = new String[currentLength];
+        for (int i = 0; i < currentLength; i++){
+        		currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+        }
 
+        panel.add(new JLabel("Select tables for order:"));
+        DefaultListModel<String> listTableNums = new DefaultListModel<>();
+        for(int i=0; i<currentTableNums.length;i++) { //fill list for UI with wanted list (element per element)
+        		listTableNums.addElement(currentTableNums[i]);
+        }
+        JList<String> allTablesList  = new JList<>(listTableNums); //now list has table nums of current tables
+        allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        
+        panel.add(allTablesList);  	
+        	
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Start Order",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION){
+        		try{
+        			List<String> selectedNumbers = allTablesList.getSelectedValuesList();
+        			List<Table> selectedTables = new ArrayList<Table>();
+        			for(int i=0; i< selectedNumbers.size(); i++) {
+        				int tableNum = Integer.parseInt((String) selectedNumbers.get(i));
+        				Table selectedTable = RestoController.getTableByNum(tableNum);
+        				selectedTables.add(selectedTable);
+        			}
+                RestoController.startOrder(selectedTables);
+            	
+                tablePanel.revalidate();
+                tablePanel.repaint();
+
+                JOptionPane.showMessageDialog(null, "Order started successfully.");
+                }
+                catch (Exception error)
+                {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            error.getMessage(),
+                            "Could not start order",
+                            JOptionPane.ERROR_MESSAGE);
+                    System.out.println(error.getMessage());
+                }
+        } 
+        else { 
+        	JOptionPane.showMessageDialog(null, "No orders were started."); 
+        	}
+    	
+    }
     private void displayMenuAction(ActionEvent event){
         JFrame f = new JFrame("menu");
         JPanel menuPanel = new MenuPanel();
