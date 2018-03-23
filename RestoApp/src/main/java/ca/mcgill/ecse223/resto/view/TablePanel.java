@@ -109,7 +109,6 @@ public class TablePanel extends JPanel
         //table.getReservations().sort();
         
         if (!table.getReservations().isEmpty()) {
-
         	Reservation earliest = RestoController.getEarliestRes(table.getReservations());
         	g2d.drawString(earliest.getDate()+" at "+earliest.getTime(), x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 20);
         }
