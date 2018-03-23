@@ -297,7 +297,7 @@ public class RestoController
 		int seatCapacity = 0;
 		boolean current;
 		List<Reservation> reservations;
-		int overlaps;
+		boolean overlaps;
 		
 		for (Table table : tables) {
 			current = currentTables.contains(table);
@@ -305,10 +305,39 @@ public class RestoController
 			reservations = table.getReservations();
 			
 			for (Reservation reservation : reservations) {
-				//overlaps = reservation.doesOverlap(date, time);
+				overlaps = reservationDoesOverlap(reservation, date, time);
+				if (overlaps) {
+					throw new InvalidInputException("Reservation overlaps.\n");
+				}
+			}
+		}
+		if (seatCapacity < numberInParty) throw new InvalidInputException("Too many people in the party for the selected tables.\n");
+		
+		Table[] tableArray = new Table[tables.size()];
+		for (int i = 0; i < tables.size(); i++) {
+			tableArray[i] = tables.get(i);
+		}
+		Reservation res = new Reservation(date, time, numberInParty, contactName, contactEmailAddress, contactPhoneNumber, r, tableArray);
+		RestoAppApplication.save();
+	}
+	
+	public static boolean reservationDoesOverlap(Reservation existingReservation, Date date, Time time) {
+		boolean overlapStatus = false;
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(time);
+		Calendar calendar2 = Calendar.getInstance();
+		calendar2.setTime(existingReservation.getTime());
+		int timeHour = calendar.get(Calendar.HOUR);
+		int resHour = calendar2.get(Calendar.HOUR);
+		if(existingReservation.getDate().equals(date)) {
+			//if(Math.abs(existingReservation.getTime().getHours() - time.getHours()) > 2) {
+			if(Math.abs(timeHour - resHour) <= 2) {
+				overlapStatus = true;
 			}
 		}
 		
+		return overlapStatus;
 	}
 	
     public static Table getTableByNum(int tableNum) throws InvalidInputException {
