@@ -249,8 +249,9 @@ public class RestoAppPage extends JFrame
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION){
             try{
-            	System.out.println(picker.getDate());
+            	
             	Date date = new Date(picker.getDate().getTime());
+
             	Time time = Time.valueOf(timePicker.getTime());
             	int numberInParty = parseInt(numPeopleField.getText());
             	String contactName = nameField.getText();
