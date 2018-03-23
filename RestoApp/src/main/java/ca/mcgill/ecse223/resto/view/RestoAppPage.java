@@ -209,6 +209,7 @@ public class RestoAppPage extends JFrame
         panel.add(allTablesList);
 
         panel.add(new JLabel("Date:"));
+  
         JXDatePicker picker = new JXDatePicker();
         picker.setDate(Calendar.getInstance().getTime());
         picker.setFormats(new SimpleDateFormat("dd.MM.yyyy"));
@@ -246,8 +247,10 @@ public class RestoAppPage extends JFrame
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION){
             try{
-            	//Date date = new Date();
-            	//Time time = new Time();
+            	System.out.println(picker.getDate());
+            	Date date = new Date(picker.getDate().getTime());
+            	//Date date = inputDate;
+            	Time time = new Time(3);
             	int numberInParty = parseInt(numPeopleField.getText());
             	String contactName = nameField.getText();
             	String contactEmailAddress = emailField.getText();
@@ -260,11 +263,11 @@ public class RestoAppPage extends JFrame
     				selectedTables.add(selectedTable);
     			}
             	
-            	//RestoController.reserveTable(date, time, numberInParty, contactName, contactEmailAddress, contactPhoneNumber, selectedTables);
+            	RestoController.reserveTable(date, time, numberInParty, contactName, contactEmailAddress, contactPhoneNumber, selectedTables);
     			//TODO: DISPLAY LATEST RESERVATION
-                /*
+                
                 tablePanel.revalidate();
-                tablePanel.repaint(); */
+                tablePanel.repaint();
 
                 JOptionPane.showMessageDialog(null, "Reservation made successfully.");
             }
