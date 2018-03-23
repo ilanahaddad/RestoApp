@@ -24,9 +24,9 @@ public class TablePanel extends JPanel
     private final int seatPadding = 5;
 
 //    private final Color TABLE_COLOR = generateRandomColor();
-    private final Color TABLE_COLOR_Available = new Color(40,180,40);//40,180,40
-    private final Color TABLE_COLOR_NothingOrdered = new Color(220,170,50);//220,170,50
-    private final Color TABLE_COLOR_Ordered = new Color(255,40,40);//255,40,40
+    private final Color TABLE_COLOR_Available = new Color(70,200,70);//70,200,70
+    private final Color TABLE_COLOR_NothingOrdered = new Color(250,200,20);//250,200,20
+    private final Color TABLE_COLOR_Ordered = new Color(255,30,30);//255,30,30
     
     
     private final float[] DASH = {4f, 0f, 2f};
