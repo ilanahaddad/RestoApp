@@ -69,8 +69,12 @@ public class RestoAppPage extends JFrame
         JMenuItem moveTableMenuItem = createMenuItem("Move Table", this::moveTableAction);
         JMenuItem removeTableMenuItem = createMenuItem("Remove Table", this::removeTableAction);
         JMenuItem menuMenuItem = createMenuItem("Display Menu", this::displayMenuAction);
+        JMenuItem reservationMenuItem = createMenuItem("Make Reservation", this::displayMenuAction);
         JMenuItem startOrderMenuItem = createMenuItem("Start Order", this::displayMenuAction);
         
+        
+        actions.add(startOrderMenuItem);
+        actions.add(reservationMenuItem);
         actions.add(addTableMenuItem);
         actions.add(changeTableMenuItem);
         actions.add(moveTableMenuItem);
@@ -79,7 +83,6 @@ public class RestoAppPage extends JFrame
         actions.add(exitMenuItem);
         menubar.add(actions);
         setJMenuBar(menubar);
-        actions.add(startOrderMenuItem);
     }
 
     private JMenuItem createMenuItem(String itemName, ActionListener action)
@@ -98,6 +101,7 @@ public class RestoAppPage extends JFrame
         JButton moveTableButton = createButton("moveTable.png", "Move Table [Alt + M]", KeyEvent.VK_M, this::moveTableAction); 
         JButton removeTableButton = createButton("removeTable.png", "Remove Table [Alt + X]", KeyEvent.VK_X, this::removeTableAction);
         JButton displayMenuButton = createButton("displayMenu.png", "Display Menu [Alt + D]", KeyEvent.VK_D, this::displayMenuAction);
+        JButton reserveTableButton = createButton("reserveTable.png", "Make Reservation [Alt + R]", KeyEvent.VK_R, this::reserveTableAction);
         JButton startOrderButton = createButton("startOrder.png", "Start Order [Alt + O]", KeyEvent.VK_O, this::startOrderAction);
         
         toolbar.add(exitButton);
@@ -106,6 +110,7 @@ public class RestoAppPage extends JFrame
         toolbar.add(moveTableButton);
         toolbar.add(removeTableButton);
         toolbar.add(displayMenuButton);
+        toolbar.add(reserveTableButton);
         toolbar.add(startOrderButton);
         add(toolbar, BorderLayout.NORTH);
     }
@@ -168,6 +173,11 @@ public class RestoAppPage extends JFrame
         scrollbar.getHorizontalScrollBar().setUnitIncrement(SCROLLBAR_SPEED);
 
         updateScrollbarMax(RestoController.getMaxX(), RestoController.getMaxY());
+    }
+    
+    private void reserveTableAction(ActionEvent event) {
+    	JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
+    	
     }
     private void startOrderAction(ActionEvent event){
         JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
