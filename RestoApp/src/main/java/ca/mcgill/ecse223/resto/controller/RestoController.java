@@ -278,9 +278,11 @@ public class RestoController
 	 * @throws InvalidInputException
 	 */
 	public static void reserveTable(Date date, Time time, int numberInParty, String contactName, String contactEmailAddress, String contactPhoneNumber, List<Table> tables) throws InvalidInputException {
-		
 		String error = "";
-		if (date == null || time == null ) {
+		if(tables ==null) {
+			error+= "Please select one or more tables.\n";
+		}
+		if (date == null) {
 			error += "Date cannot be null.\n";
 		}
 		if (time == null) {

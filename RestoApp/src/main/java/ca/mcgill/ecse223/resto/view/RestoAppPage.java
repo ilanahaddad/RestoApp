@@ -20,7 +20,6 @@ import ca.mcgill.ecse223.resto.model.Table;
 import ca.mcgill.ecse223.resto.model.Order;
 import com.github.lgooddatepicker.components.TimePicker;
 import com.github.lgooddatepicker.components.TimePickerSettings;
-import jdk.vm.ci.meta.Local;
 import org.jdesktop.swingx.JXDatePicker;
 
 import java.text.SimpleDateFormat;
@@ -190,7 +189,7 @@ public class RestoAppPage extends JFrame
     }
     
     private void reserveTableAction(ActionEvent event) {
-    	JPanel panel = new JPanel(new GridLayout(9, 4, 5, 5));
+    	JPanel panel = new JPanel(new GridLayout(7, 4, 5, 5));
         
         //create array of current table numbers
         int currentLength = RestoController.getCurrentTables().size();
@@ -206,8 +205,11 @@ public class RestoAppPage extends JFrame
         }
         JList<String> allTablesList  = new JList<>(listTableNums); //now list has table nums of current tables
         allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        
-        panel.add(allTablesList);
+        allTablesList.setVisibleRowCount(3);
+        JScrollPane scrollPane = new JScrollPane(allTablesList);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        panel.add(scrollPane);
+       // panel.add(allTablesList);
 
         panel.add(new JLabel("Date:"));
   
@@ -229,6 +231,10 @@ public class RestoAppPage extends JFrame
 
         panel.add(new JLabel("Number of people:"));
         JTextField numPeopleField = new JTextField();
+        numPeopleField.setAutoscrolls(true);
+        //numPeopleField.setVisibleRowCount(2);
+       // numPeopleField.setPreferredSize(new Dimension(1,1));
+        //numPeopleField.setBounds(0, 0, 5, 5);
         panel.add(numPeopleField);
 
         panel.add(new JLabel("Contact name:"));
@@ -253,7 +259,14 @@ public class RestoAppPage extends JFrame
             	Date date = new Date(picker.getDate().getTime());
 
             	Time time = Time.valueOf(timePicker.getTime());
-            	int numberInParty = parseInt(numPeopleField.getText());
+            	int	numberInParty=0;
+            	try { //need a try/catch here because if no number is inputed, an 
+            		//un-informative error gets thrown here for trying to parse an empty string
+            		numberInParty = parseInt((String) numPeopleField.getText());
+           	}
+            	catch(Exception error) {
+
+           	}
             	String contactName = nameField.getText();
             	String contactEmailAddress = emailField.getText();
             	String contactPhoneNumber = phoneField.getText();
