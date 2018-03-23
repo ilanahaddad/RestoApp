@@ -82,18 +82,9 @@ public class TablePanel extends JPanel
         int x = table.getX();
         int y = table.getY();
         Table.Status s = table.getStatus();
-        if (s == Table.Status.Available) {
-        	g2d.setColor(TABLE_COLOR_Available);
-        }
-        else if (s == Table.Status.NothingOrdered) {
-        	g2d.setColor(TABLE_COLOR_NothingOrdered);
-        }
-        else if (s == Table.Status.Ordered) {
-        	g2d.setColor(TABLE_COLOR_Ordered);
-        }
+        
         // draw rectangle
-     /*   switch(s) 
-        {
+        switch(s) {
           case Available:
         	g2d.setColor(TABLE_COLOR_Available);
         	break;
@@ -103,7 +94,7 @@ public class TablePanel extends JPanel
           case Ordered:
             g2d.setColor(TABLE_COLOR_Ordered);
         	break;
-        }*/
+        }// draw rectangle
         g2d.fillRect(x*UNIT_LENGTH, y*UNIT_LENGTH, table.getWidth()*UNIT_LENGTH, table.getLength()*UNIT_LENGTH);
 
         // write table number
