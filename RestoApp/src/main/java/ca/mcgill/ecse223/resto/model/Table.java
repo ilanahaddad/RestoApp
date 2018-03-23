@@ -7,7 +7,7 @@ import java.util.*;
 
 // line 13 "../../../../../RestoAppPersistence.ump"
 // line 1 "../../../../../RestoAppTableStateMachine.ump"
-// line 31 "../../../../../RestoApp-v3.ump"
+// line 28 "../../../../../RestoApp-v3.ump"
 public class Table implements Serializable
 {
 
@@ -211,7 +211,7 @@ public class Table implements Serializable
     switch (aStatus)
     {
       case NothingOrdered:
-        if (quantityNotNegative(quantity))
+        if (quantityIsPositive(quantity))
         {
         // line 12 "../../../../../RestoAppTableStateMachine.ump"
           // create a new order item with the provided quantity, order, seat, and priced menu item
@@ -221,7 +221,7 @@ public class Table implements Serializable
         }
         break;
       case Ordered:
-        if (quantityNotNegative(quantity))
+        if (quantityIsPositive(quantity))
         {
         // line 27 "../../../../../RestoAppTableStateMachine.ump"
           // create a new order item with the provided quantity, order, seat, and priced menu item
@@ -916,7 +916,7 @@ public class Table implements Serializable
    * check that the provided quantity is an integer greater than 0
    */
   // line 59 "../../../../../RestoAppTableStateMachine.ump"
-   private boolean quantityNotNegative(int quantity){
+   private boolean quantityIsPositive(int quantity){
     // TODO
       return false;
   }

@@ -9,7 +9,7 @@ class Table {
          } -> NothingOrdered; 
       }
       NothingOrdered {
-         orderItem(int quantity, Order o, Seat s, PricedMenuItem i) [quantityNotNegative(quantity)] / {
+         orderItem(int quantity, Order o, Seat s, PricedMenuItem i) [quantityIsPositive(quantity)] / {
             // create a new order item with the provided quantity, order, seat, and priced menu item
          } -> Ordered; 
          addToOrderItem(OrderItem i, Seat s) / {
@@ -24,7 +24,7 @@ class Table {
          } -> Available;
       }
       Ordered {
-         orderItem(int quantity, Order o, Seat s, PricedMenuItem i) [quantityNotNegative(quantity)] / {
+         orderItem(int quantity, Order o, Seat s, PricedMenuItem i) [quantityIsPositive(quantity)] / {
             // create a new order item with the provided quantity, order, seat, and priced menu item
          } -> Ordered; 
          addToOrderItem(OrderItem i, Seat s) / {
@@ -55,7 +55,7 @@ class Table {
    }
    
    // check that the provided quantity is an integer greater than 0
-   private boolean quantityNotNegative(int quantity) {
+   private boolean quantityIsPositive(int quantity) {
       // TODO
       return false;
    }
