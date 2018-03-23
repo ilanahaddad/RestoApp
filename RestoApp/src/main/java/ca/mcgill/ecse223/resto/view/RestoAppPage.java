@@ -176,9 +176,28 @@ public class RestoAppPage extends JFrame
     }
     
     private void reserveTableAction(ActionEvent event) {
-    	JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
+    	JPanel panel = new JPanel(new GridLayout(7, 2, 5, 5));
+        
+        //create array of current table numbers
+        int currentLength = RestoController.getCurrentTables().size();
+        String currentTableNums[] = new String[currentLength];
+        for (int i = 0; i < currentLength; i++){
+        		currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+        }
+
+        panel.add(new JLabel("Select tables to reserve:"));
+        DefaultListModel<String> listTableNums = new DefaultListModel<>();
+        for (int i = 0; i < currentTableNums.length; i++) { //fill list for UI with wanted list (element per element)
+        		listTableNums.addElement(currentTableNums[i]);
+        }
+        JList<String> allTablesList  = new JList<>(listTableNums); //now list has table nums of current tables
+        allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        
+        panel.add(allTablesList);
+        
     	panel.add(new JLabel("Date:"));
-        JTextField resDateField = new JTextField();
+    	JTextField resDateField = new JTextField();
+        //JDateChooser resDateField = new JDateChooser();
         panel.add(resDateField);
 
         panel.add(new JLabel("Time:"));
