@@ -314,6 +314,7 @@ public class RestoController
 		
 		for (Table table : tables) {
 			current = currentTables.contains(table);
+			if (current == false) throw new InvalidInputException("The table you are trying to reserve is not currently in the restaurant.\n");
 			seatCapacity += table.numberOfCurrentSeats();
 			reservations = table.getReservations();
 			

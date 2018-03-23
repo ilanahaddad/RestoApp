@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Date;
+import java.sql.Time;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -231,17 +233,23 @@ public class RestoAppPage extends JFrame
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION){
             try{
-                /* TODO: making a reservation through the UI
-                int numSeats = parseInt(numSeatsField.getText());
-                int tableNum = parseInt(tableNumField.getText());
-                int x = parseInt(xField.getText());
-                int y = parseInt(yField.getText());
-                int width = parseInt(widthField.getText());
-                int length = parseInt(lengthField.getText());
-
-                RestoController.reserveTable();
-
-                
+            	//Date date = new Date();
+            	//Time time = new Time();
+            	int numberInParty = parseInt(numPeopleField.getText());
+            	String contactName = nameField.getText();
+            	String contactEmailAddress = emailField.getText();
+            	String contactPhoneNumber = phoneField.getText();
+            	List<String> selectedNumbers = allTablesList.getSelectedValuesList();
+    			List<Table> selectedTables = new ArrayList<Table>();
+    			for(int i=0; i< selectedNumbers.size(); i++) {
+    				int tableNum = Integer.parseInt((String) selectedNumbers.get(i));
+    				Table selectedTable = RestoController.getTableByNum(tableNum);
+    				selectedTables.add(selectedTable);
+    			}
+            	
+            	//RestoController.reserveTable(date, time, numberInParty, contactName, contactEmailAddress, contactPhoneNumber, selectedTables);
+    			//TODO: DISPLAY LATEST RESERVATION
+                /*
                 tablePanel.revalidate();
                 tablePanel.repaint(); */
 
