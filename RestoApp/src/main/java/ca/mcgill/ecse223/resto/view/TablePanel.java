@@ -5,7 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.Random;
+//import java.util.Random;
 
 import javax.swing.JPanel;
 
@@ -24,9 +24,9 @@ public class TablePanel extends JPanel
     private final int seatPadding = 5;
 
 //    private final Color TABLE_COLOR = generateRandomColor();
-    private final Color TABLE_COLOR_Available = new Color(50,250,50);
-    private final Color TABLE_COLOR_NothingOrdered = new Color(250,200,50);
-    private final Color TABLE_COLOR_Ordered = new Color(250,50,50);
+    private final Color TABLE_COLOR_Available = new Color(70,200,70);
+    private final Color TABLE_COLOR_NothingOrdered = new Color(200,150,50);
+    private final Color TABLE_COLOR_Ordered = new Color(200,70,70);
     
     
     private final float[] DASH = {4f, 0f, 2f};
@@ -100,7 +100,8 @@ public class TablePanel extends JPanel
         // write table number
         g2d.setColor(Color.black);
         g2d.setFont(new Font("Purisa", Font.BOLD, 13));
-        g2d.drawString(table.getNumber()+"", x*UNIT_LENGTH + tableNumXPadding, y*UNIT_LENGTH + tableNumYPadding);
+        g2d.drawString(table.getNumber()+"", x*UNIT_LENGTH + tableNumXPadding, y*UNIT_LENGTH + tableNumYPadding - 7);
+        g2d.drawString(table.getStatus()+"", x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 7);
     }
 
     private void drawSeats(Table table, Graphics2D g2d)
@@ -203,12 +204,12 @@ public class TablePanel extends JPanel
         return seatXOffset == getTableRightCoordinates(table);
     }
 
-    private Color generateRandomColor()
+   /* private Color generateRandomColor()
     {
         Random r = new Random();
         float red = (float) (r.nextFloat() / 2f + 0.5);
         float green = (float) (r.nextFloat() / 2f + 0.5);
         float blue = (float) (r.nextFloat() / 2f + 0.5);
         return new Color(red, green, blue);
-    }
+    }*/
 }
