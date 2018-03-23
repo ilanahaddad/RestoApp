@@ -23,7 +23,12 @@ public class TablePanel extends JPanel
     private final int seatDiameter = 20;
     private final int seatPadding = 5;
 
-    private final Color TABLE_COLOR = generateRandomColor();
+//    private final Color TABLE_COLOR = generateRandomColor();
+    private final Color TABLE_COLOR_Available = new Color(50,250,50);
+    private final Color TABLE_COLOR_NothingOrdered = new Color(250,200,50);
+    private final Color TABLE_COLOR_Ordered = new Color(250,50,50);
+    
+    
     private final float[] DASH = {4f, 0f, 2f};
     private final BasicStroke DASHED_STROKE = new BasicStroke(
             1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, DASH, 2f);
@@ -76,9 +81,29 @@ public class TablePanel extends JPanel
     {
         int x = table.getX();
         int y = table.getY();
-
+        Table.Status s = table.getStatus();
+        if (s == Table.Status.Available) {
+        	g2d.setColor(TABLE_COLOR_Available);
+        }
+        else if (s == Table.Status.NothingOrdered) {
+        	g2d.setColor(TABLE_COLOR_NothingOrdered);
+        }
+        else if (s == Table.Status.Ordered) {
+        	g2d.setColor(TABLE_COLOR_Ordered);
+        }
         // draw rectangle
-        g2d.setColor(TABLE_COLOR);
+     /*   switch(s) 
+        {
+          case Available:
+        	g2d.setColor(TABLE_COLOR_Available);
+        	break;
+          case NothingOrdered:
+            g2d.setColor(TABLE_COLOR_NothingOrdered);
+        	break;
+          case Ordered:
+            g2d.setColor(TABLE_COLOR_Ordered);
+        	break;
+        }*/
         g2d.fillRect(x*UNIT_LENGTH, y*UNIT_LENGTH, table.getWidth()*UNIT_LENGTH, table.getLength()*UNIT_LENGTH);
 
         // write table number
