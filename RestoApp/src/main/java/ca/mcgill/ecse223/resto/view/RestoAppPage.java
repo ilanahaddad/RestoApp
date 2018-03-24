@@ -139,17 +139,6 @@ public class RestoAppPage extends JFrame
         button.addActionListener(action);
         return button;
     }
-    private JButton createButtonText(String text, String buttonTip, int shortcut, ActionListener action) {
-    		//Path iconPath = Paths.get(RESSOURCES_PATH + iconName).toAbsolutePath();
-       // ImageIcon icon = new ImageIcon(iconPath.toString());
-        JButton button = new JButton(text);
-        
-        button.setMnemonic(shortcut);
-        button.setToolTipText(buttonTip);
-        button.addActionListener(action);
-        return button;
-    	
-    }
     private void updateScrollbarMax(int x, int y)
     {
         if (maxX < x*UNIT_LENGTH) { maxX = x*UNIT_LENGTH; }
@@ -317,9 +306,13 @@ public class RestoAppPage extends JFrame
         JList<String> allTablesList  = new JList<>(listTableNums); //now list has table nums of current tables
         allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         
-        panel.add(allTablesList);  	
-        	
-
+        //SCROLLBAR:
+        allTablesList.setVisibleRowCount(3);
+        JScrollPane scrollPane = new JScrollPane(allTablesList);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        
+        //panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
+        panel.add(scrollPane);
         int result = JOptionPane.showConfirmDialog(null, panel, "Start Order",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION){
@@ -345,7 +338,7 @@ public class RestoAppPage extends JFrame
                             error.getMessage(),
                             "Could not start order",
                             JOptionPane.ERROR_MESSAGE);
-                    System.out.println(error.getMessage());
+                    
                 }
         } 
         else { 
@@ -503,7 +496,7 @@ public class RestoAppPage extends JFrame
         int currentLength = RestoController.getCurrentTables().size();
         String currentTableNums[] = new String[currentLength];
         for (int i = 0; i < currentLength; i++){
-        	currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+        		currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
         }
 
         panel.add(new JLabel("Select table to change:"));
@@ -529,7 +522,7 @@ public class RestoAppPage extends JFrame
     
                 RestoController.updateTable(selectedTable, newTableNum, amountOfSeats);
             	
-            	tablePanel.revalidate();
+                tablePanel.revalidate();
                 tablePanel.repaint();
 
                 JOptionPane.showMessageDialog(null, "Table updated successfully.");

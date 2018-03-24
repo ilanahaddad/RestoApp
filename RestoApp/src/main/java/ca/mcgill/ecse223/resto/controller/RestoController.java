@@ -153,16 +153,16 @@ public class RestoController
         String error = "";
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         if(table == null) {
-            error += "Input Table does not exist.\n";
+        		throw new InvalidInputException("Input Table does not exist.\n");
         }
         if(newNumber < 0) {
-            error += "New table number must be positive.\n";
+        		throw new InvalidInputException("New table number must be positive.\n");
         }
         if(numberOfSeats < 0) {
-            error += "Number of seats must be positive.\n";
+        		throw new InvalidInputException("Number of seats must be positive.\n");
         }
         if(table.hasReservations()) {
-            error += "Can't update a table that is reserved.\n";
+        		throw new InvalidInputException("Can't update a table that is reserved.\n");
         }
         List<Order> currentOrders = restoApp.getCurrentOrders();
         boolean inUse = false;
@@ -171,17 +171,18 @@ public class RestoController
             inUse = tablesWithOrders.contains(table);
         }
         if(inUse) {
-            error += "Can't update a table that is currently in use.\n";
+        		throw new InvalidInputException("Can't update a table that is currently in use.\n");
         }
         
         if(!table.setNumber(newNumber)) {
-    			error+= "A table with this number already exists. Please use a different number.\n";
+        		throw new InvalidInputException("A table with this number already exists. Please use a different number.\n");
         }
+        /*
         if(error.length() > 0) {
             throw new InvalidInputException(error.trim());
-        }
+        }*/
        
-        int n = table.numberOfCurrentSeats();
+        int n = table.numberOfCurrentSeats(); 
         //Add seats if new numberOfSeats > numberOfCurrentSeats:
         for(int i = 1; i <= numberOfSeats - n; i++) {
             Seat seat = table.addSeat();

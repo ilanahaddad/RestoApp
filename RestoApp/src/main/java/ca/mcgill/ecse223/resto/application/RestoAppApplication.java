@@ -14,7 +14,7 @@ public class RestoAppApplication
 {
 
 	private static RestoApp restoApp;
-	private static String filename = "menu.resto";
+	private static String filename = "menu v2.resto";
 
 
 	public static void main(String[] args)
