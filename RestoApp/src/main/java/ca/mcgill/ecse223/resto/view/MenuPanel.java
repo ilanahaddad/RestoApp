@@ -1,18 +1,20 @@
 package ca.mcgill.ecse223.resto.view;
 
-import ca.mcgill.ecse223.resto.controller.InvalidInputException;
-import ca.mcgill.ecse223.resto.controller.RestoController;
-import ca.mcgill.ecse223.resto.model.Menu;
-import ca.mcgill.ecse223.resto.model.MenuItem;
-import ca.mcgill.ecse223.resto.model.PricedMenuItem;
-import ca.mcgill.ecse223.resto.model.Table;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+
+import ca.mcgill.ecse223.resto.controller.InvalidInputException;
+import ca.mcgill.ecse223.resto.controller.RestoController;
+import ca.mcgill.ecse223.resto.model.MenuItem;
 
 public class MenuPanel extends JPanel implements ActionListener {
 
@@ -78,35 +80,35 @@ public class MenuPanel extends JPanel implements ActionListener {
 		}
 
 		List<Double> mainPices = new ArrayList<>();
-        for(MenuItem m : mains) {
-            mainPices.add(m.getCurrentPricedMenuItem().getPrice());
-        }
+		for(MenuItem m : mains) {
+			mainPices.add(m.getCurrentPricedMenuItem().getPrice());
+		}
 
-        List<Double> desertPrices = new ArrayList<>();
-        for(MenuItem m : desserts) {
-            desertPrices.add(m.getCurrentPricedMenuItem().getPrice());
-        }
+		List<Double> desertPrices = new ArrayList<>();
+		for(MenuItem m : desserts) {
+			desertPrices.add(m.getCurrentPricedMenuItem().getPrice());
+		}
 
-        List<Double> abevPrices = new ArrayList<>();
-        for(MenuItem m : abevs) {
-            abevPrices.add(m.getCurrentPricedMenuItem().getPrice());
-        }
+		List<Double> abevPrices = new ArrayList<>();
+		for(MenuItem m : abevs) {
+			abevPrices.add(m.getCurrentPricedMenuItem().getPrice());
+		}
 
-        List<Double> nabevPrices = new ArrayList<>();
-        for(MenuItem m : nabevs) {
-            nabevPrices.add(m.getCurrentPricedMenuItem().getPrice());
-        }
+		List<Double> nabevPrices = new ArrayList<>();
+		for(MenuItem m : nabevs) {
+			nabevPrices.add(m.getCurrentPricedMenuItem().getPrice());
+		}
 
-        String[] itemCategoriesItems = { "Appetizer", "Main", "Dessert", "AlcoholicBeverage", "NonAlcoholicBeverage" };
+		String[] itemCategoriesItems = { "Appetizer", "Main", "Dessert", "AlcoholicBeverage", "NonAlcoholicBeverage" };
 
-        String[] appetizerItems = aplist.stream().toArray(String[]::new);
-        String[] mainDishItems = mainlist.stream().toArray(String[]::new);
-        String[] dessertItems = deslist.stream().toArray(String[]::new);
-        String[] alcoholItems = abevlist.stream().toArray(String[]::new);
-        String[] nonAlcoholItems = nabevlist.stream().toArray(String[]::new);
+		String[] appetizerItems = aplist.stream().toArray(String[]::new);
+		String[] mainDishItems = mainlist.stream().toArray(String[]::new);
+		String[] dessertItems = deslist.stream().toArray(String[]::new);
+		String[] alcoholItems = abevlist.stream().toArray(String[]::new);
+		String[] nonAlcoholItems = nabevlist.stream().toArray(String[]::new);
 
-        List<String> a = Arrays.asList(appetizerItems);
-        for(int i = 0; i < a.size(); i++){
+		List<String> a = Arrays.asList(appetizerItems);
+		for(int i = 0; i < a.size(); i++){
 			a.set(i,a.get(i) + " $" +  Double.toString(appPrices.get(i)));
 		}
 		List<String> m = Arrays.asList(mainDishItems);
@@ -178,35 +180,35 @@ public class MenuPanel extends JPanel implements ActionListener {
 			String category = (String) itemCategories.getSelectedItem();
 
 			switch (category) {
-			case "Appetizer":
+				case "Appetizer":
 				appetizer.setVisible(true);
 				mainDish.setVisible(false);
 				dessert.setVisible(false);
 				alcohol.setVisible(false);
 				nonAlcohol.setVisible(false);
 				break;
-			case "Main":
+				case "Main":
 				mainDish.setVisible(true);
 				appetizer.setVisible(false);
 				dessert.setVisible(false);
 				alcohol.setVisible(false);
 				nonAlcohol.setVisible(false);
 				break;
-			case "Dessert":
+				case "Dessert":
 				dessert.setVisible(true);
 				appetizer.setVisible(false);
 				mainDish.setVisible(false);
 				alcohol.setVisible(false);
 				nonAlcohol.setVisible(false);
 				break;
-			case "AlcoholicBeverage":
+				case "AlcoholicBeverage":
 				alcohol.setVisible(true);
 				appetizer.setVisible(false);
 				mainDish.setVisible(false);
 				dessert.setVisible(false);
 				nonAlcohol.setVisible(false);
 				break;
-			case "NonAlcoholicBeverage":
+				case "NonAlcoholicBeverage":
 				nonAlcohol.setVisible(true);
 				appetizer.setVisible(false);
 				mainDish.setVisible(false);

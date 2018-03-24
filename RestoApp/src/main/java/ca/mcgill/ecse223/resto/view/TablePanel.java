@@ -9,10 +9,8 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.controller.RestoController;
 import ca.mcgill.ecse223.resto.model.Reservation;
-import ca.mcgill.ecse223.resto.model.RestoApp;
 import ca.mcgill.ecse223.resto.model.Table;
 
 public class TablePanel extends JPanel
@@ -26,15 +24,15 @@ public class TablePanel extends JPanel
     private final int seatDiameter = 20;
     private final int seatPadding = 5;
 
-//    private final Color TABLE_COLOR = generateRandomColor();
+    //    private final Color TABLE_COLOR = generateRandomColor();
     private final Color TABLE_COLOR_Available = new Color(70,200,70);//70,200,70
     private final Color TABLE_COLOR_NothingOrdered = new Color(250,200,20);//250,200,20
     private final Color TABLE_COLOR_Ordered = new Color(255,30,30);//255,30,30
-    
-    
+
+
     private final float[] DASH = {4f, 0f, 2f};
     private final BasicStroke DASHED_STROKE = new BasicStroke(
-            1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, DASH, 2f);
+    1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, DASH, 2f);
 
     // called everytime UI is refreshed
     @Override
@@ -85,18 +83,18 @@ public class TablePanel extends JPanel
         int x = table.getX();
         int y = table.getY();
         Table.Status s = table.getStatus();
-        
+
         // draw rectangle
         switch(s) {
-          case Available:
-        	g2d.setColor(TABLE_COLOR_Available);
-        	break;
-          case NothingOrdered:
+            case Available:
+            g2d.setColor(TABLE_COLOR_Available);
+            break;
+            case NothingOrdered:
             g2d.setColor(TABLE_COLOR_NothingOrdered);
-        	break;
-          case Ordered:
+            break;
+            case Ordered:
             g2d.setColor(TABLE_COLOR_Ordered);
-        	break;
+            break;
         }// draw rectangle
         g2d.fillRect(x*UNIT_LENGTH, y*UNIT_LENGTH, table.getWidth()*UNIT_LENGTH, table.getLength()*UNIT_LENGTH);
 
@@ -105,12 +103,12 @@ public class TablePanel extends JPanel
         g2d.setFont(new Font("Purisa", Font.BOLD, 13));
         g2d.drawString(table.getNumber()+"", x*UNIT_LENGTH + tableNumXPadding, y*UNIT_LENGTH + tableNumYPadding - 7);
         g2d.drawString(table.getStatus()+"", x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 7);
-        
+
         //table.getReservations().sort();
-        
+
         if (!table.getReservations().isEmpty()) {
-        	Reservation earliest = RestoController.getEarliestRes(table.getReservations());
-        	g2d.drawString(earliest.getDate()+" at "+earliest.getTime(), x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 20);
+            Reservation earliest = RestoController.getEarliestRes(table.getReservations());
+            g2d.drawString(earliest.getDate()+" at "+earliest.getTime(), x*UNIT_LENGTH + 2, y*UNIT_LENGTH + tableNumYPadding + 20);
         }
     }
 
@@ -214,7 +212,7 @@ public class TablePanel extends JPanel
         return seatXOffset == getTableRightCoordinates(table);
     }
 
-   /* private Color generateRandomColor()
+    /* private Color generateRandomColor()
     {
         Random r = new Random();
         float red = (float) (r.nextFloat() / 2f + 0.5);
