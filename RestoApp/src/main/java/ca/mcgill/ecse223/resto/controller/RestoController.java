@@ -28,12 +28,11 @@ public class RestoController
 	  }
 
 	  public static List<MenuItem> getMenuItems (MenuItem.ItemCategory itemCategory) throws InvalidInputException {
-	      List<MenuItem> items = new ArrayList<>();
+	    List<MenuItem> items = new ArrayList<>();
 	    RestoApp restoApp = RestoAppApplication.getRestoApp();
 	    Menu menu = restoApp.getMenu();
 
 	    List<MenuItem> menuItems = menu.getMenuItems();
-
 	    for(MenuItem mi : menuItems) {
 	      boolean current = mi.hasCurrentPricedMenuItem();
 	      MenuItem.ItemCategory category = mi.getItemCategory();
@@ -47,40 +46,7 @@ public class RestoController
 	    return items;
 
 	  }
-    /**
-     * Updates desired item from the menu
-     * @param  menuFile  menu read from file to be displayed
-     */
-    public static Menu readMenu (File menuFile) throws InvalidInputException { return null; }
 
-    /**
-     * Removes desired item from the menu
-     * @param  name  name of the created menu item
-     * @param  category  enum category for the menu item
-     */
-    public static MenuItem createMenuItem  (String name, MenuItem.ItemCategory category) throws InvalidInputException { return null; }
-
-    /**
-     * @param item  item to be added to the menu
-     */
-    public static void addMenuItem (MenuItem item) throws InvalidInputException {}
-
-    /**
-     * Removes desired item from the menu
-     * @param  item  the item to be removed
-     */
-    public static void removeMenuItem(MenuItem item) throws InvalidInputException {}
-
-    /**
-     * Updates desired item from the menu
-     * @param  item  item to be updated
-     */
-    public static void updateMenuItem(MenuItem item) throws InvalidInputException {}
-
-    /**
-     * Creates table and its seats and adds them to the application
-     * @throws InvalidInputException If the table number already exists
-     */
     public static void createTableAndSeats(
             int numSeats, int tableNum, int x, int y, int width, int length
     ) throws InvalidInputException

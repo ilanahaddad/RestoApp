@@ -257,7 +257,6 @@ public class RestoAppPage extends JFrame
             try{
             	
             	Date date = new Date(picker.getDate().getTime());
-
             	Time time = Time.valueOf(timePicker.getTime());
             	int	numberInParty=0;
             	try { //need a try/catch here because if no number is inputed, an 
