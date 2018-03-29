@@ -420,19 +420,19 @@ public class RestoAppPage extends JFrame
 	}
 
     private void displayMenuAction(ActionEvent event){
-        JFrame f = new JFrame("menu");
-        JPanel menuPanel = new MenuPanel();
-        //JPanel p = new MenuPanel();
-
-        f.add(menuPanel);
-        f.setSize(400,150);
-        f.setLayout(new FlowLayout());
-        f.pack();
-        f.setLocationRelativeTo(null);
-        f.setVisible(true);
-
-        menuPanel.validate();
-        menuPanel.repaint();
+        new MenuFrame();
+//        JFrame f = new JFrame("menu");
+//        JPanel menuPanel = new MenuPanel();
+//
+//        f.add(menuPanel);
+//        f.setSize(400,150);
+//        f.setLayout(new FlowLayout());
+//        f.pack();
+//        f.setLocationRelativeTo(null);
+//        f.setVisible(true);
+//
+//        menuPanel.validate();
+//        menuPanel.repaint();
 
 
     }
