@@ -20,10 +20,11 @@ public class MenuFrame {
     private JFrame frame;
     private JPanel menuPanel;
     private JPanel menuDisplay;
+    private JPanel addMenuItemPanel;
     private JComboBox categorySelector;
 
     //Buttons
-    private JButton addMenuItem;
+    private JButton addMenuItemButton;
 
     //Jlist items (displayed after choosing category)
     private JList appetizerJList;
@@ -51,6 +52,18 @@ public class MenuFrame {
     private List<String> nonAlcoholicBevs = new ArrayList<>();
 
     private ItemHandler handler = new ItemHandler();
+
+    private Scanner menuInput = new Scanner(System.in);
+    private Scanner itemPriceInput = new Scanner(System.in);
+    private String menuItemString;
+    private Double itemPriceDouble;
+
+    private JTextField textfield;
+    private JTextField textfield2;
+    private JLabel label;
+    private JLabel label2;
+
+
 
 
     public MenuFrame() {
@@ -115,14 +128,49 @@ public class MenuFrame {
         GridBagConstraints c = new GridBagConstraints();
 
         //COMPONENTS
-        addMenuItem = new JButton("add item to menu");
-        addMenuItem.addActionListener(e -> JOptionPane.showMessageDialog(null, "aaaa"));
+        addMenuItemButton = new JButton("add item to menu");
+        addMenuItemButton.addActionListener(e -> {
+            JPanel panel = new JPanel();
+
+            JLabel label1 = new JLabel("Menu item name: ");
+            JTextField field1 = new JTextField( 10);
+            panel.add(label1);
+            panel.add(field1);
+
+
+            JLabel label2 = new JLabel("Menu item price: ");
+            JTextField field2 = new JTextField( 10);
+            panel.add(label2);
+            panel.add(field2);
+
+
+
+            int value = JOptionPane.showConfirmDialog(frame, panel, "Add menu item", JOptionPane.OK_CANCEL_OPTION);
+            if (value == JOptionPane.OK_OPTION)
+            {
+               try{
+                   // OK was pressed
+                   String s1 = field1.getText();
+                   String s2 = field2.getText();
+                   // handle them
+               } catch (Exception error){
+                   JOptionPane.showMessageDialog(
+                           null,
+                           error.getMessage(),
+                           "Could not add menu item",
+                           JOptionPane.ERROR_MESSAGE);
+               }
+
+                JOptionPane.showMessageDialog(null, "Menu item added successfully");
+            }
+        });
+
 
         //ADD COMPONENTS TO PANEL
         //menuPanel
         c.gridx = 0;
         c.gridy = 1;
-        menuPanel.add(addMenuItem, c);
+        menuPanel.add(addMenuItemButton, c);
 
         //menuDisplay
         for (MenuItem m : appetizerMenuItems) {
@@ -169,9 +217,6 @@ public class MenuFrame {
         //ADD COMPONENTS TO FRAME
         frame.add(menuPanel, BorderLayout.WEST);
         frame.add(menuDisplay);
-        frame.pack();
-        frame.setVisible(true);
-
     }
 
     private class ItemHandler implements ItemListener {
@@ -212,5 +257,10 @@ public class MenuFrame {
             }
 
         }
+    }
+
+    private class addMenuItem extends JPanel {
+        private JPanel panel = new JPanel();
+        private JTextArea item = new JTextArea();
     }
 }

@@ -421,20 +421,6 @@ public class RestoAppPage extends JFrame
 
     private void displayMenuAction(ActionEvent event){
         new MenuFrame();
-//        JFrame f = new JFrame("menu");
-//        JPanel menuPanel = new MenuPanel();
-//
-//        f.add(menuPanel);
-//        f.setSize(400,150);
-//        f.setLayout(new FlowLayout());
-//        f.pack();
-//        f.setLocationRelativeTo(null);
-//        f.setVisible(true);
-//
-//        menuPanel.validate();
-//        menuPanel.repaint();
-
-
     }
 
     private void addTableAction(ActionEvent event)
