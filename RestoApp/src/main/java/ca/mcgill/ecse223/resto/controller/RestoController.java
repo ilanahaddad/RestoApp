@@ -13,6 +13,7 @@ import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.model.Menu;
 import ca.mcgill.ecse223.resto.model.MenuItem;
 import ca.mcgill.ecse223.resto.model.Order;
+import ca.mcgill.ecse223.resto.model.OrderItem;
 import ca.mcgill.ecse223.resto.model.Reservation;
 import ca.mcgill.ecse223.resto.model.RestoApp;
 import ca.mcgill.ecse223.resto.model.Seat;
@@ -552,4 +553,97 @@ public class RestoController
         private static boolean orderBelongsToTable(Order orderToEnd, Table table) {
             return table.numberOfOrders() > 0 && table.getOrder(table.numberOfOrders() - 1).equals(orderToEnd);
         }
+
+		/**
+		 * Cancel an ordered item for a customer 
+		 * @param s Seat do cancel order item for
+		 * @param oi orderItem to delete
+		 * @throws InvalidInputException if Seat is null, OrderItem is null, Seat has no OrderItems, and if Seat does not have that specific order item
+		 */
+        public static void cancelOrderItem(Seat s, OrderItem oi) throws InvalidInputException{
+        		if(s == null) {
+        			throw new InvalidInputException("Please select a seat.\n");
+        		}
+        		if(oi == null) {
+        			throw new InvalidInputException("Please select an order item.\n");
+        		}
+        		if(s.numberOfOrderItems()==0) {
+        			throw new InvalidInputException("Seat has no order items.\n");
+        		}
+        		boolean seatHasThatOrderItem = false;
+        		List<OrderItem> orderItemsOfSeat = s.getOrderItems();
+        		for(OrderItem seat_oi: orderItemsOfSeat) {
+        			if(seat_oi.equals(oi)) {
+        				seatHasThatOrderItem = true;
+        				break;
+        			}
+        		}
+        		if(!seatHasThatOrderItem) {
+        			throw new InvalidInputException("Seat does not have this order item.\n");
+        		}
+        		Table t = s.getTable();
+        		t.cancelOrderItem(oi);
+        		RestoAppApplication.save();
+        }
+        /**
+         * Delete all order items of the table 
+         * @param table table to cancel order for
+         * @throws InvalidInputException if table is null or if table isn't current
+         */
+        public static void cancelAllOrderItems(Table table) throws InvalidInputException{
+        		if(table == null) {
+        			throw new InvalidInputException("Please select a table.\n");
+        		}
+        		RestoApp r = RestoAppApplication.getRestoApp();
+        		boolean isTableCurrent = false;
+        		for(Table t: r.getCurrentTables()) {
+        			if(t.equals(table)) {
+        				isTableCurrent = true;
+        				break;
+        			}
+        		}
+        		if(!isTableCurrent) {
+        			throw new InvalidInputException("Table is not current.\n");
+        		}
+        		table.cancelOrder();
+        		//cancel order in table class does this:
+        		/*
+        		Order curOrder = table.getOrder(table.numberOfOrders()-1);
+        		List<OrderItem> orderItemsOfTable = curOrder.getOrderItems();
+        		for(OrderItem o: orderItemsOfTable) {
+        			o.delete(); //delete all order items of the table 
+        		}*/
+        		RestoAppApplication.save();
+        		
+        }
+        
+        
+        
+        
+        /*RestoApp r = RestoAppApplication.getRestoApp();
+		//
+		boolean lastOrderItemForSeat = s.getOrderItems().size() == 1;
+		if(lastOrderItemForSeat) {
+		}*/
+        /*
+                		Table t = s.getTable();
+		boolean seatIsCurrent = false;
+		boolean tableIsCurrent = false;
+		for(Table curTable: r.getCurrentTables()) {
+			if(curTable.equals(t)) { //checks if table the seat is at is current
+				tableIsCurrent = true;
+				for(Seat curSeat: curTable.getCurrentSeats()) {
+					if(curSeat.equals(s)) {
+						seatIsCurrent = true;
+					}
+				}
+			}
+		}*/
+        
+        
+        
+        
+        
+        
+        
     }
