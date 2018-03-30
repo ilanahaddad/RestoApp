@@ -7,6 +7,10 @@ import ca.mcgill.ecse223.resto.model.MenuItem;
 import javax.swing.*;
 import java.awt.*;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,11 +32,11 @@ public class MenuFrame {
     private JList alcoholicBevJList;
     private JList nonAlcoholicBevJList;
 
-    private List <MenuItem> appetizerMenuItems = new ArrayList<>();
-    private List <MenuItem> mainMenuItems = new ArrayList<>();
-    private List <MenuItem> dessertMenuItems = new ArrayList<>();
-    private List <MenuItem> alcoholicBevMenuItems = new ArrayList<>();
-    private List <MenuItem> nonAlcoholicBevMenuItems = new ArrayList<>();
+    private List<MenuItem> appetizerMenuItems = new ArrayList<>();
+    private List<MenuItem> mainMenuItems = new ArrayList<>();
+    private List<MenuItem> dessertMenuItems = new ArrayList<>();
+    private List<MenuItem> alcoholicBevMenuItems = new ArrayList<>();
+    private List<MenuItem> nonAlcoholicBevMenuItems = new ArrayList<>();
 
 //    private List<Double> appetizerPrices = new ArrayList<>();
 //    private List<Double> mainPrices = new ArrayList<>();
@@ -46,14 +50,16 @@ public class MenuFrame {
     private List<String> alcoholicBevs = new ArrayList<>();
     private List<String> nonAlcoholicBevs = new ArrayList<>();
 
+    private ItemHandler handler = new ItemHandler();
 
-    public MenuFrame(){
+
+    public MenuFrame() {
         populate();
         gui();
     }
 
     public void populate() {
-        try{
+        try {
 
             appetizerMenuItems = RestoController.getMenuItems(MenuItem.ItemCategory.Appetizer);
 //            appetizerPrices = RestoController.getMenuItems(MenuItem.ItemCategory.Appetizer)
@@ -85,10 +91,11 @@ public class MenuFrame {
 //                    .map(x-> x.getCurrentPricedMenuItem().getPrice())
 //                    .collect(Collectors.toList());
 
-        } catch (InvalidInputException e){
+        } catch (InvalidInputException e) {
             e.printStackTrace();
         }
     }
+
 
     public void gui() {
         //FRAME
@@ -109,17 +116,7 @@ public class MenuFrame {
 
         //COMPONENTS
         addMenuItem = new JButton("add item to menu");
-
-//        addMenuItem.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                JOptionPane.showMessageDialog(null, "action listener working");
-//
-//            }
-//        });
-
         addMenuItem.addActionListener(e -> JOptionPane.showMessageDialog(null, "aaaa"));
-
 
         //ADD COMPONENTS TO PANEL
         //menuPanel
@@ -128,19 +125,19 @@ public class MenuFrame {
         menuPanel.add(addMenuItem, c);
 
         //menuDisplay
-        for(MenuItem m : appetizerMenuItems){
+        for (MenuItem m : appetizerMenuItems) {
             appetizers.add(m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
         }
-        for(MenuItem m : mainMenuItems){
+        for (MenuItem m : mainMenuItems) {
             mains.add(m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
         }
-        for(MenuItem m : dessertMenuItems){
+        for (MenuItem m : dessertMenuItems) {
             desserts.add(m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
         }
-        for(MenuItem m : alcoholicBevMenuItems){
+        for (MenuItem m : alcoholicBevMenuItems) {
             alcoholicBevs.add(m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
         }
-        for(MenuItem m : nonAlcoholicBevMenuItems){
+        for (MenuItem m : nonAlcoholicBevMenuItems) {
             nonAlcoholicBevs.add(m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
         }
 
@@ -150,39 +147,70 @@ public class MenuFrame {
         alcoholicBevJList = new JList(alcoholicBevs.stream().toArray(String[]::new));
         nonAlcoholicBevJList = new JList(nonAlcoholicBevs.stream().toArray(String[]::new));
 
+        menuDisplay.add(appetizerJList);
+        menuDisplay.add(mainJList);
+        menuDisplay.add(dessertJList);
+        menuDisplay.add(alcoholicBevJList);
+        menuDisplay.add(nonAlcoholicBevJList);
+
+        mainJList.setVisible(false);
+        dessertJList.setVisible(false);
+        alcoholicBevJList.setVisible(false);
+        nonAlcoholicBevJList.setVisible(false);
 
         //JCOMBOBOX
-        String[] categories = { "Appetizer", "Main", "Dessert", "AlcoholicBeverage", "NonAlcoholicBeverage" };
+        String[] categories = {"Appetizer", "Main", "Dessert", "AlcoholicBeverage", "NonAlcoholicBeverage"};
         categorySelector = new JComboBox(categories);
         menuPanel.add(categorySelector);
-        String selectedCategory = (String)categorySelector.getSelectedItem();
 
-        categorySelector.addActionListener(e -> {
-                    switch (selectedCategory) {
-                        case "Appetizer":
-                            menuDisplay.add(appetizerJList);
-                            appetizerJList.setVisible(true);
-                        case "Main":
-                            menuDisplay.add(mainJList);
-                            mainJList.setVisible(true);
-                        case "Dessert":
-                            menuDisplay.add(dessertJList);
-                            dessertJList.setVisible(true);
-                        case "AlcoholicBeverage":
-                            menuDisplay.add(alcoholicBevJList);
-                            alcoholicBevJList.setVisible(true);
-                        case "NonAlcoholicBeverage":
-                            menuDisplay.add(nonAlcoholicBevJList);
-                            nonAlcoholicBevJList.setVisible(true);
-                    }
-                }
-        );
-
+        categorySelector.addItemListener(handler);
 
 
         //ADD COMPONENTS TO FRAME
         frame.add(menuPanel, BorderLayout.WEST);
         frame.add(menuDisplay);
+        frame.pack();
+        frame.setVisible(true);
 
+    }
+
+    private class ItemHandler implements ItemListener {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            if (e.getSource() == categorySelector) {
+                if (categorySelector.getSelectedItem().equals("Appetizer")) {
+                    appetizerJList.setVisible(true);
+                    mainJList.setVisible(false);
+                    dessertJList.setVisible(false);
+                    alcoholicBevJList.setVisible(false);
+                    nonAlcoholicBevJList.setVisible(false);
+                } else if (categorySelector.getSelectedItem().equals("Main")) {
+                    appetizerJList.setVisible(false);
+                    mainJList.setVisible(true);
+                    dessertJList.setVisible(false);
+                    alcoholicBevJList.setVisible(false);
+                    nonAlcoholicBevJList.setVisible(false);
+                } else if (categorySelector.getSelectedItem().equals("Dessert")) {
+                    appetizerJList.setVisible(false);
+                    mainJList.setVisible(false);
+                    dessertJList.setVisible(true);
+                    alcoholicBevJList.setVisible(false);
+                    nonAlcoholicBevJList.setVisible(false);
+                } else if (categorySelector.getSelectedItem().equals("AlcoholicBeverage")) {
+                    appetizerJList.setVisible(false);
+                    mainJList.setVisible(false);
+                    dessertJList.setVisible(false);
+                    alcoholicBevJList.setVisible(true);
+                    nonAlcoholicBevJList.setVisible(false);
+                } else if (categorySelector.getSelectedItem().equals("NonAlcoholicBeverage")) {
+                    appetizerJList.setVisible(false);
+                    mainJList.setVisible(false);
+                    dessertJList.setVisible(false);
+                    alcoholicBevJList.setVisible(false);
+                    nonAlcoholicBevJList.setVisible(true);
+                }
+            }
+
+        }
     }
 }

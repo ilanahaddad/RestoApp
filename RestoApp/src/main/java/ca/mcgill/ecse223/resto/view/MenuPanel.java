@@ -176,14 +176,11 @@ public class MenuPanel extends JPanel implements ActionListener {
 
 		// Add ActionListeners
 		itemCategories.addActionListener(this);
-		addItem.addActionListener(this);
 
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == addItem){
 
-		}
 
 		if (e.getSource() == itemCategories) {
 			String category = (String) itemCategories.getSelectedItem();
