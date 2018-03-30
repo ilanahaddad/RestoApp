@@ -560,7 +560,7 @@ public class RestoController
 		 * @param oi orderItem to delete
 		 * @throws InvalidInputException if Seat is null, OrderItem is null, Seat has no OrderItems, and if Seat does not have that specific order item
 		 */
-        public static void cancelOrderItem(Seat s, OrderItem oi) throws InvalidInputException{
+        public static void cancelOrderItem(Seat s, OrderItem oi, Table table) throws InvalidInputException{
         		if(s == null) {
         			throw new InvalidInputException("Please select a seat.\n");
         		}
