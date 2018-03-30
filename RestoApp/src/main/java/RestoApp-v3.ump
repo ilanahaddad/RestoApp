@@ -12,6 +12,9 @@ class RestoApp {
    1 <@>- 1 Menu menu;   
    1 <@>- * PricedMenuItem pricedMenuItems;
    1 <@>- * Bill bills;
+   1 <@>- 1 Statistics statistics;
+   1 <@>- * StatisticsTable statisticsTables;
+   1 <@>- * StatisticsItem statisticsItems;
 }
 
 class Reservation {
@@ -33,6 +36,7 @@ class Table {
    Integer length;
    1 <@>- 1..* Seat seats;
    0..1 -> * Seat currentSeats; // subsets seats
+   0..1 -- 0..1 StatisticsTable statisticTable;
 }
 
 class Seat {
@@ -50,6 +54,7 @@ class OrderItem {
    Integer quantity;
    * orderItems -- 1 PricedMenuItem pricedMenuItem; // only from MenuItem.currentPricedMenuItem for currentOrders
    * orderItems -- 1..* Seat seats; // only from order.tables.seats
+   0..1 -- 0..1 StatisticsItem statisticItem;
 }
 
 class Menu {   
@@ -71,4 +76,18 @@ class PricedMenuItem {
 class Bill {
    * bills -- 1 Order order; // order.bills.issuedForSeats = order.orderItems.seats
    * bills -- 1..* Seat issuedForSeats; // only from order.orderItems.seats;
+}
+
+class Statistics {
+	1 <@>- * StatisticsTable statisticsTables;
+	1 <@>- * StatisticsItem statisticsItems;
+
+}
+
+class StatisticsTable {
+	Integer numUsed;
+}
+
+class StatisticsItem {
+	Integer numOrdered;
 }
