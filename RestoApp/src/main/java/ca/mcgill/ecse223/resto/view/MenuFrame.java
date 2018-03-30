@@ -7,13 +7,12 @@ import ca.mcgill.ecse223.resto.model.MenuItem;
 import javax.swing.*;
 import java.awt.*;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MenuFrame {
     //Frame and panel components
@@ -25,6 +24,8 @@ public class MenuFrame {
 
     //Buttons
     private JButton addMenuItemButton;
+    private JButton removeMenuItemButton;
+    private JButton editMenuItemButton;
 
     //Jlist items (displayed after choosing category)
     private JList appetizerJList;
@@ -39,12 +40,6 @@ public class MenuFrame {
     private List<MenuItem> alcoholicBevMenuItems = new ArrayList<>();
     private List<MenuItem> nonAlcoholicBevMenuItems = new ArrayList<>();
 
-//    private List<Double> appetizerPrices = new ArrayList<>();
-//    private List<Double> mainPrices = new ArrayList<>();
-//    private List<Double> dessertPrices = new ArrayList<>();
-//    private List<Double> alcoholicBevPrices = new ArrayList<>();
-//    private List<Double> nonAlcoholicBevPrices = new ArrayList<>();
-
     private List<String> appetizers = new ArrayList<>();
     private List<String> mains = new ArrayList<>();
     private List<String> desserts = new ArrayList<>();
@@ -52,11 +47,6 @@ public class MenuFrame {
     private List<String> nonAlcoholicBevs = new ArrayList<>();
 
     private ItemHandler handler = new ItemHandler();
-
-    private Scanner menuInput = new Scanner(System.in);
-    private Scanner itemPriceInput = new Scanner(System.in);
-    private String menuItemString;
-    private Double itemPriceDouble;
 
     private JTextField textfield;
     private JTextField textfield2;
@@ -123,12 +113,17 @@ public class MenuFrame {
 
         menuDisplay = new JPanel(new GridBagLayout());
         menuDisplay.setBackground(Color.WHITE);
+        menuDisplay.setBorder(BorderFactory.createLineBorder(Color.black));
 
         //GRIDBACK CONSTRAINTS
         GridBagConstraints c = new GridBagConstraints();
 
         //COMPONENTS
         addMenuItemButton = new JButton("add item to menu");
+        removeMenuItemButton = new JButton("remove item from menu");
+        editMenuItemButton = new JButton("edit a menu item");
+
+        //BUTTON LISTENERS
         addMenuItemButton.addActionListener(e -> {
             JPanel panel = new JPanel();
 
@@ -137,21 +132,22 @@ public class MenuFrame {
             panel.add(label1);
             panel.add(field1);
 
-
             JLabel label2 = new JLabel("Menu item price: ");
             JTextField field2 = new JTextField( 10);
             panel.add(label2);
             panel.add(field2);
-
-
 
             int value = JOptionPane.showConfirmDialog(frame, panel, "Add menu item", JOptionPane.OK_CANCEL_OPTION);
             if (value == JOptionPane.OK_OPTION)
             {
                try{
                    // OK was pressed
-                   String s1 = field1.getText();
-                   String s2 = field2.getText();
+                   String name = field1.getText();
+                   Double price = Double.parseDouble(field2.getText());
+
+                   System.out.println(name);
+                   System.out.println(price);
+
                    // handle them
                } catch (Exception error){
                    JOptionPane.showMessageDialog(
@@ -165,35 +161,117 @@ public class MenuFrame {
             }
         });
 
+        removeMenuItemButton.addActionListener(e -> {
+            JPanel panel = new JPanel();
+
+            JLabel l = new JLabel("Select category:");
+            panel.add(categorySelector);
+            int value = JOptionPane.showConfirmDialog(frame, panel, "Remove menu item", JOptionPane.OK_CANCEL_OPTION);
+            if (value == JOptionPane.OK_OPTION) {
+            }
+            try{
+
+                // handle them
+            } catch (Exception error){
+                JOptionPane.showMessageDialog(
+                        null,
+                        error.getMessage(),
+                        "Could not add menu item",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+
+        });
+
 
         //ADD COMPONENTS TO PANEL
-        //menuPanel
+        //menuPanel buttons
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 0;
         menuPanel.add(addMenuItemButton, c);
+//        c.gridx = 0;
+//        c.gridy = 2;
+//        menuPanel.add(removeMenuItemButton, c);
+//        c.gridx = 0;
+//        c.gridy = 3;
+//        menuPanel.add(editMenuItemButton,c);
+
 
         //menuDisplay
+        int i,k,p,n,t;
+        i = 1; k = 1; p = 1; n = 1; t = 1;
+
         for (MenuItem m : appetizerMenuItems) {
-            appetizers.add(m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            appetizers.add(i + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            i++;
         }
         for (MenuItem m : mainMenuItems) {
-            mains.add(m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            mains.add(k + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            k++;
         }
         for (MenuItem m : dessertMenuItems) {
-            desserts.add(m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            desserts.add(p + "." +m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            p++;
         }
         for (MenuItem m : alcoholicBevMenuItems) {
-            alcoholicBevs.add(m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            alcoholicBevs.add(n + "." +m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            n++;
         }
         for (MenuItem m : nonAlcoholicBevMenuItems) {
-            nonAlcoholicBevs.add(m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            nonAlcoholicBevs.add(t + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            t++;
         }
 
+        //JLISTS
         appetizerJList = new JList(appetizers.stream().toArray(String[]::new));
         mainJList = new JList(mains.stream().toArray(String[]::new));
         dessertJList = new JList(desserts.stream().toArray(String[]::new));
         alcoholicBevJList = new JList(alcoholicBevs.stream().toArray(String[]::new));
         nonAlcoholicBevJList = new JList(nonAlcoholicBevs.stream().toArray(String[]::new));
+
+        //JLIST LISTENERS
+        appetizerJList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    // Double-click detected
+                    int index = appetizerJList.locationToIndex(e.getPoint());
+
+                    JPanel panel = new JPanel();
+                    JButton remove = new JButton("remove item");
+                    JButton edit = new JButton("edit");
+
+                    edit.addActionListener(e1 -> {
+                        JPanel panel1 = new JPanel();
+
+                        JLabel label1 = new JLabel("new item name: ");
+                        JTextField field1 = new JTextField( 10);
+                        panel1.add(label1);
+                        panel1.add(field1);
+
+                        JLabel label2 = new JLabel("new item price: ");
+                        JTextField field2 = new JTextField( 10);
+                        panel1.add(label2);
+                        panel1.add(field2);
+
+                        JOptionPane.showConfirmDialog(frame, panel1, "properties", JOptionPane.OK_CANCEL_OPTION);
+
+                    });
+                    remove.addActionListener(e2 -> {
+                        JOptionPane.showMessageDialog(null, "Item removed succesfully");
+                    });
+
+                    panel.add(remove);
+                    panel.add(edit);
+
+                    JOptionPane.showConfirmDialog(frame, panel, "Edit or remove menu item: " + String.valueOf(index), JOptionPane.OK_CANCEL_OPTION);
+
+                }
+            }
+
+        });
+
+//        appetizerJList.setModel(new DefaultListModel());
+//        DefaultListModel lm1 = (DefaultListModel)appetizerJList.getModel();
+//        lm1.add(3, "gsdkjnsdijgnsa");
 
         menuDisplay.add(appetizerJList);
         menuDisplay.add(mainJList);
@@ -210,9 +288,7 @@ public class MenuFrame {
         String[] categories = {"Appetizer", "Main", "Dessert", "AlcoholicBeverage", "NonAlcoholicBeverage"};
         categorySelector = new JComboBox(categories);
         menuPanel.add(categorySelector);
-
         categorySelector.addItemListener(handler);
-
 
         //ADD COMPONENTS TO FRAME
         frame.add(menuPanel, BorderLayout.WEST);
@@ -259,8 +335,4 @@ public class MenuFrame {
         }
     }
 
-    private class addMenuItem extends JPanel {
-        private JPanel panel = new JPanel();
-        private JTextArea item = new JTextArea();
-    }
 }
