@@ -100,9 +100,11 @@ public class RestoAppPage extends JFrame
         JMenuItem menuMenuItem = createMenuItem("Display Menu", this::displayMenuAction);
         JMenuItem reservationMenuItem = createMenuItem("Make Reservation", this::reserveTableAction);
         JMenuItem startOrderMenuItem = createMenuItem("Start Order", this::startOrderAction);
+        JMenuItem viewOrderMenuItem = createMenuItem("View Order", this::viewOrderAction);
         JMenuItem endOrderMenuItem = createMenuItem("End Order", this::endOrderAction);
 
         actions.add(endOrderMenuItem);
+        actions.add(viewOrderMenuItem);
         actions.add(startOrderMenuItem);
         actions.add(reservationMenuItem);
         actions.add(addTableMenuItem);
@@ -133,6 +135,7 @@ public class RestoAppPage extends JFrame
         JButton displayMenuButton = createButton("displayMenu.png", "Display Menu [Alt + D]", KeyEvent.VK_D, this::displayMenuAction);
         JButton reserveTableButton = createButton("reserveTable.png", "Make Reservation [Alt + R]", KeyEvent.VK_R, this::reserveTableAction);
         JButton startOrderButton = createButton("startOrder.png", "Start Order [Alt + O]", KeyEvent.VK_O, this::startOrderAction);
+        JButton viewOrderButton = createButton("viewOrder.png", "View Order [Alt + V]", KeyEvent.VK_V, this::viewOrderAction);
         JButton endOrderButton = createButton("endOrder.png", "Start Order [Alt + E]", KeyEvent.VK_E, this::endOrderAction);
 
         toolbar.add(exitButton);
@@ -143,6 +146,7 @@ public class RestoAppPage extends JFrame
         toolbar.add(displayMenuButton);
         toolbar.add(reserveTableButton);
         toolbar.add(startOrderButton);
+        toolbar.add(viewOrderButton);
         toolbar.add(endOrderButton);
         add(toolbar, BorderLayout.NORTH);
     }
@@ -366,6 +370,22 @@ public class RestoAppPage extends JFrame
 
     }
 
+    private void viewOrderAction(ActionEvent event){
+        JFrame f = new JFrame("View Order");
+        JPanel menuPanel = new MenuPanel();
+        //JPanel p = new MenuPanel();
+
+        f.add(menuPanel);
+        f.setSize(400,150);
+        f.setLayout(new FlowLayout());
+        f.pack();
+        f.setLocationRelativeTo(null);
+        f.setVisible(true);
+
+        menuPanel.validate();
+        menuPanel.repaint();
+    }
+
     private void endOrderAction(ActionEvent event){
         JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
 
@@ -445,8 +465,6 @@ public class RestoAppPage extends JFrame
 
         menuPanel.validate();
         menuPanel.repaint();
-
-
     }
 
     private void addTableAction(ActionEvent event)

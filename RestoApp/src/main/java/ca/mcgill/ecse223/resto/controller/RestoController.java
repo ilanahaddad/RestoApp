@@ -508,6 +508,28 @@ public class RestoController
             RestoAppApplication.save();
         }
 
+        public static Order viewOrder(Table table) throws InvalidInputException
+        {
+            if(table == null) { throw new InvalidInputException("Error: Table can't be null.\n"); }
+
+            RestoApp r = RestoAppApplication.getRestoApp();
+
+            boolean isTableCurrent = false;
+            for (Table t : r.getCurrentTables())
+            {
+                if (t.equals(table)) 
+                {
+                    isTableCurrent = true;
+                    break;
+                }
+            }
+            if(!isTableCurrent) { throw new InvalidInputException("Error: Table is not part of current tables.\n"); }
+
+            if (table.numberOfOrders() == 0) { throw new InvalidInputException("Error: Table has no Orders.\n"); }
+            
+            return table.getOrder(table.numberOfOrders()-1);
+        }
+
         public static void endOrder(Order orderToEnd) throws InvalidInputException
         {
             RestoApp r = RestoAppApplication.getRestoApp();
