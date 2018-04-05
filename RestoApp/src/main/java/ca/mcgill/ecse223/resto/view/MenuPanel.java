@@ -1,11 +1,26 @@
 package ca.mcgill.ecse223.resto.view;
 
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import ca.mcgill.ecse223.resto.controller.InvalidInputException;
+import ca.mcgill.ecse223.resto.controller.RestoController;
+import ca.mcgill.ecse223.resto.model.Menu;
+import ca.mcgill.ecse223.resto.model.MenuItem;
+import ca.mcgill.ecse223.resto.model.PricedMenuItem;
+import ca.mcgill.ecse223.resto.model.Table;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -25,6 +40,13 @@ public class MenuPanel extends JPanel implements ActionListener {
 	private JList alcohol;
 	private JList nonAlcohol;
 	private JComboBox itemCategories;
+	private JButton addItem;
+
+	Map<MenuItem.ItemCategory, List<MenuItem>> allItems = new HashMap<>();
+	//< Appetizers -> <spring roll, taco, ...>, Mains -> <chicken, beef, ...> ... >
+
+	Map <MenuItem.ItemCategory, List<Double>> allPrices = new HashMap<>();
+
 
 	List<MenuItem> appetizers;
 	protected List<String> aplist = new ArrayList<>();
@@ -43,7 +65,6 @@ public class MenuPanel extends JPanel implements ActionListener {
 
 	public MenuPanel() {
 		try {
-
 			// List containing all menu items, need to go within JList
 			appetizers = RestoController.getMenuItems(ca.mcgill.ecse223.resto.model.MenuItem.ItemCategory.Appetizer);
 			mains = RestoController.getMenuItems(ca.mcgill.ecse223.resto.model.MenuItem.ItemCategory.Main);
@@ -70,7 +91,6 @@ public class MenuPanel extends JPanel implements ActionListener {
 		for (MenuItem m : nabevs) {
 			nabevlist.add(m.getName());
 		}
-
 
 
 
@@ -146,6 +166,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		// Add components
 		add(jcomp3);
 		add(itemCategories);
+		add(addItem);
 
 		add(appetizer);
 		add(mainDish);
@@ -163,6 +184,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 		dessert.setBounds(215, 35, 260, 250);
 		alcohol.setBounds(215, 35, 260, 250);
 		nonAlcohol.setBounds(215, 35, 260, 250);
+		addItem.setBounds(30, 120, 145, 30);
 
 		mainDish.setVisible(false);
 		dessert.setVisible(false);
@@ -175,6 +197,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+
 
 		if (e.getSource() == itemCategories) {
 			String category = (String) itemCategories.getSelectedItem();
