@@ -7,7 +7,7 @@ import java.util.*;
 
 // line 13 "../../../../../RestoAppPersistence.ump"
 // line 1 "../../../../../RestoAppTableStateMachine.ump"
-// line 28 "../../../../../RestoApp-v3.ump"
+// line 31 "../../../../../RestoApp-v3.ump"
 public class Table implements Serializable
 {
 
@@ -35,6 +35,7 @@ public class Table implements Serializable
   //Table Associations
   private List<Seat> seats;
   private List<Seat> currentSeats;
+  private StatisticsTable statisticTable;
   private RestoApp restoApp;
   private List<Reservation> reservations;
   private List<Order> orders;
@@ -461,6 +462,17 @@ public class Table implements Serializable
     return index;
   }
 
+  public StatisticsTable getStatisticTable()
+  {
+    return statisticTable;
+  }
+
+  public boolean hasStatisticTable()
+  {
+    boolean has = statisticTable != null;
+    return has;
+  }
+
   public RestoApp getRestoApp()
   {
     return restoApp;
@@ -675,6 +687,39 @@ public class Table implements Serializable
     return wasAdded;
   }
 
+  public boolean setStatisticTable(StatisticsTable aNewStatisticTable)
+  {
+    boolean wasSet = false;
+    if (aNewStatisticTable == null)
+    {
+      StatisticsTable existingStatisticTable = statisticTable;
+      statisticTable = null;
+      
+      if (existingStatisticTable != null && existingStatisticTable.getTable() != null)
+      {
+        existingStatisticTable.setTable(null);
+      }
+      wasSet = true;
+      return wasSet;
+    }
+
+    StatisticsTable currentStatisticTable = getStatisticTable();
+    if (currentStatisticTable != null && !currentStatisticTable.equals(aNewStatisticTable))
+    {
+      currentStatisticTable.setTable(null);
+    }
+
+    statisticTable = aNewStatisticTable;
+    Table existingTable = aNewStatisticTable.getTable();
+
+    if (!equals(existingTable))
+    {
+      aNewStatisticTable.setTable(this);
+    }
+    wasSet = true;
+    return wasSet;
+  }
+
   public boolean setRestoApp(RestoApp aRestoApp)
   {
     boolean wasSet = false;
@@ -869,6 +914,10 @@ public class Table implements Serializable
     }
     
     currentSeats.clear();
+    if (statisticTable != null)
+    {
+      statisticTable.setTable(null);
+    }
     RestoApp placeholderRestoApp = restoApp;
     this.restoApp = null;
     if(placeholderRestoApp != null)
@@ -937,8 +986,36 @@ public class Table implements Serializable
    */
   // line 71 "../../../../../RestoAppTableStateMachine.ump"
    private boolean allSeatsBilled(){
-    // TODO
-      return false;
+    boolean billed= true;
+	   Order curOrder =this.getOrder(this.numberOfOrders()-1);
+	   List <Seat> curSeats = this.getCurrentSeats();
+	   List <Seat> seatsWithOrderItems = new ArrayList<Seat>();
+	   List<OrderItem> orderItems= curOrder.getOrderItems();
+	   for (Seat s: curSeats){ //for every current seat at the table
+	   		for( OrderItem i :orderItems){ //for every orderItem in Order of table 
+	   			if (s.getOrderItems().contains(i)){  //if seat's orderedItems contain an orderItem from the table's order
+	   				seatsWithOrderItems.add(s); // add seat to seatsWithOrderItems
+	   			}
+	   		}
+	   	} 
+	   List<Bill> billsOfCurOrder = curOrder.getBills(); //bills that belong to current order
+	   for(Seat s :seatsWithOrderItems){ //for each seat that ordered somethings
+	   		boolean seatBilled=false;
+	     	List<Bill> seatBills= s.getBills();
+	     	for(Bill sb : seatBills){ //for each bill in seat bills
+		        	if (billsOfCurOrder.contains(sb)){  //if billsOfCurOrder contains this seat's bill
+		         		seatBilled= true;         // then the seat is billed
+		         		break; //break out of this seat's bills loop
+		        	}                
+	    		}
+	    		//if after going through each seat's bill, none of them were contained in billsOfCurOrder, 
+	    		//that means this seat has order items not billed yet, so must return false for billed
+	    		if (seatBilled ==false){ 
+	        		billed=false;
+	         		break;
+	    		}      
+	   }
+	   return billed;
   }
 
 
@@ -950,6 +1027,7 @@ public class Table implements Serializable
             "y" + ":" + getY()+ "," +
             "width" + ":" + getWidth()+ "," +
             "length" + ":" + getLength()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "statisticTable = "+(getStatisticTable()!=null?Integer.toHexString(System.identityHashCode(getStatisticTable())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "restoApp = "+(getRestoApp()!=null?Integer.toHexString(System.identityHashCode(getRestoApp())):"null");
   }  
   //------------------------
