@@ -101,7 +101,9 @@ public class RestoAppPage extends JFrame
         JMenuItem reservationMenuItem = createMenuItem("Make Reservation", this::reserveTableAction);
         JMenuItem startOrderMenuItem = createMenuItem("Start Order", this::startOrderAction);
         JMenuItem endOrderMenuItem = createMenuItem("End Order", this::endOrderAction);
+        JMenuItem billManagerMenuItem = createMenuItem("billManager", this::billManagerAction);
 
+        actions.add(billManagerMenuItem);
         actions.add(endOrderMenuItem);
         actions.add(startOrderMenuItem);
         actions.add(reservationMenuItem);
@@ -134,6 +136,7 @@ public class RestoAppPage extends JFrame
         JButton reserveTableButton = createButton("reserveTable.png", "Make Reservation [Alt + R]", KeyEvent.VK_R, this::reserveTableAction);
         JButton startOrderButton = createButton("startOrder.png", "Start Order [Alt + O]", KeyEvent.VK_O, this::startOrderAction);
         JButton endOrderButton = createButton("endOrder.png", "Start Order [Alt + E]", KeyEvent.VK_E, this::endOrderAction);
+        JButton billManagerButton = createButton("billManager.png", "Start Bill Manager [Alt + B]", KeyEvent.VK_B, this::billManagerAction);
 
         toolbar.add(exitButton);
         toolbar.add(addTableButton);
@@ -144,6 +147,7 @@ public class RestoAppPage extends JFrame
         toolbar.add(reserveTableButton);
         toolbar.add(startOrderButton);
         toolbar.add(endOrderButton);
+        toolbar.add(billManagerButton);
         add(toolbar, BorderLayout.NORTH);
     }
 
@@ -366,6 +370,16 @@ public class RestoAppPage extends JFrame
 
     }
 
+    
+    private void billManagerAction(ActionEvent event){
+    	JOptionPane.showMessageDialog(
+                null,
+                "Bill Manager Under Construction",
+                "Please Come Back Later",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    
     private void endOrderAction(ActionEvent event){
         JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
 
