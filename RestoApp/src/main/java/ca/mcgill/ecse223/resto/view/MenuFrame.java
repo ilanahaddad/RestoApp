@@ -7,10 +7,7 @@ import ca.mcgill.ecse223.resto.model.MenuItem;
 import javax.swing.*;
 import java.awt.*;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
@@ -40,7 +37,7 @@ public class MenuFrame {
     private List<MenuItem> alcoholicBevMenuItems = new ArrayList<>();
     private List<MenuItem> nonAlcoholicBevMenuItems = new ArrayList<>();
 
-    private List<String> appetizers = new ArrayList<>();
+    private DefaultListModel<String> appetizers = new DefaultListModel<>();
     private List<String> mains = new ArrayList<>();
     private List<String> desserts = new ArrayList<>();
     private List<String> alcoholicBevs = new ArrayList<>();
@@ -137,13 +134,15 @@ public class MenuFrame {
             panel.add(label2);
             panel.add(field2);
 
-            int value = JOptionPane.showConfirmDialog(frame, panel, "Add menu item", JOptionPane.OK_CANCEL_OPTION);
+            int value = JOptionPane.showConfirmDialog(frame, panel, "Add menu item to: " + String.valueOf(categorySelector.getSelectedItem()), JOptionPane.OK_CANCEL_OPTION);
             if (value == JOptionPane.OK_OPTION)
             {
                try{
                    // OK was pressed
                    String name = field1.getText();
                    Double price = Double.parseDouble(field2.getText());
+
+                   appetizers.addElement(appetizers.size()+1 + "." +  name + " $" + String.valueOf(price));
 
                    System.out.println(name);
                    System.out.println(price);
@@ -201,7 +200,8 @@ public class MenuFrame {
         i = 1; k = 1; p = 1; n = 1; t = 1;
 
         for (MenuItem m : appetizerMenuItems) {
-            appetizers.add(i + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            //appetizers.add(i + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            appetizers.addElement(i + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
             i++;
         }
         for (MenuItem m : mainMenuItems) {
@@ -222,13 +222,15 @@ public class MenuFrame {
         }
 
         //JLISTS
-        appetizerJList = new JList(appetizers.stream().toArray(String[]::new));
+        //appetizerJList = new JList(appetizers.stream().toArray(String[]::new));
+        appetizerJList = new JList(appetizers);
         mainJList = new JList(mains.stream().toArray(String[]::new));
         dessertJList = new JList(desserts.stream().toArray(String[]::new));
         alcoholicBevJList = new JList(alcoholicBevs.stream().toArray(String[]::new));
         nonAlcoholicBevJList = new JList(nonAlcoholicBevs.stream().toArray(String[]::new));
 
         //JLIST LISTENERS
+
         appetizerJList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -236,7 +238,7 @@ public class MenuFrame {
                     int index = appetizerJList.locationToIndex(e.getPoint());
 
                     JPanel panel = new JPanel();
-                    JButton remove = new JButton("remove item");
+                    JButton remove = new JButton("remove");
                     JButton edit = new JButton("edit");
 
                     edit.addActionListener(e1 -> {
@@ -253,6 +255,7 @@ public class MenuFrame {
                         panel1.add(field2);
 
                         JOptionPane.showConfirmDialog(frame, panel1, "properties", JOptionPane.OK_CANCEL_OPTION);
+                        JOptionPane.showMessageDialog(null, "Item edited succesfully");
 
                     });
                     remove.addActionListener(e2 -> {
@@ -262,7 +265,7 @@ public class MenuFrame {
                     panel.add(remove);
                     panel.add(edit);
 
-                    JOptionPane.showConfirmDialog(frame, panel, "Edit or remove menu item: " + String.valueOf(index), JOptionPane.OK_CANCEL_OPTION);
+                    JOptionPane.showConfirmDialog(frame, panel, "Edit or remove menu item: " + String.valueOf(index+1), JOptionPane.OK_CANCEL_OPTION);
 
                 }
             }
