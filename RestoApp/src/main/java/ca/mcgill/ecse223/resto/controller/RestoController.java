@@ -56,10 +56,12 @@ public class RestoController
         {
             error += "Input table overlaps with another table. \n";
         }
-        if (x<0 || y<0 || tableNum<0 || numSeats<0 || width<=0 || length<=0)
-        {
-            error += "Input must be positive.";
-        }
+        if (x<0) { error += "X must be positive. \n"; }
+        if (y<0) { error += "Y must be positive. \n"; }
+        if (tableNum<0) { error += "Table number must be positive. \n"; }
+        if (numSeats<0) { error += "Number of seats must be positive. \n"; }
+        if (width<0) { error += "Width must be positive. \n"; }
+        if (length<0) { error += "Length must be positive. \n"; }
         if (error.length() > 0){
             throw new InvalidInputException(error.trim());
         }
