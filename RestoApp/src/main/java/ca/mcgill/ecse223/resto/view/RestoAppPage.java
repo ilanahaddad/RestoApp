@@ -44,7 +44,9 @@ import com.github.lgooddatepicker.components.TimePickerSettings;
 import org.jdesktop.swingx.JXDatePicker;
 
 import ca.mcgill.ecse223.resto.controller.RestoController;
+import ca.mcgill.ecse223.resto.model.MenuItem;
 import ca.mcgill.ecse223.resto.model.Order;
+import ca.mcgill.ecse223.resto.model.OrderItem;
 import ca.mcgill.ecse223.resto.model.Table;
 
 
@@ -101,7 +103,11 @@ public class RestoAppPage extends JFrame
         JMenuItem reservationMenuItem = createMenuItem("Make Reservation", this::reserveTableAction);
         JMenuItem startOrderMenuItem = createMenuItem("Start Order", this::startOrderAction);
         JMenuItem endOrderMenuItem = createMenuItem("End Order", this::endOrderAction);
-
+        JMenuItem cancelOrderItem = createMenuItem("Cancel Order Item", this::cancelOrderItemAction);
+        JMenuItem cancelOrder = createMenuItem("Cancel Order", this::cancelOrderAction);
+        
+        actions.add(cancelOrder);
+        actions.add(cancelOrderItem);
         actions.add(endOrderMenuItem);
         actions.add(startOrderMenuItem);
         actions.add(reservationMenuItem);
@@ -133,8 +139,10 @@ public class RestoAppPage extends JFrame
         JButton displayMenuButton = createButton("displayMenu.png", "Display Menu [Alt + D]", KeyEvent.VK_D, this::displayMenuAction);
         JButton reserveTableButton = createButton("reserveTable.png", "Make Reservation [Alt + R]", KeyEvent.VK_R, this::reserveTableAction);
         JButton startOrderButton = createButton("startOrder.png", "Start Order [Alt + O]", KeyEvent.VK_O, this::startOrderAction);
-        JButton endOrderButton = createButton("endOrder.png", "Start Order [Alt + E]", KeyEvent.VK_E, this::endOrderAction);
-
+        JButton endOrderButton = createButton("endOrder.png", "End Order [Alt + E]", KeyEvent.VK_E, this::endOrderAction);
+        JButton cancelOrderItemButton = createButton("power.png", "Cancel Order Item [Alt + C]", KeyEvent.VK_E, this::cancelOrderItemAction);
+        JButton cancelOrderButton = createButton("endOrder.png", "Cancel Order [Alt + F]", KeyEvent.VK_E, this::cancelOrderAction);
+       
         toolbar.add(exitButton);
         toolbar.add(addTableButton);
         toolbar.add(changeTableButton);
@@ -144,6 +152,8 @@ public class RestoAppPage extends JFrame
         toolbar.add(reserveTableButton);
         toolbar.add(startOrderButton);
         toolbar.add(endOrderButton);
+        toolbar.add(cancelOrderItemButton);
+        toolbar.add(cancelOrderButton);
         add(toolbar, BorderLayout.NORTH);
     }
 
@@ -194,6 +204,104 @@ public class RestoAppPage extends JFrame
         scrollbar.getHorizontalScrollBar().setUnitIncrement(SCROLLBAR_SPEED);
 
         updateScrollbarMax(RestoController.getMaxX(), RestoController.getMaxY());
+    }
+    private void cancelOrderItemAction(ActionEvent event) { //author: ilanahaddad
+        JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+        
+        List<MenuItem> menuItemsOrdered = RestoController.getMenuItemsFromAllCurrentOrderItems();
+        if(menuItemsOrdered != null) {
+        		displayCancelOrderItemAction(panel,menuItemsOrdered);
+        }
+        else {
+        		JOptionPane.showMessageDialog(
+                    null,
+                    "RestoApp currently has no seats with order items",
+                    "Cancel Order Items Currently Unavailable",
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    private void displayCancelOrderItemAction(JPanel panel, List<MenuItem> menuItemsOrdered) { //author: ilanahaddad
+    		int numMenuItems = menuItemsOrdered.size();
+    		//create array to fill combo box with menu items ordered:
+        String menuItemNamesArray[] = new String[numMenuItems];
+        for(int i=0; i< numMenuItems; i++) {
+        		menuItemNamesArray[i] = menuItemsOrdered.get(i).getName();
+        }
+
+        panel.add(new JLabel("Select order item to cancel:"));
+        JComboBox<String> menuItemsOrderedList = new JComboBox<String>(menuItemNamesArray);
+        panel.add(menuItemsOrderedList);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Cancel Order Item",
+        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION){
+            try{
+            		String menuItemNameSelected = (String) menuItemsOrderedList.getSelectedItem();
+            		OrderItem orderItemSelected = RestoController.getOrderItemFromMenuItemName(menuItemNameSelected);
+            		RestoController.cancelOrderItem(orderItemSelected);
+
+                tablePanel.revalidate();
+                tablePanel.repaint();
+
+                JOptionPane.showMessageDialog(null, "Order items cancelled successfully.");
+            }
+            catch (Exception error){
+                JOptionPane.showMessageDialog(
+                null,
+                error.getMessage(),
+                "Could not cancel order item",
+                JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "No order items were cancelled.");
+        }
+    	
+    }
+    private void cancelOrderAction(ActionEvent event) { //author: ilanahaddad
+        JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+
+        //create array of current table numbers
+        int currentLength = RestoController.getCurrentTables().size();
+        String currentTableNums[] = new String[currentLength];
+        for (int i = 0; i < currentLength; i++){
+            currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+        }
+
+        panel.add(new JLabel("Select table to cancel all order items for:"));
+        JComboBox<String> allTablesList = new JComboBox<String>(currentTableNums);
+        panel.add(allTablesList);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Cancel Order",
+        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION){
+            try{
+                int tableNum = Integer.parseInt((String) allTablesList.getSelectedItem());
+                Table selectedTable = RestoController.getTableByNum(tableNum);
+                if(!selectedTable.hasOrders()) {
+                		JOptionPane.showMessageDialog(null, "No orders were cancelled because table has no orders.");
+                		return;
+                }
+                RestoController.cancelOrder(selectedTable);
+
+                tablePanel.revalidate();
+                tablePanel.repaint();
+
+                JOptionPane.showMessageDialog(null, "Order cancelled successfully.");
+            }
+            catch (Exception error)
+            {
+                JOptionPane.showMessageDialog(
+                null,
+                error.getMessage(),
+                "Could cancel order",
+                JOptionPane.ERROR_MESSAGE);
+            }
+            
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "No orders were cancelled.");
+        }
     }
 
     private void reserveTableAction(ActionEvent event) {
@@ -307,7 +415,7 @@ public class RestoAppPage extends JFrame
 
     }
 
-    private void startOrderAction(ActionEvent event){
+    private void startOrderAction(ActionEvent event){ //author: ilanahaddad
         JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
 
         //create array of current table numbers
@@ -494,7 +602,7 @@ public class RestoAppPage extends JFrame
             JOptionPane.showMessageDialog(null, "No Table Added.");
         }
     }
-    private void updateTableAction(ActionEvent event){
+    private void updateTableAction(ActionEvent event){ //author: ilanahaddad
         JPanel panel = new JPanel(new GridLayout(6, 2, 5,5));
 
         //create array of current table numbers

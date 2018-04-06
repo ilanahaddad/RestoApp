@@ -607,33 +607,47 @@ public class RestoController
         		RestoAppApplication.save();
         }
         
-        
-        
-        
-        /*RestoApp r = RestoAppApplication.getRestoApp();
-		//
-		boolean lastOrderItemForSeat = s.getOrderItems().size() == 1;
-		if(lastOrderItemForSeat) {
-		}*/
-        /*
-                		Table t = s.getTable();
-		boolean seatIsCurrent = false;
-		boolean tableIsCurrent = false;
-		for(Table curTable: r.getCurrentTables()) {
-			if(curTable.equals(t)) { //checks if table the seat is at is current
-				tableIsCurrent = true;
-				for(Seat curSeat: curTable.getCurrentSeats()) {
-					if(curSeat.equals(s)) {
-						seatIsCurrent = true;
+        public static List<OrderItem> getAllCurrentOrderItems(){
+	        	RestoApp r = RestoAppApplication.getRestoApp();
+	        	List<OrderItem> allOrderItems = null;
+	        	List<Table> curTables = r.getCurrentTables();
+	        	for(Table t: curTables) {
+	        		List<Seat> curSeatsAtTable = t.getCurrentSeats();
+	        		for(Seat s: curSeatsAtTable) {
+	        			List<OrderItem> orderItemsForSeat = s.getOrderItems();
+	        			for(OrderItem i: orderItemsForSeat) {
+	        				allOrderItems.add(i);
+	        			}
+	        		}
+	        	}
+	        	return allOrderItems;
+        }
+        public static List<MenuItem> getMenuItemsFromAllCurrentOrderItems(){
+        		List<MenuItem> menuItems= null;
+        		List<OrderItem> orderItems = getAllCurrentOrderItems();
+        		if(orderItems == null) {
+        			return null;
+        		}
+        		for(OrderItem i: orderItems) {
+        			MenuItem m = i.getPricedMenuItem().getMenuItem();
+					if(menuItems!=null) {//to ensure no null pointer exception
+						if(!menuItems.contains(m)) {
+							menuItems.add(m);
+						}
 					}
-				}
-			}
-		}*/
+        		}
+        		return menuItems;
+        }
         
-        
-        
-        
-        
-        
-        
+        public static OrderItem getOrderItemFromMenuItemName(String name) {
+        		List<OrderItem> allOrderItems = getAllCurrentOrderItems();
+        		OrderItem orderItem = null;
+        		for(OrderItem i: allOrderItems) {
+        			if(i.getPricedMenuItem().getMenuItem().getName().equals(name)) {
+        				orderItem= i;
+        			}
+        		}
+        		return orderItem;
+        }
+
     }
