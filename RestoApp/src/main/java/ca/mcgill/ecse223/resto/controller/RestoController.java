@@ -60,8 +60,8 @@ public class RestoController
         if (y<0) { error += "Y must be positive. \n"; }
         if (tableNum<0) { error += "Table number must be positive. \n"; }
         if (numSeats<0) { error += "Number of seats must be positive. \n"; }
-        if (width<0) { error += "Width must be positive. \n"; }
-        if (length<0) { error += "Length must be positive. \n"; }
+        if (width<=0) { error += "Width must be positive. \n"; }
+        if (length<=0) { error += "Length must be positive. \n"; }
         if (error.length() > 0){
             throw new InvalidInputException(error.trim());
         }
