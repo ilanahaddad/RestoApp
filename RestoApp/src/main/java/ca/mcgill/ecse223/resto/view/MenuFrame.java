@@ -1,8 +1,12 @@
 package ca.mcgill.ecse223.resto.view;
 
+import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.controller.InvalidInputException;
 import ca.mcgill.ecse223.resto.controller.RestoController;
 import ca.mcgill.ecse223.resto.model.MenuItem;
+import ca.mcgill.ecse223.resto.model.Menu;
+import ca.mcgill.ecse223.resto.model.PricedMenuItem;
+import ca.mcgill.ecse223.resto.model.RestoApp;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +14,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MenuFrame {
     //Frame and panel components
@@ -38,10 +43,10 @@ public class MenuFrame {
     private List<MenuItem> nonAlcoholicBevMenuItems = new ArrayList<>();
 
     private DefaultListModel<String> appetizers = new DefaultListModel<>();
-    private List<String> mains = new ArrayList<>();
-    private List<String> desserts = new ArrayList<>();
-    private List<String> alcoholicBevs = new ArrayList<>();
-    private List<String> nonAlcoholicBevs = new ArrayList<>();
+    private DefaultListModel<String> mains = new DefaultListModel<>();
+    private DefaultListModel<String> desserts = new DefaultListModel<>();
+    private DefaultListModel<String> alcoholicBevs = new DefaultListModel<>();
+    private DefaultListModel<String> nonAlcoholicBevs = new DefaultListModel<>();
 
     private ItemHandler handler = new ItemHandler();
 
@@ -49,9 +54,6 @@ public class MenuFrame {
     private JTextField textfield2;
     private JLabel label;
     private JLabel label2;
-
-
-
 
     public MenuFrame() {
         populate();
@@ -124,6 +126,7 @@ public class MenuFrame {
         addMenuItemButton.addActionListener(e -> {
             JPanel panel = new JPanel();
 
+
             JLabel label1 = new JLabel("Menu item name: ");
             JTextField field1 = new JTextField( 10);
             panel.add(label1);
@@ -141,11 +144,37 @@ public class MenuFrame {
                    // OK was pressed
                    String name = field1.getText();
                    Double price = Double.parseDouble(field2.getText());
+                   //Persistence
+                   RestoApp r = RestoAppApplication.getRestoApp();
+                   Menu m = r.getMenu();
+                   MenuItem mi = new MenuItem(name, m);
+                   PricedMenuItem pmi = new PricedMenuItem(price, r, mi);
 
-                   appetizers.addElement(appetizers.size()+1 + "." +  name + " $" + String.valueOf(price));
+                   if(categorySelector.getSelectedItem().equals("Appetizer")){
+                       appetizers.addElement(appetizers.size()+1 + "." +  name + " $" + String.valueOf(price));
+                       mi.setItemCategory(MenuItem.ItemCategory.Appetizer);
+                       mi.setCurrentPricedMenuItem(pmi);
+                   } else if (categorySelector.getSelectedItem().equals("Main")){
+                       mains.addElement(mains.size()+1 + "." +  name + " $" + String.valueOf(price));
+                       mi.setItemCategory(MenuItem.ItemCategory.Main);
+                       mi.setCurrentPricedMenuItem(pmi);
+                   } else if (categorySelector.getSelectedItem().equals("Dessert")){
+                       mains.addElement(desserts.size()+1 + "." +  name + " $" + String.valueOf(price));
+                       mi.setItemCategory(MenuItem.ItemCategory.Dessert);
+                       mi.setCurrentPricedMenuItem(pmi);
+                   } else if (categorySelector.getSelectedItem().equals("AlcoholicBeverage")) {
+                       mains.addElement(alcoholicBevs.size() + 1 + "." + name + " $" + String.valueOf(price));
+                       mi.setItemCategory(MenuItem.ItemCategory.AlcoholicBeverage);
+                       mi.setCurrentPricedMenuItem(pmi);
+                   } else if (categorySelector.getSelectedItem().equals("NonAlcoholicBeverage")) {
+                       mains.addElement(nonAlcoholicBevs.size() + 1 + "." + name + " $" + String.valueOf(price));
+                       mi.setItemCategory(MenuItem.ItemCategory.NonAlcoholicBeverage);
+                       mi.setCurrentPricedMenuItem(pmi);
+                   } else {
+                       System.out.println("error");
+                   }
 
-                   System.out.println(name);
-                   System.out.println(price);
+                   RestoAppApplication.save();
 
                    // handle them
                } catch (Exception error){
@@ -205,32 +234,31 @@ public class MenuFrame {
             i++;
         }
         for (MenuItem m : mainMenuItems) {
-            mains.add(k + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            mains.addElement(k + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
             k++;
         }
         for (MenuItem m : dessertMenuItems) {
-            desserts.add(p + "." +m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            desserts.addElement(p + "." +m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
             p++;
         }
         for (MenuItem m : alcoholicBevMenuItems) {
-            alcoholicBevs.add(n + "." +m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            alcoholicBevs.addElement(n + "." +m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
             n++;
         }
         for (MenuItem m : nonAlcoholicBevMenuItems) {
-            nonAlcoholicBevs.add(t + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            nonAlcoholicBevs.addElement(t + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
             t++;
         }
 
         //JLISTS
         //appetizerJList = new JList(appetizers.stream().toArray(String[]::new));
         appetizerJList = new JList(appetizers);
-        mainJList = new JList(mains.stream().toArray(String[]::new));
-        dessertJList = new JList(desserts.stream().toArray(String[]::new));
-        alcoholicBevJList = new JList(alcoholicBevs.stream().toArray(String[]::new));
-        nonAlcoholicBevJList = new JList(nonAlcoholicBevs.stream().toArray(String[]::new));
+        mainJList = new JList(mains);
+        dessertJList = new JList(desserts);
+        alcoholicBevJList = new JList(alcoholicBevs);
+        nonAlcoholicBevJList = new JList(nonAlcoholicBevs);
 
         //JLIST LISTENERS
-
         appetizerJList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -272,10 +300,6 @@ public class MenuFrame {
 
         });
 
-//        appetizerJList.setModel(new DefaultListModel());
-//        DefaultListModel lm1 = (DefaultListModel)appetizerJList.getModel();
-//        lm1.add(3, "gsdkjnsdijgnsa");
-
         menuDisplay.add(appetizerJList);
         menuDisplay.add(mainJList);
         menuDisplay.add(dessertJList);
@@ -290,6 +314,7 @@ public class MenuFrame {
         //JCOMBOBOX
         String[] categories = {"Appetizer", "Main", "Dessert", "AlcoholicBeverage", "NonAlcoholicBeverage"};
         categorySelector = new JComboBox(categories);
+
         menuPanel.add(categorySelector);
         categorySelector.addItemListener(handler);
 
