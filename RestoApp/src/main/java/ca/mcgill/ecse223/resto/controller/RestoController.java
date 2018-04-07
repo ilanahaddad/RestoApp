@@ -18,6 +18,7 @@ import ca.mcgill.ecse223.resto.model.Reservation;
 import ca.mcgill.ecse223.resto.model.RestoApp;
 import ca.mcgill.ecse223.resto.model.Seat;
 import ca.mcgill.ecse223.resto.model.Table;
+import ca.mcgill.ecse223.resto.model.Table.Status;
 
 public class RestoController
 {
@@ -508,6 +509,45 @@ public class RestoController
             }
             r.addCurrentOrder(newOrder); //added newly created order to list of current orders
             RestoAppApplication.save();
+        }
+
+        public static List<OrderItem> getOrderItems(Table table) throws InvalidInputException
+        {
+            if(table == null) { throw new InvalidInputException("Error: Table can't be null.\n"); }
+
+            RestoApp r = RestoAppApplication.getRestoApp();
+
+            if (r.getCurrentTables().contains(table)) 
+            { 
+                throw new InvalidInputException("Error: Table is not part of current tables.\n"); 
+            } 
+
+            if (table.getStatus() == Status.Available) 
+            {
+                throw new InvalidInputException("Error: Table is not currently being used.\n"); 
+            }
+
+            Order lastOrder = null;
+            if (table.numberOfOrders() > 0) 
+            {
+                lastOrder = table.getOrder(table.numberOfOrders() - 1);
+            } 
+            else { throw new InvalidInputException("Error: Table has no current orders.\n"); }
+
+            List<OrderItem> finalOrderItems = new ArrayList<OrderItem>();
+
+            for (Seat seat : table.getCurrentSeats())
+            {
+                for (OrderItem oi : seat.getOrderItems()) 
+                {
+                    if (lastOrder.equals(oi.getOrder()) && !finalOrderItems.contains(oi))
+                    {
+                        finalOrderItems.add(oi);
+                    }
+                }
+            }
+
+            return finalOrderItems;
         }
 
         public static void endOrder(Order orderToEnd) throws InvalidInputException
