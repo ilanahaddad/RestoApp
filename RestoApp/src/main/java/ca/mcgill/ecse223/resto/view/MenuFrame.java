@@ -8,6 +8,7 @@ import ca.mcgill.ecse223.resto.model.Menu;
 import ca.mcgill.ecse223.resto.model.PricedMenuItem;
 import ca.mcgill.ecse223.resto.model.RestoApp;
 
+import javax.management.JMException;
 import javax.swing.*;
 import java.awt.*;
 
@@ -54,6 +55,8 @@ public class MenuFrame {
     private JTextField textfield2;
     private JLabel label;
     private JLabel label2;
+
+    private JPopupMenu rightClickMenu;
 
     public MenuFrame() {
         populate();
@@ -141,7 +144,7 @@ public class MenuFrame {
             if (value == JOptionPane.OK_OPTION)
             {
                try{
-                   // OK was pressed
+                   // OK was pressed -- PUT IN CONTROLLER
                    String name = field1.getText();
                    Double price = Double.parseDouble(field2.getText());
                    //Persistence
@@ -223,32 +226,8 @@ public class MenuFrame {
 //        c.gridy = 3;
 //        menuPanel.add(editMenuItemButton,c);
 
-
-        //menuDisplay
-        int i,k,p,n,t;
-        i = 1; k = 1; p = 1; n = 1; t = 1;
-
-        for (MenuItem m : appetizerMenuItems) {
-            //appetizers.add(i + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
-            appetizers.addElement(i + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
-            i++;
-        }
-        for (MenuItem m : mainMenuItems) {
-            mains.addElement(k + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
-            k++;
-        }
-        for (MenuItem m : dessertMenuItems) {
-            desserts.addElement(p + "." +m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
-            p++;
-        }
-        for (MenuItem m : alcoholicBevMenuItems) {
-            alcoholicBevs.addElement(n + "." +m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
-            n++;
-        }
-        for (MenuItem m : nonAlcoholicBevMenuItems) {
-            nonAlcoholicBevs.addElement(t + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
-            t++;
-        }
+        //Menu DISPlay
+        display();
 
         //JLISTS
         //appetizerJList = new JList(appetizers.stream().toArray(String[]::new));
@@ -260,18 +239,28 @@ public class MenuFrame {
 
         //JLIST LISTENERS
         appetizerJList.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
+            public void mouseClicked(MouseEvent event) {
+                if (event.getClickCount() == 2) {
+
                     // Double-click detected
-                    int index = appetizerJList.locationToIndex(e.getPoint());
+                    int index = appetizerJList.locationToIndex(event.getPoint());
 
                     JPanel panel = new JPanel();
                     JButton remove = new JButton("remove");
                     JButton edit = new JButton("edit");
+                    panel.add(remove);
+                    panel.add(edit);
 
-                    edit.addActionListener(e1 -> {
+                    edit.addActionListener(e -> {
+                        JOptionPane.showConfirmDialog(
+                                frame,
+                                panel,
+                                "Edit or remove menu item: " + String.valueOf(index+1),
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.YES_NO_CANCEL_OPTION
+                        );
+
                         JPanel panel1 = new JPanel();
-
                         JLabel label1 = new JLabel("new item name: ");
                         JTextField field1 = new JTextField( 10);
                         panel1.add(label1);
@@ -286,18 +275,70 @@ public class MenuFrame {
                         JOptionPane.showMessageDialog(null, "Item edited succesfully");
 
                     });
-                    remove.addActionListener(e2 -> {
+                    remove.addActionListener(e -> {
+                        try {
+                            appetizers.remove(index);
+
+                        } catch(Exception error){
+                            JOptionPane.showMessageDialog(
+                                    null,
+                                    error.getMessage(),
+                                    "Could not remove menu item",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
                         JOptionPane.showMessageDialog(null, "Item removed succesfully");
                     });
 
-                    panel.add(remove);
-                    panel.add(edit);
-
-                    JOptionPane.showConfirmDialog(frame, panel, "Edit or remove menu item: " + String.valueOf(index+1), JOptionPane.OK_CANCEL_OPTION);
+                    JOptionPane.showConfirmDialog(
+                            frame,
+                            panel,
+                            "Edit or remove menu item: " + String.valueOf(index+1),
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.YES_NO_CANCEL_OPTION
+                    );
 
                 }
             }
 
+        });
+
+        mainJList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if(SwingUtilities.isRightMouseButton(event)) {
+                    mainJList.setSelectedIndex(mainJList.locationToIndex(event.getPoint()));
+                    JPopupMenu menu = new JPopupMenu();
+                    JMenuItem edit = new JMenuItem("edit");
+                    JMenuItem delete = new JMenuItem("delete");
+
+                    edit.addActionListener(e -> {
+                        JTextField name = new JTextField();
+                        JTextField price = new JTextField();
+                        Object[] message = {
+                                "New item name:", name,
+                                "New item price:", price
+                        };
+
+                        int option = JOptionPane.showConfirmDialog(null, message, "Edit item", JOptionPane.OK_CANCEL_OPTION);
+                        if (option == JOptionPane.OK_OPTION) {
+                            System.out.println("editign");
+                            mains.set(mainJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
+                        } else {
+                            System.out.println("error");
+                        }
+                    });
+
+                    delete.addActionListener(e -> {
+                        mains.remove(mainJList.getSelectedIndex());
+
+                    });
+                    menu.add(edit);
+                    menu.add(delete);
+                    menu.show(mainJList, event.getPoint().x,event.getPoint().y);
+                }
+
+
+            }
         });
 
         menuDisplay.add(appetizerJList);
@@ -360,6 +401,34 @@ public class MenuFrame {
                 }
             }
 
+        }
+    }
+
+    private void display() {
+        //menuDisplay
+        int i,k,p,n,t;
+        i = 1; k = 1; p = 1; n = 1; t = 1;
+
+        for (MenuItem m : appetizerMenuItems) {
+            //appetizers.add(i + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            appetizers.addElement(i + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            i++;
+        }
+        for (MenuItem m : mainMenuItems) {
+            mains.addElement(k + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            k++;
+        }
+        for (MenuItem m : dessertMenuItems) {
+            desserts.addElement(p + "." +m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            p++;
+        }
+        for (MenuItem m : alcoholicBevMenuItems) {
+            alcoholicBevs.addElement(n + "." +m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            n++;
+        }
+        for (MenuItem m : nonAlcoholicBevMenuItems) {
+            nonAlcoholicBevs.addElement(t + "." + m.getName() + " " + "$" + m.getCurrentPricedMenuItem().getPrice());
+            t++;
         }
     }
 
