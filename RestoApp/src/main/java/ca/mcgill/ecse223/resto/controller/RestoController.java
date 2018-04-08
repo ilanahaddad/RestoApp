@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
+import ca.mcgill.ecse223.resto.model.Bill;
 import ca.mcgill.ecse223.resto.model.Menu;
 import ca.mcgill.ecse223.resto.model.MenuItem;
 import ca.mcgill.ecse223.resto.model.Order;
@@ -556,6 +557,77 @@ public class RestoController
             return table.numberOfOrders() > 0 && table.getOrder(table.numberOfOrders() - 1).equals(orderToEnd);
         }
 
+        public static void issueBill(List<Seat> seats) throws InvalidInputException{
+            if(seats == null) {
+                throw new InvalidInputException("Error: Seats can't be null.\n");
+            }
+            RestoApp r = RestoAppApplication.getRestoApp();
+            List<Table> currentTables = r.getCurrentTables();
+            boolean current =false;
+            Table t;
+            List<Seat> currentSeats;
+            Order lastOrder = null;
+            for(Seat s: seats) { //loop through tables given
+            	t = s.getTable();
+                current = currentTables.contains(t); //check if each table given is contained in currentTables
+                if(!current) {
+                    throw new InvalidInputException("Error: One of the seats is at a table that is not current");
+                }
+                currentSeats = t.getCurrentSeats();
+                current = currentSeats.contains(s);	
+                if(!current) {
+                	throw new InvalidInputException("Error: One of the seats is not current");
+                }
+                if(lastOrder == null) {
+                	if (t.numberOfOrders() > 0) {
+                		lastOrder = t.getOrder(t.numberOfOrders()-1);
+                	}
+                	else {
+                		throw new InvalidInputException("Error: There are no orders");
+                	}
+                }
+                else {
+                	Order comparedOrder = null;
+                	if (t.numberOfOrders() > 0) {
+                		comparedOrder = t.getOrder(t.numberOfOrders()-1);
+                	}
+                	else {
+                		throw new InvalidInputException("Error: There are no orders");
+                	}
+                	if(!comparedOrder.equals(lastOrder)) {
+                		throw new InvalidInputException("Error: Not the same order?");
+                	}
+                }  
+            }
+            if(lastOrder == null) {
+            	throw new InvalidInputException("Error: lastOrder is null");
+            }
+            boolean billCreated = false;
+            Bill newBill = null;
+            for(Seat s: seats) {
+            	t = s.getTable();
+            	if(billCreated) {
+            		t.addToBill(newBill, s);
+            	}
+            	else {
+            		Bill lastBill = null;
+            		if(lastOrder.numberOfBills() > 0) {
+            			lastBill = lastOrder.getBill(lastOrder.numberOfBills()-1);
+            		}
+            		t.billForSeat(lastOrder, s);
+            		if((lastOrder.numberOfBills() > 0) && (!lastOrder.getBill(lastOrder.numberOfBills() - 1).equals(lastBill))) {
+            			billCreated = true;
+            			newBill = lastOrder.getBill(lastOrder.numberOfBills() - 1);
+            		}
+            	}
+            }
+            if (billCreated) {
+            	throw new InvalidInputException("Error: Bill not created");
+            }
+            RestoAppApplication.save();
+        }
+        
+        
 		/**
 		 * Cancel an ordered item for a customer 
 		 * @param s Seat do cancel order item for
