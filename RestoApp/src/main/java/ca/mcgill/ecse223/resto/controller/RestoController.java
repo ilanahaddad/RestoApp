@@ -10,14 +10,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
-import ca.mcgill.ecse223.resto.model.Menu;
-import ca.mcgill.ecse223.resto.model.MenuItem;
-import ca.mcgill.ecse223.resto.model.Order;
-import ca.mcgill.ecse223.resto.model.OrderItem;
-import ca.mcgill.ecse223.resto.model.Reservation;
-import ca.mcgill.ecse223.resto.model.RestoApp;
-import ca.mcgill.ecse223.resto.model.Seat;
-import ca.mcgill.ecse223.resto.model.Table;
+import ca.mcgill.ecse223.resto.model.*;
+import ca.mcgill.ecse223.resto.view.MenuFrame;
 
 public class RestoController
 {
@@ -43,6 +37,54 @@ public class RestoController
 
         return items;
 
+    }
+
+    public static void addMenuItem(String name, MenuItem.ItemCategory category, double price) {
+        RestoApp r = RestoAppApplication.getRestoApp();
+        Menu m = r.getMenu();
+        MenuItem mi = new MenuItem(name, m);
+        PricedMenuItem pmi = new PricedMenuItem(price, r, mi);
+        MenuFrame mf = new MenuFrame();
+
+        if(mf.categorySelector.getSelectedItem().equals("Appetizer")){
+            mf.appetizers.addElement(name + " $" + String.valueOf(price));
+            mi.setItemCategory(MenuItem.ItemCategory.Appetizer);
+            mi.setCurrentPricedMenuItem(pmi);
+        } else if (mf.categorySelector.getSelectedItem().equals("Main")){
+            mf.mains.addElement(name + " $" + String.valueOf(price));
+            mi.setItemCategory(MenuItem.ItemCategory.Main);
+            mi.setCurrentPricedMenuItem(pmi);
+        } else if (mf.categorySelector.getSelectedItem().equals("Dessert")){
+            mf.mains.addElement(name + " $" + String.valueOf(price));
+            mi.setItemCategory(MenuItem.ItemCategory.Dessert);
+            mi.setCurrentPricedMenuItem(pmi);
+        } else if (mf.categorySelector.getSelectedItem().equals("AlcoholicBeverage")) {
+            mf.mains.addElement(name + " $" + String.valueOf(price));
+            mi.setItemCategory(MenuItem.ItemCategory.AlcoholicBeverage);
+            mi.setCurrentPricedMenuItem(pmi);
+        } else if (mf.categorySelector.getSelectedItem().equals("NonAlcoholicBeverage")) {
+            mf.mains.addElement(name + " $" + String.valueOf(price));
+            mi.setItemCategory(MenuItem.ItemCategory.NonAlcoholicBeverage);
+            mi.setCurrentPricedMenuItem(pmi);
+        } else {
+            System.out.println("error");
+        }
+
+
+    }
+
+    public static void updateMenuItem(MenuItem menuItem, String name, MenuItem.ItemCategory itemCategory, double price){
+	    boolean current = menuItem.hasCurrentPricedMenuItem();
+	    boolean duplicate = menuItem.setName(name);
+	    menuItem.setItemCategory(itemCategory);
+
+	    if(price != menuItem.getCurrentPricedMenuItem().getPrice()) {
+	        RestoApp r = RestoAppApplication.getRestoApp();
+	        PricedMenuItem pmi = menuItem.addPricedMenuItem(price, r);
+	        menuItem.setCurrentPricedMenuItem(pmi);
+        }
+
+        RestoAppApplication.save();
     }
 
     public static void createTableAndSeats(
