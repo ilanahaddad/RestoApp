@@ -41,34 +41,41 @@ public class RestoController
 
     public static void addMenuItem(String name, MenuItem.ItemCategory category, double price) {
         RestoApp r = RestoAppApplication.getRestoApp();
-        Menu m = r.getMenu();
-        MenuItem mi = new MenuItem(name, m);
-        PricedMenuItem pmi = new PricedMenuItem(price, r, mi);
-        MenuFrame mf = new MenuFrame();
+        Menu menu = r.getMenu();
+        MenuItem menuItem = new MenuItem(name, menu);
+        menuItem.setItemCategory(MenuItem.ItemCategory.Main);
+        PricedMenuItem pmi = menuItem.addPricedMenuItem(price,r);
+        menuItem.setCurrentPricedMenuItem(pmi);
 
-        if(mf.categorySelector.getSelectedItem().equals("Appetizer")){
-            mf.appetizers.addElement(name + " $" + String.valueOf(price));
-            mi.setItemCategory(MenuItem.ItemCategory.Appetizer);
-            mi.setCurrentPricedMenuItem(pmi);
-        } else if (mf.categorySelector.getSelectedItem().equals("Main")){
-            mf.mains.addElement(name + " $" + String.valueOf(price));
-            mi.setItemCategory(MenuItem.ItemCategory.Main);
-            mi.setCurrentPricedMenuItem(pmi);
-        } else if (mf.categorySelector.getSelectedItem().equals("Dessert")){
-            mf.mains.addElement(name + " $" + String.valueOf(price));
-            mi.setItemCategory(MenuItem.ItemCategory.Dessert);
-            mi.setCurrentPricedMenuItem(pmi);
-        } else if (mf.categorySelector.getSelectedItem().equals("AlcoholicBeverage")) {
-            mf.mains.addElement(name + " $" + String.valueOf(price));
-            mi.setItemCategory(MenuItem.ItemCategory.AlcoholicBeverage);
-            mi.setCurrentPricedMenuItem(pmi);
-        } else if (mf.categorySelector.getSelectedItem().equals("NonAlcoholicBeverage")) {
-            mf.mains.addElement(name + " $" + String.valueOf(price));
-            mi.setItemCategory(MenuItem.ItemCategory.NonAlcoholicBeverage);
-            mi.setCurrentPricedMenuItem(pmi);
-        } else {
-            System.out.println("error");
-        }
+
+
+
+
+//        if(mf.categorySelector.getSelectedItem().equals("Appetizer")){
+//            mf.appetizers.addElement(name + " $" + String.valueOf(price));
+//            mi.setItemCategory(MenuItem.ItemCategory.Appetizer);
+//            mi.setCurrentPricedMenuItem(pmi);
+//        } else if (mf.categorySelector.getSelectedItem().equals("Main")){
+//            mf.mains.addElement(name + " $" + String.valueOf(price));
+//            mi.setItemCategory(MenuItem.ItemCategory.Main);
+//            mi.setCurrentPricedMenuItem(pmi);
+//        } else if (mf.categorySelector.getSelectedItem().equals("Dessert")){
+//            mf.mains.addElement(name + " $" + String.valueOf(price));
+//            mi.setItemCategory(MenuItem.ItemCategory.Dessert);
+//            mi.setCurrentPricedMenuItem(pmi);
+//        } else if (mf.categorySelector.getSelectedItem().equals("AlcoholicBeverage")) {
+//            mf.mains.addElement(name + " $" + String.valueOf(price));
+//            mi.setItemCategory(MenuItem.ItemCategory.AlcoholicBeverage);
+//            mi.setCurrentPricedMenuItem(pmi);
+//        } else if (mf.categorySelector.getSelectedItem().equals("NonAlcoholicBeverage")) {
+//            mf.mains.addElement(name + " $" + String.valueOf(price));
+//            mi.setItemCategory(MenuItem.ItemCategory.NonAlcoholicBeverage);
+//            mi.setCurrentPricedMenuItem(pmi);
+//        } else {
+//            System.out.println("error");
+//        }
+
+        RestoAppApplication.save();
 
 
     }
