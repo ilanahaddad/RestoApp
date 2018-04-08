@@ -43,10 +43,10 @@ public class RestoController
         RestoApp r = RestoAppApplication.getRestoApp();
         Menu menu = r.getMenu();
         MenuItem menuItem = new MenuItem(name, menu);
-        menuItem.setItemCategory(MenuItem.ItemCategory.Main);
+        menuItem.setItemCategory(category);
         PricedMenuItem pmi = menuItem.addPricedMenuItem(price,r);
         menuItem.setCurrentPricedMenuItem(pmi);
-
+        RestoAppApplication.save();
 
 
 
@@ -75,7 +75,6 @@ public class RestoController
 //            System.out.println("error");
 //        }
 
-        RestoAppApplication.save();
 
 
     }

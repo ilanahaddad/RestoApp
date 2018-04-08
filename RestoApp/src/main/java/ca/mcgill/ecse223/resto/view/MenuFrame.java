@@ -45,7 +45,6 @@ public class MenuFrame {
 
     private ItemHandler handler = new ItemHandler();
 
-
     public MenuFrame() {
         populate();
         gui();
@@ -110,19 +109,16 @@ public class MenuFrame {
 
         //COMPONENTS
         addMenuItemButton = new JButton("add item to menu");
-        removeMenuItemButton = new JButton("remove item from menu");
-        editMenuItemButton = new JButton("edit a menu item");
 
         //BUTTON LISTENERS
         addmenuItem();
-
 
         //ADD COMPONENTS TO PANEL
         c.gridx = 0;
         c.gridy = 0;
         menuPanel.add(addMenuItemButton, c);
 
-        //Menu DISPlay
+        //Menu Display
         display();
 
         //JCOMBOBOX
@@ -157,8 +153,6 @@ public class MenuFrame {
         dessertJList.setVisible(false);
         alcoholicBevJList.setVisible(false);
         nonAlcoholicBevJList.setVisible(false);
-
-
 
         //ADD COMPONENTS TO FRAME
         frame.add(menuPanel, BorderLayout.WEST);
@@ -498,26 +492,23 @@ public class MenuFrame {
                     //Persistence
 
                     if (categorySelector.getSelectedItem().equals("Appetizer")) {
-                        //RestoController.addMenuItem(name, MenuItem.ItemCategory.Appetizer, price);
+                        RestoController.addMenuItem(name, MenuItem.ItemCategory.Appetizer, price);
                         appetizers.addElement(name + " $" + String.valueOf(price));
                     } else if (categorySelector.getSelectedItem().equals("Main")) {
-                        //RestoController.addMenuItem(name, MenuItem.ItemCategory.Main, price);
+                        RestoController.addMenuItem(name, MenuItem.ItemCategory.Main, price);
                         mains.addElement(name + " $" + String.valueOf(price));
                     } else if (categorySelector.getSelectedItem().equals("Dessert")) {
-                        //RestoController.addMenuItem(name, MenuItem.ItemCategory.Dessert, price);
+                        RestoController.addMenuItem(name, MenuItem.ItemCategory.Dessert, price);
                         mains.addElement(name + " $" + String.valueOf(price));
                     } else if (categorySelector.getSelectedItem().equals("AlcoholicBeverage")) {
-                        //RestoController.addMenuItem(name, MenuItem.ItemCategory.AlcoholicBeverage, price);
+                        RestoController.addMenuItem(name, MenuItem.ItemCategory.AlcoholicBeverage, price);
                         mains.addElement(name + " $" + String.valueOf(price));
                     } else if (categorySelector.getSelectedItem().equals("NonAlcoholicBeverage")) {
-                        //RestoController.addMenuItem(name, MenuItem.ItemCategory.NonAlcoholicBeverage, price);
+                        RestoController.addMenuItem(name, MenuItem.ItemCategory.NonAlcoholicBeverage, price);
                         mains.addElement(name + " $" + String.valueOf(price));
                     } else {
                         System.out.println("error");
                     }
-
-                    RestoAppApplication.save();
-
                     // handle them
                 } catch (Exception error) {
                     JOptionPane.showMessageDialog(
