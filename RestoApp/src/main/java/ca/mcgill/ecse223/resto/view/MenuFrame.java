@@ -276,7 +276,11 @@ public class MenuFrame {
 
                                 int option = JOptionPane.showConfirmDialog(null, message, "Edit item", JOptionPane.OK_CANCEL_OPTION);
                                 if (option == JOptionPane.OK_OPTION) {
-                                    RestoController.updateMenuItem(mainMenuItems.get(mainJList.getSelectedIndex()), name.getText(), MenuItem.ItemCategory.Main, Double.parseDouble(price.getText()));
+                                    try{
+                                        RestoController.updateMenuItem(mainMenuItems.get(mainJList.getSelectedIndex()), name.getText(), MenuItem.ItemCategory.Main, Double.parseDouble(price.getText()));
+                                    } catch (InvalidInputException ex){
+                                        ex.getMessage();
+                                    }
                                     mains.set(mainJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
                                 } else {
                                     System.out.println("error");
@@ -284,9 +288,12 @@ public class MenuFrame {
                             });
 
                             delete.addActionListener(e -> {
+                                try {
+                                    RestoController.removeMenuItem(mainMenuItems.get(mainJList.getSelectedIndex()));
+                                } catch (InvalidInputException ex) {
+                                    ex.getMessage();
+                                }
                                 mains.remove(mainJList.getSelectedIndex());
-                                mainMenuItems.remove(mainJList.getSelectedIndex());
-
                             });
                             menu.add(edit);
                             menu.add(delete);

@@ -73,9 +73,20 @@ public class RestoController
 
     }
 
-    public static void updateMenuItem(MenuItem menuItem, String name, MenuItem.ItemCategory itemCategory, double price){
+    //TAKE CARE OF SWITCH CASES
+    public static void updateMenuItem(MenuItem menuItem, String name, MenuItem.ItemCategory itemCategory, double price) throws InvalidInputException{
+	    if( (menuItem == null) || (name == null) || (name.equals("")) || (itemCategory == null) || (price < 0) ) {
+	        throw new InvalidInputException("error");
+        }
 	    boolean current = menuItem.hasCurrentPricedMenuItem();
+	    if(!current) {
+	        throw new InvalidInputException("item does not have priced menu item");
+        }
 	    boolean duplicate = menuItem.setName(name);
+        if(!duplicate) {
+            throw new InvalidInputException("duplicate item");
+        }
+
 	    menuItem.setItemCategory(itemCategory);
 
 	    if(price != menuItem.getCurrentPricedMenuItem().getPrice()) {
@@ -85,6 +96,18 @@ public class RestoController
         }
 
         RestoAppApplication.save();
+    }
+
+    public static void removeMenuItem(MenuItem menuItem) throws  InvalidInputException {
+	    if(menuItem == null){
+	        throw new InvalidInputException("Menu item does not exist");
+        }
+	    boolean current = menuItem.hasCurrentPricedMenuItem();
+	    if(!current){
+	        throw new InvalidInputException("priced menu item does not exist");
+        }
+	    menuItem.setCurrentPricedMenuItem(null);
+	    RestoAppApplication.save();
     }
 
     public static void createTableAndSeats(
