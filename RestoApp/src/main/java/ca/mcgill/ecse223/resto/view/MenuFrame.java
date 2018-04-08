@@ -240,14 +240,19 @@ public class MenuFrame {
                                 "New item price:", price
                         };
 
-                        int option = JOptionPane.showConfirmDialog(null, message, "Edit item", JOptionPane.OK_CANCEL_OPTION);
+                        int option = JOptionPane.showConfirmDialog(null, message, "Edit item: " + name.getText(), JOptionPane.OK_CANCEL_OPTION);
                         if (option == JOptionPane.OK_OPTION) {
                             try {
                                 RestoController.updateMenuItem(appetizerMenuItems.get(appetizerJList.getSelectedIndex()), name.getText(), MenuItem.ItemCategory.Appetizer, Double.parseDouble(price.getText()));
+                                appetizers.set(appetizerJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
+                                JOptionPane.showMessageDialog(null, "Menu item edited successfully");
                             } catch (InvalidInputException ex) {
-                                ex.getMessage();
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Could not edit menu item (name must be a string, price must be a double)",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
                             }
-                            appetizers.set(appetizerJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
                         } else {
                             System.out.println("error");
                         }
@@ -472,7 +477,6 @@ public class MenuFrame {
         addMenuItemButton.addActionListener(e -> {
             JPanel panel = new JPanel();
 
-
             JLabel label1 = new JLabel("Menu item name: ");
             JTextField field1 = new JTextField(10);
             panel.add(label1);
@@ -490,22 +494,26 @@ public class MenuFrame {
                     String name = field1.getText();
                     Double price = Double.parseDouble(field2.getText());
                     //Persistence
-
                     if (categorySelector.getSelectedItem().equals("Appetizer")) {
                         RestoController.addMenuItem(name, MenuItem.ItemCategory.Appetizer, price);
                         appetizers.addElement(name + " $" + String.valueOf(price));
+                        JOptionPane.showMessageDialog(null, "Menu item added successfully");
                     } else if (categorySelector.getSelectedItem().equals("Main")) {
                         RestoController.addMenuItem(name, MenuItem.ItemCategory.Main, price);
                         mains.addElement(name + " $" + String.valueOf(price));
+                        JOptionPane.showMessageDialog(null, "Menu item added successfully");
                     } else if (categorySelector.getSelectedItem().equals("Dessert")) {
                         RestoController.addMenuItem(name, MenuItem.ItemCategory.Dessert, price);
                         mains.addElement(name + " $" + String.valueOf(price));
+                        JOptionPane.showMessageDialog(null, "Menu item added successfully");
                     } else if (categorySelector.getSelectedItem().equals("AlcoholicBeverage")) {
                         RestoController.addMenuItem(name, MenuItem.ItemCategory.AlcoholicBeverage, price);
                         mains.addElement(name + " $" + String.valueOf(price));
+                        JOptionPane.showMessageDialog(null, "Menu item added successfully");
                     } else if (categorySelector.getSelectedItem().equals("NonAlcoholicBeverage")) {
                         RestoController.addMenuItem(name, MenuItem.ItemCategory.NonAlcoholicBeverage, price);
                         mains.addElement(name + " $" + String.valueOf(price));
+                        JOptionPane.showMessageDialog(null, "Menu item added successfully");
                     } else {
                         System.out.println("error");
                     }
@@ -513,12 +521,11 @@ public class MenuFrame {
                 } catch (Exception error) {
                     JOptionPane.showMessageDialog(
                             null,
-                            error.getMessage(),
-                            "Could not add menu item",
+                            "Could not add menu item (name must be a string, price must be a double)",
+                            "Error",
                             JOptionPane.ERROR_MESSAGE);
                 }
 
-                JOptionPane.showMessageDialog(null, "Menu item added successfully");
             }
         });
 

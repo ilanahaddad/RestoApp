@@ -39,48 +39,26 @@ public class RestoController
 
     }
 
-    public static void addMenuItem(String name, MenuItem.ItemCategory category, double price) {
+    public static void addMenuItem(String name, MenuItem.ItemCategory category, double price) throws InvalidInputException {
+	    if(name == null || name.equals("") || category == null || price < 0) {
+	        throw new InvalidInputException("errrrrrrrrrrrrror");
+        }
         RestoApp r = RestoAppApplication.getRestoApp();
         Menu menu = r.getMenu();
+
         MenuItem menuItem = new MenuItem(name, menu);
+        
         menuItem.setItemCategory(category);
         PricedMenuItem pmi = menuItem.addPricedMenuItem(price,r);
         menuItem.setCurrentPricedMenuItem(pmi);
         RestoAppApplication.save();
 
-
-
-
-//        if(mf.categorySelector.getSelectedItem().equals("Appetizer")){
-//            mf.appetizers.addElement(name + " $" + String.valueOf(price));
-//            mi.setItemCategory(MenuItem.ItemCategory.Appetizer);
-//            mi.setCurrentPricedMenuItem(pmi);
-//        } else if (mf.categorySelector.getSelectedItem().equals("Main")){
-//            mf.mains.addElement(name + " $" + String.valueOf(price));
-//            mi.setItemCategory(MenuItem.ItemCategory.Main);
-//            mi.setCurrentPricedMenuItem(pmi);
-//        } else if (mf.categorySelector.getSelectedItem().equals("Dessert")){
-//            mf.mains.addElement(name + " $" + String.valueOf(price));
-//            mi.setItemCategory(MenuItem.ItemCategory.Dessert);
-//            mi.setCurrentPricedMenuItem(pmi);
-//        } else if (mf.categorySelector.getSelectedItem().equals("AlcoholicBeverage")) {
-//            mf.mains.addElement(name + " $" + String.valueOf(price));
-//            mi.setItemCategory(MenuItem.ItemCategory.AlcoholicBeverage);
-//            mi.setCurrentPricedMenuItem(pmi);
-//        } else if (mf.categorySelector.getSelectedItem().equals("NonAlcoholicBeverage")) {
-//            mf.mains.addElement(name + " $" + String.valueOf(price));
-//            mi.setItemCategory(MenuItem.ItemCategory.NonAlcoholicBeverage);
-//            mi.setCurrentPricedMenuItem(pmi);
-//        } else {
-//            System.out.println("error");
-//        }
-
-
-
     }
 
     //TAKE CARE OF SWITCH CASES
     public static void updateMenuItem(MenuItem menuItem, String name, MenuItem.ItemCategory itemCategory, double price) throws InvalidInputException{
+
+
 	    if( (menuItem == null) || (name == null) || (name.equals("")) || (itemCategory == null) || (price < 0) ) {
 	        throw new InvalidInputException("error");
         }
