@@ -14,6 +14,7 @@ import ca.mcgill.ecse223.resto.model.Menu;
 import ca.mcgill.ecse223.resto.model.MenuItem;
 import ca.mcgill.ecse223.resto.model.Order;
 import ca.mcgill.ecse223.resto.model.OrderItem;
+import ca.mcgill.ecse223.resto.model.PricedMenuItem;
 import ca.mcgill.ecse223.resto.model.Reservation;
 import ca.mcgill.ecse223.resto.model.RestoApp;
 import ca.mcgill.ecse223.resto.model.Seat;
@@ -659,7 +660,118 @@ public class RestoController
         		
         }
         
-        
+        /**
+	 * Order a menu item to a seat
+	 * 
+	 * @param menuItem
+	 *            MenuItem to be added to order
+	 * @param quantity
+	 *            quantity of menuItem to be ordered
+	 * @param seats
+	 *            seats associated with the order
+	 * @throws InvalidInputException
+	 *             if menuItem or seats is null, seats list is empty, or quantity is
+	 *             not positive
+	 */
+
+	public static void orderMenuItem(MenuItem menuItem, int quantity, List<Seat> seats) throws InvalidInputException {
+
+		if (!(quantity > 0)) {
+			throw new InvalidInputException("Please enter a positive quantity.\n");
+		}
+		if (menuItem == null) {
+			throw new InvalidInputException("Please enter a valid MenuItem.\n");
+		}
+		if (seats == null) {
+			throw new InvalidInputException("Please enter valid seats.\n");
+		}
+		if (seats.isEmpty()) {
+			throw new InvalidInputException("No seats in list.\n");
+		}
+
+		RestoApp r = RestoAppApplication.getRestoApp();
+		
+		boolean current = menuItem.hasCurrentPricedMenuItem();
+		if (!current) {
+			throw new InvalidInputException("The ordered MenuItem does not exist.\n");
+		}
+
+		List<Table> currentTables = r.getCurrentTables();
+		Order lastOrder = null;
+
+		for (Seat seat : seats) {
+			Table table = seat.getTable();
+			
+			current = currentTables.contains(table);
+			if (!current) {
+				throw new InvalidInputException("The table associated with the seat is not currently active.\n");
+			}
+			
+			List<Seat> currentSeats = table.getCurrentSeats();
+			
+			current = currentSeats.contains(seat);
+			if (!current) {
+				throw new InvalidInputException("The seat is not currently active.\n");
+			}
+			
+			if (lastOrder == null) {
+				if (table.numberOfOrders() > 0) {
+					lastOrder = table.getOrder(table.numberOfOrders() - 1);
+				} else {
+					throw new InvalidInputException("No order associated with table.\n");
+				}
+			} else {
+				Order comparedOrder = null;
+				
+				if (table.numberOfOrders() > 0) {
+					comparedOrder = table.getOrder(table.numberOfOrders() - 1);
+				} else {
+					throw new InvalidInputException("No order associated with table.\n");
+				}
+				
+				if (!comparedOrder.equals(lastOrder)) {
+					throw new InvalidInputException("Last order does not match compared last order.\n");
+				}
+			}
+		}
+
+		if (lastOrder == null) {
+			throw new InvalidInputException("No Order found.\n");
+		}
+		
+		PricedMenuItem pmi = menuItem.getCurrentPricedMenuItem();
+		boolean itemCreated = false;
+		OrderItem newItem = null;
+
+		for (Seat seat : seats) {
+			Table table = seat.getTable();
+			
+			if (itemCreated) {
+				table.addToOrderItem(newItem, seat);
+			} else {
+				OrderItem lastItem = null;
+				
+				if (lastOrder.numberOfOrderItems() > 0) {
+					lastItem = lastOrder.getOrderItem(lastOrder.numberOfOrderItems() - 1);
+				}
+				
+				table.orderItem(quantity, lastOrder, seat, pmi);
+				
+				if (lastOrder.numberOfOrderItems() > 0
+						&& !lastOrder.getOrderItem(lastOrder.numberOfOrderItems() - 1).equals(lastItem)) {
+					itemCreated = true;
+					newItem = lastOrder.getOrderItem(lastOrder.numberOfOrderItems() - 1);
+				}
+			}
+		}
+		
+		if (!itemCreated) {
+			throw new InvalidInputException("OrderItem not sucessfully created.\n");
+		}
+		
+		RestoAppApplication.save();
+
+	}
         
         
         /*RestoApp r = RestoAppApplication.getRestoApp();
