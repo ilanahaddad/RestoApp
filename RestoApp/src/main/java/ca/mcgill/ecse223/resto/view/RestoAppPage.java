@@ -92,6 +92,7 @@ public class RestoAppPage extends JFrame
         //TODO before submitting split  into different tabs (system, table, menu)
         JMenuBar menubar = new JMenuBar();
         JMenu actions = new JMenu("Actions");
+        JMenu manageBillsMenuItem= new JMenu("Manage Bills");
         JMenuItem exitMenuItem = createMenuItem("Exit", RestoAppActions.EXIT_ACTION);
         JMenuItem addTableMenuItem = createMenuItem("Add Table", this::addTableAction);
         JMenuItem changeTableMenuItem = createMenuItem("Change Table", this::updateTableAction);
@@ -101,9 +102,11 @@ public class RestoAppPage extends JFrame
         JMenuItem reservationMenuItem = createMenuItem("Make Reservation", this::reserveTableAction);
         JMenuItem startOrderMenuItem = createMenuItem("Start Order", this::startOrderAction);
         JMenuItem endOrderMenuItem = createMenuItem("End Order", this::endOrderAction);
-        JMenuItem billManagerMenuItem = createMenuItem("billManager", this::billManagerAction);
-
-        actions.add(billManagerMenuItem);
+        JMenuItem newBillMenuItem = createMenuItem("New Bill", this::newBillAction);
+        JMenuItem reissueBillMenuItem = createMenuItem("Reissue Bill", this::reissueBillAction);
+        JMenuItem resolveBillMenuItem = createMenuItem("Resolve Bill", this::resolveBillAction);
+        JMenuItem cancelBillMenuItem = createMenuItem("Cancel Bill", this::cancelBillAction);
+        
         actions.add(endOrderMenuItem);
         actions.add(startOrderMenuItem);
         actions.add(reservationMenuItem);
@@ -112,6 +115,11 @@ public class RestoAppPage extends JFrame
         actions.add(moveTableMenuItem);
         actions.add(removeTableMenuItem);
         actions.add(menuMenuItem);
+        manageBillsMenuItem.add(newBillMenuItem);
+        manageBillsMenuItem.add(reissueBillMenuItem);
+        manageBillsMenuItem.add(resolveBillMenuItem);
+        manageBillsMenuItem.add(cancelBillMenuItem);
+        actions.add(manageBillsMenuItem);
         actions.add(exitMenuItem);
         menubar.add(actions);
         setJMenuBar(menubar);
@@ -372,13 +380,58 @@ public class RestoAppPage extends JFrame
 
     
     private void billManagerAction(ActionEvent event){
+    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+        JButton newBill = new JButton("New Bill");
+        newBill.addActionListener(this::newBillAction);
+        panel.add(newBill);
+        JButton reissueBill = new JButton("Reissue Bill");
+        reissueBill.addActionListener(this::reissueBillAction);
+        panel.add(reissueBill);
+        JButton resolveBill = new JButton("Resolve Bill");
+        resolveBill.addActionListener(this::resolveBillAction);
+        panel.add(resolveBill);
+        JButton cancelBill = new JButton("Cancel Bill");
+        cancelBill.addActionListener(this::cancelBillAction);
+        panel.add(cancelBill);
+    	
+    	JOptionPane.showMessageDialog(null, panel, "Bill Manager",-1);
+        }
+    
+    private void newBillAction(ActionEvent event){
+    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
     	JOptionPane.showMessageDialog(
-                null,
-                "Bill Manager Under Construction",
-                "Please Come Back Later",
-                JOptionPane.INFORMATION_MESSAGE);
+          null,
+          "I need stuff",
+          "New Bill",
+          JOptionPane.INFORMATION_MESSAGE);
+    }    
+
+    private void reissueBillAction(ActionEvent event){
+    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+    	JOptionPane.showMessageDialog(
+          null,
+          "I need stuff",
+          "Reissue Bill",
+          JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void cancelBillAction(ActionEvent event){
+    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+    	JOptionPane.showMessageDialog(
+          null,
+          "I need stuff",
+          "Cancel Bill",
+          JOptionPane.INFORMATION_MESSAGE);
     }
     
+    private void resolveBillAction(ActionEvent event){
+    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+    	JOptionPane.showMessageDialog(
+          null,
+          "I need stuff",
+          "Resolve Bill",
+          JOptionPane.INFORMATION_MESSAGE);
+    }
     
     private void endOrderAction(ActionEvent event){
         JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
