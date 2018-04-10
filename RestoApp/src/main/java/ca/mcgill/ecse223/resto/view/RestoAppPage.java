@@ -604,17 +604,75 @@ public class RestoAppPage extends JFrame {
 		JFrame frame = new JFrame("Order Menu Item");
 		JPanel panel = new JPanel();
 
-		JTextField menuItem = new JTextField();
+		int numoftable = RestoController.getCurrentTables().size();
+		String currentTableNums[] = new String[numoftable];
+		for (int i = 0; i < numoftable; i++) {
+			currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+		}
+
+		String currentItemCategories[] = { "Choose a category...", "Appetizer", "Main", "Dessert", "AlcoholicBeverage",
+				"NonAlcoholicBeverage" };
+
+		List<MenuItem> appetizerMenuItems = new ArrayList<>();
+		List<MenuItem> mainMenuItems = new ArrayList<>();
+		List<MenuItem> dessertMenuItems = new ArrayList<>();
+		List<MenuItem> alcoholicBevMenuItems = new ArrayList<>();
+		List<MenuItem> nonAlcoholicBevMenuItems = new ArrayList<>();
+
+		List<String> appetizers = new ArrayList<>();
+		List<String> mains = new ArrayList<>();
+		List<String> desserts = new ArrayList<>();
+		List<String> alcoholicBevs = new ArrayList<>();
+		List<String> nonAlcoholicBevs = new ArrayList<>();
+
+		try {
+			appetizerMenuItems = RestoController.getMenuItems(MenuItem.ItemCategory.Appetizer);
+			mainMenuItems = RestoController.getMenuItems(MenuItem.ItemCategory.Main);
+			dessertMenuItems = RestoController.getMenuItems(MenuItem.ItemCategory.Dessert);
+			alcoholicBevMenuItems = RestoController.getMenuItems(MenuItem.ItemCategory.AlcoholicBeverage);
+			nonAlcoholicBevMenuItems = RestoController.getMenuItems(MenuItem.ItemCategory.NonAlcoholicBeverage);
+		} catch (Exception error) {
+			JOptionPane.showMessageDialog(null, error.getMessage(), "Cannot get list of MenuItems",
+					JOptionPane.ERROR_MESSAGE);
+			error.printStackTrace();
+		}
+
+		for (MenuItem m : appetizerMenuItems) {
+			appetizers.add(m.getName());
+		}
+		
+		for (MenuItem m : mainMenuItems) {
+			mains.add(m.getName());
+
+		}
+		for (MenuItem m : dessertMenuItems) {
+			desserts.add(m.getName());
+
+		}
+		for (MenuItem m : alcoholicBevMenuItems) {
+			alcoholicBevs.add(m.getName());
+
+		}
+		for (MenuItem m : nonAlcoholicBevMenuItems) {
+			nonAlcoholicBevs.add(m.getName());
+		}
+		
+		JLabel menuItemCatlabel = new JLabel("Item Category");
+		JComboBox<String> menuItemCategory = new JComboBox<String>(currentItemCategories);
 		JLabel menuItemlabel = new JLabel("Menu Item");
-		JTextField quantity = new JTextField();
+		JComboBox<String> menuItem = new JComboBox<String>();
 		JLabel quantitylabel = new JLabel("Quantity");
-		JTextField tables = new JTextField();
+		JTextField quantity = new JTextField();
 		JLabel tablelabel = new JLabel("Table");
+		JComboBox<String> tables = new JComboBox<String>(currentTableNums);
 		JButton add = new JButton("Add to Order");
 
-		panel.setPreferredSize(new Dimension(260, 300));
+		panel.setPreferredSize(new Dimension(260, 360));
 		panel.setLayout(null);
-
+		
+		
+		panel.add(menuItemCatlabel);
+		panel.add(menuItemCategory);
 		panel.add(menuItem);
 		panel.add(menuItemlabel);
 		panel.add(quantity);
@@ -623,27 +681,76 @@ public class RestoAppPage extends JFrame {
 		panel.add(tablelabel);
 		panel.add(add);
 
-		menuItem.setBounds(30, 50, 200, 30);
-		menuItemlabel.setBounds(30, 20, 150, 25);
-		quantity.setBounds(30, 120, 200, 30);
-		quantitylabel.setBounds(30, 90, 100, 25);
-		tables.setBounds(30, 190, 200, 30);
-		tablelabel.setBounds(30, 160, 100, 25);
-		add.setBounds(30, 240, 200, 25);
+		menuItemCatlabel.setBounds(30, 20, 150, 25);
+		menuItemCategory.setBounds(30, 50, 200, 30);
+		menuItemlabel.setBounds(30, 90, 150, 25);
+		menuItem.setBounds(30, 120, 200, 30);
+		quantitylabel.setBounds(30, 160, 100, 25);
+		quantity.setBounds(30, 190, 200, 30);
+		tablelabel.setBounds(30, 230, 100, 25);
+		tables.setBounds(30, 260, 200, 30);
+		add.setBounds(30, 310, 200, 30);
 
 		frame.getContentPane().add(panel);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
+		
+		menuItemCategory.addActionListener(e -> {
 
+			JComboBox<String> source = (JComboBox<String>) e.getSource();
+			String selectedValue = source.getSelectedItem().toString();
+
+			switch (selectedValue) {
+			case "Choose a category...":
+				menuItem.removeAllItems();
+				break;
+			case "Appetizer":
+				menuItem.removeAllItems();
+				for (String name : appetizers) {
+					menuItem.addItem(name);
+				}
+				break;
+			case "Main":
+				menuItem.removeAllItems();
+				for (String name : mains) {
+					menuItem.addItem(name);
+				}
+				break;
+			case "Dessert":
+				menuItem.removeAllItems();
+				for (String name : desserts) {
+					menuItem.addItem(name);
+				}
+				break;
+			case "AlcoholicBeverage":
+				menuItem.removeAllItems();
+				for (String name : alcoholicBevs) {
+					menuItem.addItem(name);
+				}
+				break;
+			case "NonAlcoholicBeverage":
+				menuItem.removeAllItems();
+				for (String name : nonAlcoholicBevs) {
+					menuItem.addItem(name);
+				}
+				break;
+			}
+
+		});
+
+		
 		add.addActionListener(e -> {
 			try {
-				MenuItem menuitem = RestoController.getMenuItem(menuItem.getText());
+				MenuItem menuitem = RestoController.getMenuItem((String) menuItem.getSelectedItem());
 				int qty = Integer.parseInt(quantity.getText());
-				List<Seat> seats = RestoController
-						.getSeats(RestoController.getCurrentTableByNum(Integer.parseInt(tables.getText())));
+				List<Seat> seats = RestoController.getSeats(
+						RestoController.getCurrentTableByNum(Integer.parseInt((String) tables.getSelectedItem())));
 				RestoController.orderMenuItem(menuitem, qty, seats);
-
+				tablePanel.revalidate();
+				tablePanel.repaint();
+				JOptionPane.showMessageDialog(null, "Item ordered sucessfully!", "Item Add Sucess",
+						JOptionPane.INFORMATION_MESSAGE);
 			} catch (Exception error) {
 				JOptionPane.showMessageDialog(null, error.getMessage(), "Could not add item to order",
 						JOptionPane.ERROR_MESSAGE);
