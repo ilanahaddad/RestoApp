@@ -56,8 +56,8 @@ class Table {
    
    // check that the provided quantity is an integer greater than 0
    private boolean quantityIsPositive(int quantity) {
-      // TODO
-      return false;
+      boolean positive = quantity > 0;
+      return positive;
    }
 
    // check that the provided order item is the last item of the current order of the table
