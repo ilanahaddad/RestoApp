@@ -5,8 +5,10 @@ import static java.lang.Integer.parseInt;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -14,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.Time;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -33,9 +36,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 
 import com.github.lgooddatepicker.components.TimePicker;
@@ -43,12 +48,12 @@ import com.github.lgooddatepicker.components.TimePickerSettings;
 
 import org.jdesktop.swingx.JXDatePicker;
 
-import ca.mcgill.ecse223.resto.controller.InvalidInputException;
 import ca.mcgill.ecse223.resto.controller.RestoController;
 import ca.mcgill.ecse223.resto.model.MenuItem;
 import ca.mcgill.ecse223.resto.model.Order;
-import ca.mcgill.ecse223.resto.model.Table;
+import ca.mcgill.ecse223.resto.model.OrderItem;
 import ca.mcgill.ecse223.resto.model.Seat;
+import ca.mcgill.ecse223.resto.model.Table;
 
 public class RestoAppPage extends JFrame {
 	private static final long serialVersionUID = 6588228649238198455L;
@@ -382,7 +387,7 @@ public class RestoAppPage extends JFrame {
 			currentTableNums[i] = "" + RestoController.getCurrentTable(i-1).getNumber();
 		}
 		
-		JTextArea display = new JTextArea(20, 30);
+		JTextArea display  = new JTextArea(20, 60);
 		display.setEditable (false);
 		JScrollPane scroll = new JScrollPane(display);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -427,7 +432,7 @@ public class RestoAppPage extends JFrame {
 		panel.add(scroll, gbc);  
 		
 		f.add(panel);
-		f.setSize(300,300);
+		f.setSize(500,500);
 		// f.setLayout(new FlowLayout());
 		f.pack();
 		f.setLocationRelativeTo(null);
@@ -435,6 +440,46 @@ public class RestoAppPage extends JFrame {
 		
 		panel.validate();
 		panel.repaint();
+	}
+	
+	private String getPrettyOrderItems(List<OrderItem> orderItems) {
+		String output = "";
+		String appetizers = "APPETIZERS\n";
+		String main = "MAIN\n";
+		String dessert = "DESSERT\n";
+		String alcoholicBev = "ALCOHOLIC BEVERAGES\n";
+		String nonAlcoholicBev = "NON-ALCOHOLIC BEVERAGES\n";
+
+		DecimalFormat df = new DecimalFormat("#.##");
+
+		for (OrderItem oi : orderItems)
+		{
+			int qty = oi.getQuantity();
+			double unitPrice = oi.getPricedMenuItem().getPrice();
+			String totalPrice = df.format(qty * unitPrice);
+			MenuItem menuItem = oi.getPricedMenuItem().getMenuItem();
+			switch (menuItem.getItemCategory()) {
+				case Appetizer: 
+				appetizers += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
+				break;
+				case Main: 
+				main += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
+				break;
+				case Dessert:
+				dessert += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
+				break;
+				case AlcoholicBeverage: 
+				alcoholicBev += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
+				break;
+				case NonAlcoholicBeverage: 
+				nonAlcoholicBev += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
+				break;
+			}
+		}
+		
+		output = appetizers + "\n" + main + "\n" + dessert + "\n" + alcoholicBev + "\n" + nonAlcoholicBev;
+		
+		return output;
 	}
 	
 	private void endOrderAction(ActionEvent event) {

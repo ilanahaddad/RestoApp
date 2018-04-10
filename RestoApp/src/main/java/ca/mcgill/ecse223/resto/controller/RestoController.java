@@ -98,7 +98,7 @@ public class RestoController {
 				}
 				throw new InvalidInputException(error);
 			}
-			restoApp.addTable(tableToAdd);
+			restoApp.addCurrentTable(tableToAdd);
 
 			for (int i = 0; i < numSeats; i++) {
 				Seat newSeat = tableToAdd.addSeat();
@@ -106,7 +106,7 @@ public class RestoController {
 			}
 		}
 
-		restoApp.addCurrentTable(tableToAdd);
+		// restoApp.addCurrentTable(tableToAdd);
 		RestoAppApplication.save();
 	}
 
@@ -556,7 +556,14 @@ public class RestoController {
 
 		RestoApp r = RestoAppApplication.getRestoApp();
 
-		if (r.getCurrentTables().contains(table)) {
+		boolean isTableCurrent = false;
+		for (Table t : r.getCurrentTables()) {
+			if (t.getNumber() == table.getNumber()) {
+				isTableCurrent = true;
+				break;
+			}
+		}
+		if (!isTableCurrent) {
 			throw new InvalidInputException("Error: Table is not part of current tables.\n");
 		}
 
