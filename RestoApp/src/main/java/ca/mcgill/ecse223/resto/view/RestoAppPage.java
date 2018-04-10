@@ -46,6 +46,7 @@ import org.jdesktop.swingx.JXDatePicker;
 import ca.mcgill.ecse223.resto.controller.RestoController;
 import ca.mcgill.ecse223.resto.model.Order;
 import ca.mcgill.ecse223.resto.model.Table;
+import ca.mcgill.ecse223.resto.model.Seat;;
 
 
 public class RestoAppPage extends JFrame
@@ -377,7 +378,6 @@ public class RestoAppPage extends JFrame
         }
 
     }
-
     
     private void billManagerAction(ActionEvent event){
     	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
@@ -399,38 +399,126 @@ public class RestoAppPage extends JFrame
     
     private void newBillAction(ActionEvent event){
     	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
-    	JOptionPane.showMessageDialog(
-          null,
-          "I need stuff",
-          "New Bill",
-          JOptionPane.INFORMATION_MESSAGE);
+
+        int currentTableLength = RestoController.getCurrentTables().size();
+        String currentTableNums[] = new String[currentTableLength];
+        for (int i = 0; i < currentTableLength; i++){
+            currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+        }
+
+        List<Table> currentTables = RestoController.getCurrentTables();
+        List<Seat> seats = new ArrayList<Seat>();
+        for(Table t: currentTables) {
+        	seats.addAll(t.getSeats());
+        }
+        
+
+        panel.add(new JLabel("Select tables to add to Bill:"));
+        DefaultListModel<String> listTableNums = new DefaultListModel<>();
+        for(int i=0; i<currentTableNums.length;i++) { //fill list for UI with wanted list (element per element)
+            listTableNums.addElement(currentTableNums[i]);
+        }
+        JList<String> allTablesList  = new JList<>(listTableNums); //now list has table nums of current tables
+        allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        //SCROLLBAR:
+        allTablesList.setVisibleRowCount(3);
+        JScrollPane scrollPaneTable = new JScrollPane(allTablesList);
+        scrollPaneTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        //panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
+        panel.add(scrollPaneTable);
+    	
+      //create array of current order numbers
+        int currentOrderLength = RestoController.getCurrentOrders().size();
+        String currentOrderNums[] = new String[currentOrderLength];
+        for (int i = 0; i < currentOrderLength; i++){
+            currentOrderNums[i] = "" + RestoController.getCurrentOrder(i).getNumber();
+        }
+
+        panel.add(new JLabel("Select orders to add to Bill:"));
+        DefaultListModel<String> listOrderNums = new DefaultListModel<>();
+        for(int i=0; i<currentOrderNums.length;i++) { //fill list for UI with wanted list (element per element)
+            listOrderNums.addElement(currentOrderNums[i]);
+        }
+        JList<String> allOrdersList  = new JList<>(listOrderNums); //now list has order nums of current tables
+        allOrdersList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        //SCROLLBAR:
+        allOrdersList.setVisibleRowCount(3);
+        JScrollPane scrollPaneOrder = new JScrollPane(allOrdersList);
+        scrollPaneOrder.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        //panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
+        panel.add(scrollPaneOrder);
+    	
+
+        
+        int result = JOptionPane.showConfirmDialog(null, panel, "New Bill",
+        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
     }    
 
     private void reissueBillAction(ActionEvent event){
     	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
-    	JOptionPane.showMessageDialog(
-          null,
-          "I need stuff",
-          "Reissue Bill",
-          JOptionPane.INFORMATION_MESSAGE);
+    	List<Order> orders = RestoController.getCurrentOrders();
+    	int numBills = 0;
+    	for (Order o: orders) {
+    		numBills = numBills + o.getBills().size();
+    	}
+        if (numBills > 0)
+        {
+            displayEndOrderAction(panel, numBills);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(
+            null,
+            "RestoApp currently has no bills issued",
+            "Reissue Bills",
+            JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     private void cancelBillAction(ActionEvent event){
     	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
-    	JOptionPane.showMessageDialog(
-          null,
-          "I need stuff",
-          "Cancel Bill",
-          JOptionPane.INFORMATION_MESSAGE);
+    	List<Order> orders = RestoController.getCurrentOrders();
+    	int numBills = 0;
+    	for (Order o: orders) {
+    		numBills = numBills + o.getBills().size();
+    	}
+        if (numBills > 0)
+        {
+            displayEndOrderAction(panel, numBills);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(
+            null,
+            "RestoApp currently has no bills issued",
+            "Cancel Bills",
+            JOptionPane.INFORMATION_MESSAGE);
+        }
     }
     
     private void resolveBillAction(ActionEvent event){
     	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
-    	JOptionPane.showMessageDialog(
-          null,
-          "I need stuff",
-          "Resolve Bill",
-          JOptionPane.INFORMATION_MESSAGE);
+    	List<Order> orders = RestoController.getCurrentOrders();
+    	int numBills = 0;
+    	for (Order o: orders) {
+    		numBills = numBills + o.getBills().size();
+    	}
+        if (numBills > 0)
+        {
+            displayEndOrderAction(panel, numBills);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(
+            null,
+            "RestoApp currently has no bills issued",
+            "Resolve Bills",
+            JOptionPane.INFORMATION_MESSAGE);
+        }
     }
     
     private void endOrderAction(ActionEvent event){
@@ -561,6 +649,7 @@ public class RestoAppPage extends JFrame
             JOptionPane.showMessageDialog(null, "No Table Added.");
         }
     }
+
     private void updateTableAction(ActionEvent event){
         JPanel panel = new JPanel(new GridLayout(6, 2, 5,5));
 
@@ -612,6 +701,7 @@ public class RestoAppPage extends JFrame
             JOptionPane.showMessageDialog(null, "No tables were changed.");
         }
     }
+    
     private void moveTableAction(ActionEvent event){
         JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
 
@@ -664,6 +754,7 @@ public class RestoAppPage extends JFrame
         }
 
     }
+
     private void removeTableAction(ActionEvent event)
     {
         JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
@@ -705,6 +796,5 @@ public class RestoAppPage extends JFrame
             JOptionPane.showMessageDialog(null, "Unsuccessful removal.");
         }
     }
-
 
 }
