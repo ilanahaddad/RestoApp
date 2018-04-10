@@ -47,7 +47,7 @@ public class RestoController
         Menu menu = r.getMenu();
 
         MenuItem menuItem = new MenuItem(name, menu);
-        
+
         menuItem.setItemCategory(category);
         PricedMenuItem pmi = menuItem.addPricedMenuItem(price,r);
         menuItem.setCurrentPricedMenuItem(pmi);
@@ -58,6 +58,13 @@ public class RestoController
     //TAKE CARE OF SWITCH CASES
     public static void updateMenuItem(MenuItem menuItem, String name, MenuItem.ItemCategory itemCategory, double price) throws InvalidInputException{
 
+	    if(!(name instanceof String)){
+	        throw new InvalidInputException("name is not a string");
+        }
+        if(! (price instanceof Double)) {
+	        
+
+        }
 
 	    if( (menuItem == null) || (name == null) || (name.equals("")) || (itemCategory == null) || (price < 0) ) {
 	        throw new InvalidInputException("error");
