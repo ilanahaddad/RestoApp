@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Comparator;
 
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.model.Menu;
@@ -881,6 +882,46 @@ public class RestoController {
 	}
 	
 	/**
+	 * Helper method for table statistics that return the top 10 tables
+	 * @param tables
+	 * @return
+	 */
+	public static List<StatisticsTable> sortAndTrimTables(List<StatisticsTable> tables){
+		List<StatisticsTable> result = new ArrayList<>();
+		int resultSize = 0;
+		int insertIndex = 0;
+		for (StatisticsTable t : tables) {
+			if (result.isEmpty()) {
+				result.add(t);
+			}
+			else {
+				resultSize = result.size();
+				if (t.getNumUsed() > result.get(resultSize - 1).getNumUsed()) { //if numUsed greater than last element in result
+					insertIndex = resultSize - 1;
+					for (int i = resultSize - 2; i >= 0; i--) {
+						if (t.getNumUsed() > result.get(i).getNumUsed()) {
+							insertIndex--;
+						}
+						else {
+							break;
+						}
+					}
+					result.add(insertIndex, t);
+				}
+				else if (resultSize < 10) {
+					result.add(t);
+				}
+			}
+		}
+		// pop objects until only top 10 remain
+		while (result.size() > 10){
+			result.remove(result.get(result.size() - 1)); // removes last element
+		}
+		
+		return result;
+	}
+	
+	/**
 	 * Gets the top 10 tables in the restaurant between a time frame
 	 * @param startDate
 	 * @param startTime
@@ -918,8 +959,8 @@ public class RestoController {
 			StatisticsTable statTable = new StatisticsTable(t, t.getNumUsed());
 			tablesInTimeRange.add(statTable);
 		}
-		//reverseSortTables(tablesInTimeRange);
-		return tablesInTimeRange; 
+		List<StatisticsTable> topTenTables = sortAndTrimTables(tablesInTimeRange); //sort stat tables per highest numUsed
+		return topTenTables; 
 	}
 
 

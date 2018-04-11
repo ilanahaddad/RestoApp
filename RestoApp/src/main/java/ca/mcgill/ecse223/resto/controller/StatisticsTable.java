@@ -20,8 +20,8 @@ import ca.mcgill.ecse223.resto.model.Table;
 
 	  public StatisticsTable(Table aTable, int aNumUsed)
 	  {
-		table = aTable;
-	    numUsed = aNumUsed;
+		this.table = aTable;
+	    this.numUsed = aNumUsed;
 	  }
 
 	  //------------------------
