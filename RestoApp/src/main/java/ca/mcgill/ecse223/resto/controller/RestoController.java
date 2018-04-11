@@ -855,6 +855,24 @@ public class RestoController {
 
 	}
 	
+	
+	/*public static List<StatisticsTable> getTableStatistics()
+	List<StatisticsTable> tablesInTimeRange = null;
+	for (Table t : allTables) {
+		for (Order o: t.getOrders()) //looping thru all orders in history of app for one table
+			If (orderInTimeRange(o, dateTime)) {//tables in time range
+				if(!t.hasStatisticsTable){
+					StatisticsTable statTable = new StatisticsTable(t, 1)
+					tablesInTimeRange.add(statTable);
+				}
+				else{
+					t.getStatTable.setNumUsed(t.getStatisticsTable.getNumUsed() + 1)
+				}
+			}	
+		}
+	}
+	reverseSortTables(tablesInTimeRange);
+	return tablesInTimeRange; */
 
 
 	/*
