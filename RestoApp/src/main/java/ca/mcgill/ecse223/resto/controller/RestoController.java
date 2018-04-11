@@ -727,71 +727,100 @@ public class RestoController {
         return table.numberOfOrders() > 0 && table.getOrder(table.numberOfOrders() - 1).equals(orderToEnd);
     }
 
-    /**
-     * Cancel an ordered item for a customer
-     *
-     * @param s  Seat do cancel order item for
-     * @param oi orderItem to delete
-     * @throws InvalidInputException if Seat is null, OrderItem is null, Seat has no OrderItems, and
-     *                               if Seat does not have that specific order item
-     */
-    public static void cancelOrderItem(Seat s, OrderItem oi, Table table) throws InvalidInputException {
-        if (s == null) {
-            throw new InvalidInputException("Please select a seat.\n");
-        }
-        if (oi == null) {
-            throw new InvalidInputException("Please select an order item.\n");
-        }
-        if (s.numberOfOrderItems() == 0) {
-            throw new InvalidInputException("Seat has no order items.\n");
-        }
-        boolean seatHasThatOrderItem = false;
-        List<OrderItem> orderItemsOfSeat = s.getOrderItems();
-        for (OrderItem seat_oi : orderItemsOfSeat) {
-            if (seat_oi.equals(oi)) {
-                seatHasThatOrderItem = true;
-                break;
-            }
-        }
-        if (!seatHasThatOrderItem) {
-            throw new InvalidInputException("Seat does not have this order item.\n");
-        }
-        Table t = s.getTable();
-        t.cancelOrderItem(oi);
-        RestoAppApplication.save();
+	/**
+	 * Cancel an ordered item for a customer 
+	 * @param orderItem orderItem to delete
+	 * @throws InvalidInputException if OrderItem is null, and if table doesn't have an order
+	 */
+    public static void cancelOrderItem(OrderItem orderItem) throws InvalidInputException{
+    		if(orderItem==null) {
+    			throw new InvalidInputException("Please select an order item.\n");
+    		}
+    		List<Seat> seats = orderItem.getSeats();
+    		Order order = orderItem.getOrder();
+    		List<Table> tables = null;
+    		for(Seat seat: seats) {
+    			Table table = seat.getTable();
+    			Order lastOrder = null;
+    			if(table.numberOfOrders()>0) { //if the seat's table has orders
+    				lastOrder = table.getOrder(table.numberOfOrders()-1);
+    			}
+    			else { // if table has no order (this would never be thrown because if one of its seats has 
+    				//an orderItem then table must have an order)
+    				throw new InvalidInputException("The table doesn't have an order");
+    			}
+    			if(lastOrder.equals(order) && !tables.contains(table)) {
+    				//if this is the table's last order, add table to list of tables that we will cancel items for
+    				tables.add(table);
+    			}
+    		}
+    		for(Table table: tables) {
+    			table.cancelOrderItem(orderItem);
+    		}
+    		RestoAppApplication.save();
     }
-
     /**
-     * Delete all order items of the table
-     *
+     * Delete all order items of the table 
      * @param table table to cancel order for
      * @throws InvalidInputException if table is null or if table isn't current
      */
-    public static void cancelAllOrderItems(Table table) throws InvalidInputException {
-        if (table == null) {
-            throw new InvalidInputException("Please select a table.\n");
-        }
-        RestoApp r = RestoAppApplication.getRestoApp();
-        boolean isTableCurrent = false;
-        for (Table t : r.getCurrentTables()) {
-            if (t.equals(table)) {
-                isTableCurrent = true;
-                break;
-            }
-        }
-        if (!isTableCurrent) {
-            throw new InvalidInputException("Table is not current.\n");
-        }
-        table.cancelOrder();
-        // cancel order in table class does this:
-        /*
-         * Order curOrder = table.getOrder(table.numberOfOrders()-1); List<OrderItem>
-         * orderItemsOfTable = curOrder.getOrderItems(); for(OrderItem o:
-         * orderItemsOfTable) { o.delete(); //delete all order items of the table }
-         */
-        RestoAppApplication.save();
-
+    public static void cancelOrder(Table table) throws InvalidInputException{
+    		if(table == null) {
+    			throw new InvalidInputException("Please select a table.\n");
+    		}
+    		RestoApp r = RestoAppApplication.getRestoApp();
+    		List<Table> currentTables = r.getCurrentTables();
+    		boolean isTableCurrent = currentTables.contains(table);
+    		if(!isTableCurrent) {
+    			throw new InvalidInputException("Table is not current.\n");
+    		}
+    		table.cancelOrder();
+    		RestoAppApplication.save();
     }
+    
+    public static List<OrderItem> getAllCurrentOrderItems(){
+        	RestoApp r = RestoAppApplication.getRestoApp();
+        	List<OrderItem> allOrderItems = null;
+        	List<Table> curTables = r.getCurrentTables();
+        	for(Table t: curTables) {
+        		List<Seat> curSeatsAtTable = t.getCurrentSeats();
+        		for(Seat s: curSeatsAtTable) {
+        			List<OrderItem> orderItemsForSeat = s.getOrderItems();
+        			for(OrderItem i: orderItemsForSeat) {
+        				allOrderItems.add(i);
+        			}
+        		}
+        	}
+        	return allOrderItems;
+    }
+    public static List<MenuItem> getMenuItemsFromAllCurrentOrderItems(){
+    		List<MenuItem> menuItems= null;
+    		List<OrderItem> orderItems = getAllCurrentOrderItems();
+    		if(orderItems == null) {
+    			return null;
+    		}
+    		for(OrderItem i: orderItems) {
+    			MenuItem m = i.getPricedMenuItem().getMenuItem();
+				if(menuItems!=null) {//to ensure no null pointer exception
+					if(!menuItems.contains(m)) {
+						menuItems.add(m);
+					}
+				}
+    		}
+    		return menuItems;
+    }
+    
+    public static OrderItem getOrderItemFromMenuItemName(String name) {
+    		List<OrderItem> allOrderItems = getAllCurrentOrderItems();
+    		OrderItem orderItem = null;
+    		for(OrderItem i: allOrderItems) {
+    			if(i.getPricedMenuItem().getMenuItem().getName().equals(name)) {
+    				orderItem= i;
+    			}
+    		}
+    		return orderItem;
+    }
+
 
     /**
      * Order a menu item to a seat
@@ -1181,19 +1210,5 @@ public class RestoController {
 	
 	}
 
-
-
-    /*
-     * RestoApp r = RestoAppApplication.getRestoApp(); // boolean
-     * lastOrderItemForSeat = s.getOrderItems().size() == 1;
-     * if(lastOrderItemForSeat) { }
-     */
-    /*
-     * Table t = s.getTable(); boolean seatIsCurrent = false; boolean tableIsCurrent
-     * = false; for(Table curTable: r.getCurrentTables()) { if(curTable.equals(t)) {
-     * //checks if table the seat is at is current tableIsCurrent = true; for(Seat
-     * curSeat: curTable.getCurrentSeats()) { if(curSeat.equals(s)) { seatIsCurrent
-     * = true; } } } }
-     */
 
 }
