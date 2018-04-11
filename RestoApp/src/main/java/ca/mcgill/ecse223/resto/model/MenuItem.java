@@ -6,7 +6,9 @@ import java.io.Serializable;
 import java.util.*;
 
 // line 60 "../../../../../RestoAppPersistence.ump"
-// line 64 "../../../../../RestoApp-v3.ump"
+
+// line 60 "../../../../../RestoApp-v3.ump"
+
 public class MenuItem implements Serializable
 {
 
@@ -29,6 +31,7 @@ public class MenuItem implements Serializable
   //MenuItem Attributes
   private String name;
   private ItemCategory itemCategory;
+  private int numUsed;
 
   //MenuItem Associations
   private List<PricedMenuItem> pricedMenuItems;
@@ -41,6 +44,7 @@ public class MenuItem implements Serializable
 
   public MenuItem(String aName, Menu aMenu)
   {
+    numUsed = 0;
     if (!setName(aName))
     {
       throw new RuntimeException("Cannot create due to duplicate name");
@@ -81,6 +85,14 @@ public class MenuItem implements Serializable
     return wasSet;
   }
 
+  public boolean setNumUsed(int aNumUsed)
+  {
+    boolean wasSet = false;
+    numUsed = aNumUsed;
+    wasSet = true;
+    return wasSet;
+  }
+
   public String getName()
   {
     return name;
@@ -99,6 +111,11 @@ public class MenuItem implements Serializable
   public ItemCategory getItemCategory()
   {
     return itemCategory;
+  }
+
+  public int getNumUsed()
+  {
+    return numUsed;
   }
 
   public PricedMenuItem getPricedMenuItem(int index)
@@ -287,7 +304,8 @@ public class MenuItem implements Serializable
   public String toString()
   {
     return super.toString() + "["+
-            "name" + ":" + getName()+ "]" + System.getProperties().getProperty("line.separator") +
+            "name" + ":" + getName()+ "," +
+            "numUsed" + ":" + getNumUsed()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "itemCategory" + "=" + (getItemCategory() != null ? !getItemCategory().equals(this)  ? getItemCategory().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "currentPricedMenuItem = "+(getCurrentPricedMenuItem()!=null?Integer.toHexString(System.identityHashCode(getCurrentPricedMenuItem())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "menu = "+(getMenu()!=null?Integer.toHexString(System.identityHashCode(getMenu())):"null");

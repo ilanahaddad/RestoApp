@@ -8,7 +8,7 @@ import java.sql.Time;
 import java.util.*;
 
 // line 33 "../../../../../RestoAppPersistence.ump"
-// line 20 "../../../../../RestoApp-v3.ump"
+// line 17 "../../../../../RestoApp-v3.ump"
 public class Reservation implements Serializable
 {
 

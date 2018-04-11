@@ -6,7 +6,9 @@ import java.io.Serializable;
 import java.util.*;
 
 // line 45 "../../../../../RestoAppPersistence.ump"
-// line 53 "../../../../../RestoApp-v3.ump"
+
+// line 50 "../../../../../RestoApp-v3.ump"
+
 public class OrderItem implements Serializable
 {
 
@@ -20,7 +22,6 @@ public class OrderItem implements Serializable
   //OrderItem Associations
   private PricedMenuItem pricedMenuItem;
   private List<Seat> seats;
-  private StatisticsItem statisticItem;
   private Order order;
 
   //------------------------
@@ -101,17 +102,6 @@ public class OrderItem implements Serializable
   {
     int index = seats.indexOf(aSeat);
     return index;
-  }
-
-  public StatisticsItem getStatisticItem()
-  {
-    return statisticItem;
-  }
-
-  public boolean hasStatisticItem()
-  {
-    boolean has = statisticItem != null;
-    return has;
   }
 
   public Order getOrder()
@@ -272,39 +262,6 @@ public class OrderItem implements Serializable
     return wasAdded;
   }
 
-  public boolean setStatisticItem(StatisticsItem aNewStatisticItem)
-  {
-    boolean wasSet = false;
-    if (aNewStatisticItem == null)
-    {
-      StatisticsItem existingStatisticItem = statisticItem;
-      statisticItem = null;
-      
-      if (existingStatisticItem != null && existingStatisticItem.getOrderItem() != null)
-      {
-        existingStatisticItem.setOrderItem(null);
-      }
-      wasSet = true;
-      return wasSet;
-    }
-
-    StatisticsItem currentStatisticItem = getStatisticItem();
-    if (currentStatisticItem != null && !currentStatisticItem.equals(aNewStatisticItem))
-    {
-      currentStatisticItem.setOrderItem(null);
-    }
-
-    statisticItem = aNewStatisticItem;
-    OrderItem existingOrderItem = aNewStatisticItem.getOrderItem();
-
-    if (!equals(existingOrderItem))
-    {
-      aNewStatisticItem.setOrderItem(this);
-    }
-    wasSet = true;
-    return wasSet;
-  }
-
   public boolean setOrder(Order aOrder)
   {
     boolean wasSet = false;
@@ -338,10 +295,6 @@ public class OrderItem implements Serializable
     {
       aSeat.removeOrderItem(this);
     }
-    if (statisticItem != null)
-    {
-      statisticItem.setOrderItem(null);
-    }
     Order placeholderOrder = order;
     this.order = null;
     if(placeholderOrder != null)
@@ -356,7 +309,6 @@ public class OrderItem implements Serializable
     return super.toString() + "["+
             "quantity" + ":" + getQuantity()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "pricedMenuItem = "+(getPricedMenuItem()!=null?Integer.toHexString(System.identityHashCode(getPricedMenuItem())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "statisticItem = "+(getStatisticItem()!=null?Integer.toHexString(System.identityHashCode(getStatisticItem())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "order = "+(getOrder()!=null?Integer.toHexString(System.identityHashCode(getOrder())):"null");
   }  
   //------------------------
