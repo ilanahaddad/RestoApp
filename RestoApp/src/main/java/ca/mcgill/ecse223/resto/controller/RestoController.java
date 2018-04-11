@@ -24,6 +24,9 @@ import ca.mcgill.ecse223.resto.model.Table.Status;
 import javax.swing.*;
 
 public class RestoController {
+	
+
+
     public static List<MenuItem.ItemCategory> getItemCategories() {
         return Arrays.asList(MenuItem.ItemCategory.values());
     }
@@ -216,7 +219,6 @@ public class RestoController {
      *                               positive and if table is reserved
      */
     public static void updateTable(Table table, int newNumber, int numberOfSeats) throws InvalidInputException {
-        String error = "";
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         if (table == null) {
             throw new InvalidInputException("Input Table does not exist.\n");
@@ -263,7 +265,7 @@ public class RestoController {
     }
 
     /**
-     * TODO: Fill moveTable api comment
+     * 
      *
      * @param table
      * @param newX
@@ -884,6 +886,247 @@ public class RestoController {
         return item;
 
     }
+    
+	/**
+	 * Helper method that determines if an order is within a specified time range
+	 * @param order
+	 * @param startDate
+	 * @param startTime
+	 * @param endDate
+	 * @param endTime
+	 * @return
+	 */
+	public static boolean orderInTimeRange(Order order, Date startDate, Time startTime, Date endDate, Time endTime) throws InvalidInputException{
+		boolean inRange = false;
+		Date orderDate = order.getDate();
+		Time orderTime = order.getTime();
+		
+		//construct date and time objects
+		Calendar dateStart = Calendar.getInstance();
+		dateStart.setTime(startDate);
+		Calendar timeStart = Calendar.getInstance();
+		timeStart.setTime(startTime);
+		dateStart.set(Calendar.HOUR_OF_DAY, timeStart.get(Calendar.HOUR_OF_DAY));
+		dateStart.set(Calendar.MINUTE, timeStart.get(Calendar.MINUTE));
+		dateStart.set(Calendar.SECOND, timeStart.get(Calendar.SECOND));
+		
+		java.util.Date start = dateStart.getTime();
+		//
+		Calendar dateEnd = Calendar.getInstance();
+		dateEnd.setTime(endDate);
+		Calendar timeEnd = Calendar.getInstance();
+		timeEnd.setTime(endTime);
+		dateEnd.set(Calendar.HOUR_OF_DAY, timeEnd.get(Calendar.HOUR_OF_DAY));
+		dateEnd.set(Calendar.MINUTE, timeEnd.get(Calendar.MINUTE));
+		dateEnd.set(Calendar.SECOND, timeEnd.get(Calendar.SECOND));
+		
+		java.util.Date end = dateEnd.getTime();
+		//
+		Calendar dateOrder = Calendar.getInstance();
+		dateOrder.setTime(orderDate);
+		Calendar timeOrder = Calendar.getInstance();
+		timeOrder.setTime(orderTime);
+		dateOrder.set(Calendar.HOUR_OF_DAY, timeOrder.get(Calendar.HOUR_OF_DAY));
+		dateOrder.set(Calendar.MINUTE, timeOrder.get(Calendar.MINUTE));
+		dateOrder.set(Calendar.SECOND, timeOrder.get(Calendar.SECOND));
+		
+		java.util.Date timeOfOrder = dateOrder.getTime();
+		
+		
+		//Check if date and time are within range
+
+		if (start.after(end)) {
+			throw new InvalidInputException("Start time cannot be after end time.");
+		}
+		if (timeOfOrder.after(start) && timeOfOrder.before(end)) {
+			inRange = true;
+		}
+		if (timeOfOrder.equals(start) || timeOfOrder.equals(end)) {
+			inRange = true;
+		}
+		
+		
+		return inRange;
+	}
+	
+	/**
+	 * Helper method for table statistics that return the top 10 tables
+	 * @param tables
+	 * @return
+	 */
+	public static List<StatisticsTable> sortAndTrimTables(List<StatisticsTable> tables){
+		List<StatisticsTable> result = new ArrayList<>();
+		int resultSize = 0;
+		int insertIndex = 0;
+		for (StatisticsTable t : tables) {
+			if (result.isEmpty()) {
+				result.add(t);
+			}
+			else {
+				resultSize = result.size();
+				if (t.getNumUsed() > result.get(resultSize - 1).getNumUsed()) { //if numUsed greater than last element in result
+					insertIndex = resultSize - 1;
+					for (int i = resultSize - 2; i >= 0; i--) {
+						if (t.getNumUsed() > result.get(i).getNumUsed()) {
+							insertIndex--;
+						}
+						else {
+							break;
+						}
+					}
+					result.add(insertIndex, t);
+				}
+				else if (resultSize < 10) {
+					result.add(t);
+				}
+			}
+		}
+		// pop objects until only top 10 remain
+		while (result.size() > 10){
+			result.remove(result.get(result.size() - 1)); // removes last element
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Helper method for item statistics that return the top 10 items
+	 * @param tables
+	 * @return
+	 */
+	public static List<StatisticsItem> sortAndTrimItems(List<StatisticsItem> items){
+		List<StatisticsItem> result = new ArrayList<>();
+		int resultSize = 0;
+		int insertIndex = 0;
+		for (StatisticsItem sI : items) {
+			if (result.isEmpty()) {
+				result.add(sI);
+			}
+			else {
+				resultSize = result.size();
+				if (sI.getNumUsed() > result.get(resultSize - 1).getNumUsed()) { //if numUsed greater than last element in result
+					insertIndex = resultSize - 1;
+					for (int i = resultSize - 2; i >= 0; i--) {
+						if (sI.getNumUsed() > result.get(i).getNumUsed()) {
+							insertIndex--;
+						}
+						else {
+							break;
+						}
+					}
+					result.add(insertIndex, sI);
+				}
+				else if (resultSize < 10) {
+					result.add(sI);
+				}
+			}
+		}
+		// pop objects until only top 10 remain
+		while (result.size() > 10){
+			result.remove(result.get(result.size() - 1)); // removes last element
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Gets the top 10 tables in the restaurant between a time frame
+	 * @param startDate
+	 * @param startTime
+	 * @param endDate
+	 * @param endTime
+	 * @return a list of 10 best-selling tables (of type StatisticsTable), in order of most popular to least popular
+	 */
+	public static List<StatisticsTable> getTableStatistics(Date startDate, Time startTime, Date endDate, Time endTime) throws InvalidInputException {
+		//input validation
+		if (startDate == null) {
+			throw new InvalidInputException ("Start date must be specified.\n");
+		}
+		if (startTime == null) {
+			throw new InvalidInputException ("Start time must be specified.\n");
+		}
+		if (endDate == null) {
+			throw new InvalidInputException ("End date must be specified.\n");
+		}
+		if (endTime == null) {
+			throw new InvalidInputException ("End time must be specified.\n");
+		}
+		
+		RestoApp restoApp = RestoAppApplication.getRestoApp();
+		List<Table> allTables = restoApp.getTables();
+		int currentNumUsed = 0;
+		List<StatisticsTable> tablesInTimeRange = new ArrayList<>();
+		for (Table t : allTables) {
+			t.setNumUsed(0);
+
+			for (Order o: t.getOrders()) { //looping thru all orders in history of app for one table
+				if (orderInTimeRange(o, startDate, startTime, endDate, endTime)) {//tables in time range
+
+					currentNumUsed = t.getNumUsed();
+					t.setNumUsed(currentNumUsed + 1);
+				}	
+			}
+			if (t.getNumUsed() != 0) {
+				StatisticsTable statTable = new StatisticsTable(t, t.getNumUsed());
+				tablesInTimeRange.add(statTable);
+			}
+		}
+		List<StatisticsTable> topTenTables = sortAndTrimTables(tablesInTimeRange); //sort stat tables per highest numUsed
+		return topTenTables; 
+	}
+	
+	/**
+	 * Gets the top 10 Menu Items within a specified time frame
+	 * @param startDate
+	 * @param startTime
+	 * @param endDate
+	 * @param endTime
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public static List<StatisticsItem> getItemStatistics(Date startDate, Time startTime, Date endDate, Time endTime) throws InvalidInputException {
+		//input validation
+				if (startDate == null) {
+					throw new InvalidInputException ("Start date must be specified.\n");
+				}
+				if (startTime == null) {
+					throw new InvalidInputException ("Start time must be specified.\n");
+				}
+				if (endDate == null) {
+					throw new InvalidInputException ("End date must be specified.\n");
+				}
+				if (endTime == null) {
+					throw new InvalidInputException ("End time must be specified.\n");
+				}
+				
+				RestoApp restoApp = RestoAppApplication.getRestoApp();
+				List<Order> allOrders = restoApp.getOrders();
+				//clear all menu item numUsed
+				List<MenuItem> allMenuItems = restoApp.getMenu().getMenuItems();
+				for (MenuItem m : allMenuItems) {
+					m.setNumUsed(0);
+				}
+				for (Order order : allOrders) {
+					if(orderInTimeRange(order, startDate, startTime, endDate, endTime)){
+						List<OrderItem> orderItems = order.getOrderItems();
+						for (OrderItem item : orderItems) {
+							item.getPricedMenuItem().getMenuItem().setNumUsed(item.getPricedMenuItem().getMenuItem().getNumUsed() + item.getQuantity());
+						}
+					}
+				}
+				
+				List<StatisticsItem> itemsInTimeRange = new ArrayList<>();
+				for (MenuItem menuItem : allMenuItems) {
+					if (menuItem.getNumUsed() != 0) {
+						StatisticsItem statItem = new StatisticsItem(menuItem, menuItem.getNumUsed());
+						itemsInTimeRange.add(statItem);
+					}
+				}
+	
+		List<StatisticsItem> topTenItems = sortAndTrimItems(itemsInTimeRange);
+		return topTenItems;
+	
+	}
 
 
 

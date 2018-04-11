@@ -38,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
@@ -48,7 +49,10 @@ import com.github.lgooddatepicker.components.TimePickerSettings;
 
 import org.jdesktop.swingx.JXDatePicker;
 
+import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.controller.RestoController;
+import ca.mcgill.ecse223.resto.controller.StatisticsItem;
+import ca.mcgill.ecse223.resto.controller.StatisticsTable;
 import ca.mcgill.ecse223.resto.model.MenuItem;
 import ca.mcgill.ecse223.resto.model.Order;
 import ca.mcgill.ecse223.resto.model.OrderItem;
@@ -106,7 +110,9 @@ public class RestoAppPage extends JFrame {
 		JMenuItem viewOrderMenuItem = createMenuItem("View Order", this::viewOrderAction);
 		JMenuItem endOrderMenuItem = createMenuItem("End Order", this::endOrderAction);
 		JMenuItem orderMenuItem = createMenuItem("Order Menu Item", this::orderMenuItemAction);
+		JMenuItem businessStatistics = createMenuItem("Business Statistics", this::businessStatisticsAction);
 		
+		actions.add(businessStatistics);
 		actions.add(orderMenuItem);
 		actions.add(endOrderMenuItem);
 		actions.add(viewOrderMenuItem);
@@ -152,6 +158,8 @@ public class RestoAppPage extends JFrame {
 		this::endOrderAction);
 		JButton orderMenuItemButton = createButton("orderMenuItem.png", "Order Menu Item [Alt + I]", KeyEvent.VK_I,
 		this::orderMenuItemAction);
+		JButton businessStatisticsButton = createButton("businessStatistics.png", "View Business Statistics [Alt + 1]", KeyEvent.VK_1,
+		this::businessStatisticsAction);
 		
 		toolbar.add(exitButton);
 		toolbar.add(addTableButton);
@@ -164,6 +172,7 @@ public class RestoAppPage extends JFrame {
 		toolbar.add(viewOrderButton);
 		toolbar.add(endOrderButton);
 		toolbar.add(orderMenuItemButton);
+		toolbar.add(businessStatisticsButton);
 		add(toolbar, BorderLayout.NORTH);
 	}
 	
@@ -879,6 +888,104 @@ public class RestoAppPage extends JFrame {
 			}
 			
 		});
+		
+	}
+	
+	private void businessStatisticsAction(ActionEvent event) {
+		JPanel panel = new JPanel(new GridLayout(7, 4, 5, 5));
+
+		panel.add(new JLabel("Start Date:"));
+		
+		JXDatePicker startDatePicker = new JXDatePicker();
+		startDatePicker.setDate(Calendar.getInstance().getTime());
+		startDatePicker.setFormats(new SimpleDateFormat("dd.MM.yyyy"));
+		panel.add(startDatePicker);
+		
+		panel.add(new JLabel("Start Time:"));
+		TimePickerSettings timeSettings = new TimePickerSettings();
+		timeSettings.setColor(TimePickerSettings.TimeArea.TimePickerTextValidTime, Color.black);
+		timeSettings.generatePotentialMenuTimes(TimePickerSettings.TimeIncrement.OneHour, LocalTime.of(9, 0),
+		LocalTime.of(23, 0));
+		timeSettings.initialTime = LocalTime.now();
+		TimePicker startTimePicker = new TimePicker(timeSettings);
+		add(startTimePicker);
+		panel.add(startTimePicker);
+		
+		panel.add(new JLabel("End Date:"));
+		
+		JXDatePicker endDatePicker = new JXDatePicker();
+		endDatePicker.setDate(Calendar.getInstance().getTime());
+		endDatePicker.setFormats(new SimpleDateFormat("dd.MM.yyyy"));
+		panel.add(endDatePicker);
+		
+		panel.add(new JLabel("End Time:"));
+		//TimePickerSettings timeSettings2 = new TimePickerSettings();
+		TimePicker endTimePicker = new TimePicker(timeSettings);
+		add(endTimePicker);
+		panel.add(endTimePicker);
+		
+		String[] options = new String[3];
+		options[0] = new String("Top Tables");
+		options[1] = new String("Top Items");
+		options[2] = new String("Exit");
+		int result = JOptionPane.showOptionDialog(null, panel, "Business Statistics", 
+				0, JOptionPane.DEFAULT_OPTION, null, options, null);
+		if (result == 0) {
+			try {
+				
+				Date startDate = new Date(startDatePicker.getDate().getTime());
+				Time startTime = Time.valueOf(startTimePicker.getTime());
+				Date endDate = new Date(endDatePicker.getDate().getTime());
+				Time endTime = Time.valueOf(endTimePicker.getTime());
+				
+				
+				JPanel topTables = new JPanel(new GridLayout(15, 4, 5, 5));
+				topTables.add(new JLabel("Top 10 Tables: "));
+				List<StatisticsTable> top10Tables = RestoController.getTableStatistics(startDate, startTime, endDate, endTime);
+				for (StatisticsTable t : top10Tables) {
+					topTables.add(new JLabel("Table " + t.getTable().getNumber() + " used " + t.getTable().getNumUsed() + " times.\n"));
+				}
+				
+				//JFrame f = new JFrame();
+				//f.setLayout(new BorderLayout());
+				//f.add(topTables);
+				//f.pack();
+				//f.setVisible(true);
+				JOptionPane.showMessageDialog(null, topTables);
+				//JOptionPane.showConfirmDialog(null, topTables, "Top Tables", JOptionPane.OK_OPTION,
+				//		JOptionPane.PLAIN_MESSAGE);
+			} catch (Exception error) {
+				JOptionPane.showMessageDialog(null, error.getMessage(), "Top 10 Tables failed to generate.",
+				JOptionPane.ERROR_MESSAGE);
+			}
+		} 
+		else if (result == 1) {
+			try {
+				
+				Date startDate = new Date(startDatePicker.getDate().getTime());
+				Time startTime = Time.valueOf(startTimePicker.getTime());
+				Date endDate = new Date(endDatePicker.getDate().getTime());
+				Time endTime = Time.valueOf(endTimePicker.getTime());
+				
+				
+				JPanel topItems = new JPanel(new GridLayout(15, 4, 5, 5));
+				topItems.add(new JLabel("Top 10 Menu Items: "));
+				List<StatisticsItem> top10Items = RestoController.getItemStatistics(startDate, startTime, endDate, endTime);
+				for (StatisticsItem sI : top10Items) {
+					topItems.add(new JLabel("" + sI.getItem().getName() + " ordered " + sI.getNumUsed() + " times.\n"));
+				}
+				
+				JOptionPane.showMessageDialog(null, topItems);
+
+			} catch (Exception error) {
+				JOptionPane.showMessageDialog(null, error.getMessage(), "Top 10 Menu Items Failed to Generate.",
+				JOptionPane.ERROR_MESSAGE);
+			}
+			//JOptionPane.showMessageDialog(null, "Top 10 Items.");
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "Statistics exited.");
+		}
 		
 	}
 	

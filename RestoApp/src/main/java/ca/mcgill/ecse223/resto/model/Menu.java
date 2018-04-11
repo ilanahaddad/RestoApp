@@ -6,7 +6,9 @@ import java.io.Serializable;
 import java.util.*;
 
 // line 66 "../../../../../RestoAppPersistence.ump"
-// line 61 "../../../../../RestoApp-v3.ump"
+
+// line 56 "../../../../../RestoApp-v3.ump"
+
 public class Menu implements Serializable
 {
 
@@ -32,10 +34,10 @@ public class Menu implements Serializable
     restoApp = aRestoApp;
   }
 
-  public Menu(Statistics aStatisticsForRestoApp)
+  public Menu()
   {
     menuItems = new ArrayList<MenuItem>();
-    restoApp = new RestoApp(this, aStatisticsForRestoApp);
+    restoApp = new RestoApp(this);
   }
 
   //------------------------
