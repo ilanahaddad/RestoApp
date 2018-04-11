@@ -1078,7 +1078,7 @@ public class RestoController {
 					if(orderInTimeRange(order, startDate, startTime, endDate, endTime)){
 						List<OrderItem> orderItems = order.getOrderItems();
 						for (OrderItem item : orderItems) {
-							item.getPricedMenuItem().getMenuItem().setNumUsed(item.getPricedMenuItem().getMenuItem().getNumUsed() + 1);
+							item.getPricedMenuItem().getMenuItem().setNumUsed(item.getPricedMenuItem().getMenuItem().getNumUsed() + item.getQuantity());
 						}
 					}
 				}
