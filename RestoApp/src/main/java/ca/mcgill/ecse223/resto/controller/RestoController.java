@@ -143,10 +143,10 @@ public class RestoController {
         if (numSeats < 0) {
             error += "Number of seats must be positive. \n";
         }
-        if (width < 0) {
+        if (width <= 0) {
             error += "Width must be positive. \n";
         }
-        if (length < 0) {
+        if (length <= 0) {
             error += "Length must be positive. \n";
         }
         if (error.length() > 0) {
