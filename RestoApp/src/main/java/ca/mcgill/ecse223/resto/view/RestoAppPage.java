@@ -19,6 +19,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -411,9 +415,42 @@ public class RestoAppPage extends JFrame
         for(Table t: currentTables) {
         	seats.addAll(t.getSeats());
         }
+        int currentSeatLength = seats.size();
+        String currentSeats[] = new String[currentSeatLength];
+        HashMap<String, Seat> hmap = new HashMap<String, Seat>();
+        int count = 0;
+        int seatCount = 0;
+        for(Table t: currentTables) {
+        	List<Seat> seatsAtTable = t.getSeats();
+        	seatCount = 1;
+        	for(Seat s: seatsAtTable) {
+        		currentSeats[count] = "t" + t.getNumber() + "s" + seatCount;
+        		hmap.put(currentSeats[count], s);
+        		seatCount++;
+        		count++;
+        	}       	
+        }       
+        
+        panel.add(new JLabel("Select seats to add to Bill:"));
+        panel.add(new JLabel("Select tables to add to Bill:"));
+        panel.add(new JLabel("Select orders to add to Bill:"));
+        DefaultListModel<String> listSeatNums = new DefaultListModel<>();
+        for(int i=0; i<currentSeats.length;i++) { //fill list for UI with wanted list (element per element)
+            listSeatNums.addElement(currentSeats[i]);
+        }
+        JList<String> allSeatsList  = new JList<>(currentSeats); //now list has table nums of current tables
+        allSeatsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        //SCROLLBAR:
+        allSeatsList.setVisibleRowCount(3);
+        JScrollPane scrollPaneSeats = new JScrollPane(allSeatsList);
+        scrollPaneSeats.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        //panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
+        panel.add(scrollPaneSeats);
+
         
 
-        panel.add(new JLabel("Select tables to add to Bill:"));
         DefaultListModel<String> listTableNums = new DefaultListModel<>();
         for(int i=0; i<currentTableNums.length;i++) { //fill list for UI with wanted list (element per element)
             listTableNums.addElement(currentTableNums[i]);
@@ -432,11 +469,11 @@ public class RestoAppPage extends JFrame
       //create array of current order numbers
         int currentOrderLength = RestoController.getCurrentOrders().size();
         String currentOrderNums[] = new String[currentOrderLength];
+        List<Order> currentOrders = RestoController.getCurrentOrders();
         for (int i = 0; i < currentOrderLength; i++){
-            currentOrderNums[i] = "" + RestoController.getCurrentOrder(i).getNumber();
+            currentOrderNums[i] = "" + currentOrders.get(i).getNumber();
         }
 
-        panel.add(new JLabel("Select orders to add to Bill:"));
         DefaultListModel<String> listOrderNums = new DefaultListModel<>();
         for(int i=0; i<currentOrderNums.length;i++) { //fill list for UI with wanted list (element per element)
             listOrderNums.addElement(currentOrderNums[i]);
@@ -456,6 +493,37 @@ public class RestoAppPage extends JFrame
         
         int result = JOptionPane.showConfirmDialog(null, panel, "New Bill",
         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION){
+            try{
+                List<String> selectedSeatNums = allTablesList.getSelectedValuesList();
+                List<String> passedSeatNums = new ArrayList<String>();
+                List<String> discardedSeatNums = new ArrayList<String>();
+                List<Seat> passedSeats = new ArrayList<Seat>();
+                for(int i = 0; i < selectedSeatNums.size(); i++) {
+                	passedSeats.add(hmap.get(selectedSeatNums.get(i)));
+                }
+                
+                
+                RestoController.issueBill(passedSeats);
+
+                tablePanel.revalidate();
+                tablePanel.repaint();
+
+                JOptionPane.showMessageDialog(null, "Order started successfully.");
+            }
+            catch (Exception error)
+            {
+                JOptionPane.showMessageDialog(
+                null,
+                error.getMessage(),
+                "Could not start order",
+                JOptionPane.ERROR_MESSAGE);
+
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "No orders were started.");
+        }
     }    
 
     private void reissueBillAction(ActionEvent event){
