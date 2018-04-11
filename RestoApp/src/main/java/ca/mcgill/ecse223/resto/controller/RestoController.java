@@ -902,8 +902,7 @@ public class RestoController {
 		
 		
 		//Check if date and time are within range
-		System.out.println(timeOfOrder.after(start));
-		System.out.println(timeOfOrder.equals(end));
+
 		if (start.after(end)) {
 			throw new InvalidInputException("Start time cannot be after end time.");
 		}
@@ -987,20 +986,20 @@ public class RestoController {
 		List<StatisticsTable> tablesInTimeRange = new ArrayList<>();
 		for (Table t : allTables) {
 			t.setNumUsed(0);
-			System.out.println(t.getOrders());
-			System.out.println(startDate);
+
 			for (Order o: t.getOrders()) { //looping thru all orders in history of app for one table
 				if (orderInTimeRange(o, startDate, startTime, endDate, endTime)) {//tables in time range
-					System.out.println("in time range");
+
 					currentNumUsed = t.getNumUsed();
 					t.setNumUsed(currentNumUsed + 1);
 				}	
 			}
-			StatisticsTable statTable = new StatisticsTable(t, t.getNumUsed());
-			tablesInTimeRange.add(statTable);
+			if (t.getNumUsed() != 0) {
+				StatisticsTable statTable = new StatisticsTable(t, t.getNumUsed());
+				tablesInTimeRange.add(statTable);
+			}
 		}
 		List<StatisticsTable> topTenTables = sortAndTrimTables(tablesInTimeRange); //sort stat tables per highest numUsed
-		System.out.println(topTenTables.toString());
 		return topTenTables; 
 	}
 
