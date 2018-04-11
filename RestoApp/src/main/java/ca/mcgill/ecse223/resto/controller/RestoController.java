@@ -864,20 +864,57 @@ public class RestoController {
 	 * @param endTime
 	 * @return
 	 */
-	public static boolean orderInTimeRange(Order order, Date startDate, Time startTime, Date endDate, Time endTime) {
+	public static boolean orderInTimeRange(Order order, Date startDate, Time startTime, Date endDate, Time endTime) throws InvalidInputException{
 		boolean inRange = false;
 		Date orderDate = order.getDate();
 		Time orderTime = order.getTime();
+		
+		//construct date and time objects
+		Calendar dateStart = Calendar.getInstance();
+		dateStart.setTime(startDate);
+		Calendar timeStart = Calendar.getInstance();
+		timeStart.setTime(startTime);
+		dateStart.set(Calendar.HOUR_OF_DAY, timeStart.get(Calendar.HOUR_OF_DAY));
+		dateStart.set(Calendar.MINUTE, timeStart.get(Calendar.MINUTE));
+		dateStart.set(Calendar.SECOND, timeStart.get(Calendar.SECOND));
+		
+		java.util.Date start = dateStart.getTime();
+		//
+		Calendar dateEnd = Calendar.getInstance();
+		dateEnd.setTime(endDate);
+		Calendar timeEnd = Calendar.getInstance();
+		timeEnd.setTime(endTime);
+		dateEnd.set(Calendar.HOUR_OF_DAY, timeEnd.get(Calendar.HOUR_OF_DAY));
+		dateEnd.set(Calendar.MINUTE, timeEnd.get(Calendar.MINUTE));
+		dateEnd.set(Calendar.SECOND, timeEnd.get(Calendar.SECOND));
+		
+		java.util.Date end = dateEnd.getTime();
+		//
+		Calendar dateOrder = Calendar.getInstance();
+		dateOrder.setTime(orderDate);
+		Calendar timeOrder = Calendar.getInstance();
+		timeOrder.setTime(orderTime);
+		dateOrder.set(Calendar.HOUR_OF_DAY, timeOrder.get(Calendar.HOUR_OF_DAY));
+		dateOrder.set(Calendar.MINUTE, timeOrder.get(Calendar.MINUTE));
+		dateOrder.set(Calendar.SECOND, timeOrder.get(Calendar.SECOND));
+		
+		java.util.Date timeOfOrder = dateOrder.getTime();
+		
+		
 		//Check if date and time are within range
-		if (startDate.before(orderDate) || startDate.equals(orderDate)) {
-			if (startTime.before(orderTime) || startTime.equals(orderTime)) {
-				if (endDate.after(orderDate) || endDate.equals(orderDate)) {
-					if (endTime.after(orderTime) || endTime.equals(orderTime)) {
-						inRange = true;
-					}
-				}
-			}
+		System.out.println(timeOfOrder.after(start));
+		System.out.println(timeOfOrder.equals(end));
+		if (start.after(end)) {
+			throw new InvalidInputException("Start time cannot be after end time.");
 		}
+		if (timeOfOrder.after(start) && timeOfOrder.before(end)) {
+			inRange = true;
+		}
+		if (timeOfOrder.equals(start) || timeOfOrder.equals(end)) {
+			inRange = true;
+		}
+		
+		
 		return inRange;
 	}
 	
@@ -950,8 +987,11 @@ public class RestoController {
 		List<StatisticsTable> tablesInTimeRange = new ArrayList<>();
 		for (Table t : allTables) {
 			t.setNumUsed(0);
+			System.out.println(t.getOrders());
+			System.out.println(startDate);
 			for (Order o: t.getOrders()) { //looping thru all orders in history of app for one table
 				if (orderInTimeRange(o, startDate, startTime, endDate, endTime)) {//tables in time range
+					System.out.println("in time range");
 					currentNumUsed = t.getNumUsed();
 					t.setNumUsed(currentNumUsed + 1);
 				}	
@@ -960,6 +1000,7 @@ public class RestoController {
 			tablesInTimeRange.add(statTable);
 		}
 		List<StatisticsTable> topTenTables = sortAndTrimTables(tablesInTimeRange); //sort stat tables per highest numUsed
+		System.out.println(topTenTables.toString());
 		return topTenTables; 
 	}
 

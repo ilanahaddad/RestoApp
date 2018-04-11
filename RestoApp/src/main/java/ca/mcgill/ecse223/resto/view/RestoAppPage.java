@@ -48,7 +48,9 @@ import com.github.lgooddatepicker.components.TimePickerSettings;
 
 import org.jdesktop.swingx.JXDatePicker;
 
+import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.controller.RestoController;
+import ca.mcgill.ecse223.resto.controller.StatisticsTable;
 import ca.mcgill.ecse223.resto.model.MenuItem;
 import ca.mcgill.ecse223.resto.model.Order;
 import ca.mcgill.ecse223.resto.model.OrderItem;
@@ -915,37 +917,51 @@ public class RestoAppPage extends JFrame {
 		panel.add(endDatePicker);
 		
 		panel.add(new JLabel("End Time:"));
-		TimePickerSettings timeSettings2 = new TimePickerSettings();
+		//TimePickerSettings timeSettings2 = new TimePickerSettings();
 		TimePicker endTimePicker = new TimePicker(timeSettings);
 		add(endTimePicker);
 		panel.add(endTimePicker);
 		
-		
-		int result = JOptionPane.showConfirmDialog(null, panel, "Business Statistics", JOptionPane.OK_CANCEL_OPTION,
-		JOptionPane.PLAIN_MESSAGE);
-		if (result == JOptionPane.OK_OPTION) {
+		String[] options = new String[3];
+		options[0] = new String("Top Tables");
+		options[1] = new String("Top Items");
+		options[2] = new String("Exit");
+		int result = JOptionPane.showOptionDialog(null, panel, "Business Statistics", 
+				0, JOptionPane.DEFAULT_OPTION, null, options, null);
+		if (result == 0) {
 			try {
 				
 				Date startDate = new Date(startDatePicker.getDate().getTime());
 				Time startTime = Time.valueOf(startTimePicker.getTime());
-				Date endDate = new Date(startDatePicker.getDate().getTime());
-				Time endTime = Time.valueOf(startTimePicker.getTime());
+				Date endDate = new Date(endDatePicker.getDate().getTime());
+				Time endTime = Time.valueOf(endTimePicker.getTime());
 				
 				//TODO: new pop-up
-				JPanel topTables = new JPanel(new GridLayout(7, 4, 5, 5));
+				
+				JPanel topTables = new JPanel();
+				topTables.add(new JLabel("Top 10 Tables: "));
+				List<StatisticsTable> top10Tables = RestoController.getTableStatistics(startDate, startTime, endDate, endTime);
+				for (StatisticsTable t : top10Tables) {
+					topTables.add(new JLabel("" + t.getTable().getNumber()));
+				}
 				
 				//TODO: call getTableStatistics and display the tables
 				
 				//tablePanel.revalidate();
 				//tablePanel.repaint();
 				
-				JOptionPane.showMessageDialog(null, "Reservation made successfully.");
+				
+				JOptionPane.showMessageDialog(null, topTables);
 			} catch (Exception error) {
 				JOptionPane.showMessageDialog(null, error.getMessage(), "Reservation was not made.",
 				JOptionPane.ERROR_MESSAGE);
 			}
-		} else {
-			JOptionPane.showMessageDialog(null, "No reservation made.");
+		} 
+		else if (result == 1) {
+			JOptionPane.showMessageDialog(null, "Top 10 Items.");
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "Statistics exited.");
 		}
 		
 	}
