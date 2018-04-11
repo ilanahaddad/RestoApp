@@ -39,9 +39,9 @@ public class RestoController {
 				hmap.put(seatIdentifier, s);
 			}
 		}
-		for(String s: hmap.keySet()) {
+		/*for(String s: hmap.keySet()) { //FOR DEBUGGING : prints all elements of hash map
 			System.out.println(s);
-		}
+		}*/
 		return hmap;
 	}
 
