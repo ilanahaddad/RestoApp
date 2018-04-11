@@ -31,6 +31,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -241,6 +242,7 @@ public class RestoAppPage extends JFrame {
 	}
     
     private void billManagerAction(ActionEvent event){
+    	JFrame f = new JFrame("Bill Manager");
     	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
         JButton newBill = new JButton("New Bill");
         newBill.addActionListener(this::newBillAction);
@@ -251,8 +253,14 @@ public class RestoAppPage extends JFrame {
         JButton cancelBill = new JButton("Cancel Bill");
         cancelBill.addActionListener(this::cancelBillAction);
         panel.add(cancelBill);
-    	
-    	JOptionPane.showMessageDialog(null, panel, "Bill Manager",-1);
+    	f.add(panel);
+		f.setSize(400,150);
+		// f.setLayout(new FlowLayout());
+		f.setLocationRelativeTo(null);
+		f.setVisible(true);
+		f.setResizable(false);
+		panel.validate();
+		panel.repaint();
         }
     
     private void newBillAction(ActionEvent event){
@@ -404,11 +412,10 @@ public class RestoAppPage extends JFrame {
 
     private void cancelBillAction(ActionEvent event){
     	JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
-		// create array of current table numbers
+		// create array of bills
     	List<Bill> bills = RestoController.getCurrentBills();
 		int currentLength = bills.size();
 		String currentBillNums[] = new String[currentLength];
-		System.out.print("cancel bill time, there are" +currentLength + " bills");
 		for (int i = 0; i < currentLength; i++) {
 			String billName = "b" + i;
 			Bill bill = bills.get(i);
@@ -447,25 +454,83 @@ public class RestoAppPage extends JFrame {
     }
     
     private void viewBillAction(ActionEvent event){
-    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
-    	List<Order> orders = RestoController.getCurrentOrders();
-    	int numBills = 0;
-    	for (Order o: orders) {
-    		numBills = numBills + o.getBills().size();
-    	}
-        if (numBills > 0)
-        {
-            displayEndOrderAction(panel, numBills);
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(
-            null,
-            "RestoApp currently has no bills issued",
-            "View Bills",
-            JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
+    	JFrame f = new JFrame("View Bills");
+    	JDialog d = new JDialog(f, "View Bills");
+		JPanel panel = new JPanel();
+		
+		GridBagLayout grid = new GridBagLayout();  
+		GridBagConstraints gbc = new GridBagConstraints();  
+		panel.setLayout(grid);  
+		
+		//create array of current table numbers
+		List<Bill> bills = RestoController.getCurrentBills();
+		int currentLength = bills.size();
+		String currentBillNums[] = new String[currentLength];
+		for (int i = 0; i < currentLength; i++) {
+			String billName = "b" + i;
+			Bill bill = bills.get(i);
+			List<Seat> seatsToShow = bill.getIssuedForSeats();
+			int count = 0;
+			for(Seat s: seatsToShow) {
+				count++;
+				billName = billName + " t" + s.getTable().getNumber() + "s" + count;
+			}
+			currentBillNums[i] = billName;
+		}
+		
+		JTextArea display  = new JTextArea(20, 60);
+		display.setEditable (false);
+		JScrollPane scroll = new JScrollPane(display);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		
+		JComboBox<String> allBillList = new JComboBox<String>(currentBillNums);
+		allBillList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				try {
+					int billNum = allBillList.getSelectedIndex();
+					Bill selectedBill = RestoController.getCurrentBills().get(billNum);
+					String displayItems = "hello there";
+					display.setText(displayItems);
+				}catch (NumberFormatException e) {
+				}catch (Exception error)
+				{
+					JOptionPane.showMessageDialog(
+					null,
+					error.getMessage(),
+					"Could not retrieve table's order",
+					JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});       
+		
+		gbc.ipady = 0;  
+		gbc.gridx = 0;  
+		gbc.gridy = 0;  
+		gbc.gridwidth = 2;
+		gbc.insets = new Insets(10,0,0,0);
+		panel.add(new JLabel("Select table:"), gbc);  
+		
+		
+		gbc.gridx = 0;  
+		gbc.gridy = 1;  
+		gbc.gridwidth = 2;
+		panel.add(allBillList, gbc);  
+		
+		gbc.gridx = 0;  
+		gbc.gridy = 3;  
+		gbc.gridwidth = 2;  
+		panel.add(scroll, gbc);  
+		
+		d.add(panel);
+		d.setSize(500,500);
+		// f.setLayout(new FlowLayout());
+		d.pack();
+		d.setLocationRelativeTo(null);
+		d.setVisible(true);
+		
+		panel.validate();
+		panel.repaint();
+	}
 
 	private void reserveTableAction(ActionEvent event) {
 		JPanel panel = new JPanel(new GridLayout(7, 4, 5, 5));
@@ -648,7 +713,6 @@ public class RestoAppPage extends JFrame {
 		allTablesList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try {
-					JComboBox comboBox = (JComboBox) event.getSource();
 					int tableNum = Integer.parseInt((String) allTablesList.getSelectedItem());
 					Table selectedTable = RestoController.getTableByNum(tableNum);
 					String formattedOrderItems = getPrettyOrderItems(RestoController.getOrderItems(selectedTable));
