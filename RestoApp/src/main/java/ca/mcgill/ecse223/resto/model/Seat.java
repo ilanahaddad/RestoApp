@@ -14,6 +14,9 @@ public class Seat implements Serializable
   // MEMBER VARIABLES
   //------------------------
 
+  //Seat Attributes
+  private int number;
+
   //Seat Associations
   private Table table;
   private List<OrderItem> orderItems;
@@ -23,8 +26,9 @@ public class Seat implements Serializable
   // CONSTRUCTOR
   //------------------------
 
-  public Seat(Table aTable)
+  public Seat(int aNumber, Table aTable)
   {
+    number = aNumber;
     boolean didAddTable = setTable(aTable);
     if (!didAddTable)
     {
@@ -37,6 +41,19 @@ public class Seat implements Serializable
   //------------------------
   // INTERFACE
   //------------------------
+
+  public boolean setNumber(int aNumber)
+  {
+    boolean wasSet = false;
+    number = aNumber;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public int getNumber()
+  {
+    return number;
+  }
 
   public Table getTable()
   {
@@ -332,7 +349,14 @@ public class Seat implements Serializable
       }
     }
   }
-  
+
+
+  public String toString()
+  {
+    return super.toString() + "["+
+            "number" + ":" + getNumber()+ "]" + System.getProperties().getProperty("line.separator") +
+            "  " + "table = "+(getTable()!=null?Integer.toHexString(System.identityHashCode(getTable())):"null");
+  }  
   //------------------------
   // DEVELOPER CODE - PROVIDED AS-IS
   //------------------------

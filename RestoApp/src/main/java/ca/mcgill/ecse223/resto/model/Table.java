@@ -556,9 +556,9 @@ public class Table implements Serializable
     return 1;
   }
 
-  public Seat addSeat()
+  public Seat addSeat(int aNumber)
   {
-    Seat aNewSeat = new Seat(this);
+    Seat aNewSeat = new Seat(aNumber, this);
     return aNewSeat;
   }
 

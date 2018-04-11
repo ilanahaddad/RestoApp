@@ -37,6 +37,7 @@ class Table {
 }
 
 class Seat {
+	Integer number;
 }
 
 class Order {
