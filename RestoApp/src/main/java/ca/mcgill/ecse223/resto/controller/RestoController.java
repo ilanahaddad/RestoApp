@@ -101,7 +101,7 @@ public class RestoController {
 			restoApp.addCurrentTable(tableToAdd);
 
 			for (int i = 0; i < numSeats; i++) {
-				Seat newSeat = tableToAdd.addSeat();
+				Seat newSeat = tableToAdd.addSeat(i+1);
 				tableToAdd.addCurrentSeat(newSeat);
 			}
 		}
@@ -201,12 +201,12 @@ public class RestoController {
 		int n = table.numberOfCurrentSeats();
 		// Add seats if new numberOfSeats > numberOfCurrentSeats:
 		for (int i = 1; i <= numberOfSeats - n; i++) {
-			Seat seat = table.addSeat();
+			Seat seat = table.addSeat(n+1);
 			table.addCurrentSeat(seat);
 		}
 		// Remove seats if new numberOfSeats < numberOfCurrentSeats:
 		for (int i = 1; i <= n - numberOfSeats; i++) {
-			Seat seat = table.getCurrentSeat(0);
+			Seat seat = table.getCurrentSeat(n-1);
 			table.removeCurrentSeat(seat);
 		}
 		RestoAppApplication.save();
