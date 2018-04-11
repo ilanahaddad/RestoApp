@@ -166,7 +166,6 @@ public class RestoController {
 	 *             positive and if table is reserved
 	 */
 	public static void updateTable(Table table, int newNumber, int numberOfSeats) throws InvalidInputException {
-		String error = "";
 		RestoApp restoApp = RestoAppApplication.getRestoApp();
 		if (table == null) {
 			throw new InvalidInputException("Input Table does not exist.\n");
@@ -213,7 +212,7 @@ public class RestoController {
 	}
 
 	/**
-	 * TODO: Fill moveTable api comment
+	 * 
 	 * 
 	 * @param table
 	 * @param newX
@@ -866,7 +865,18 @@ public class RestoController {
 	 */
 	public static boolean orderInTimeRange(Order order, Date startDate, Time startTime, Date endDate, Time endTime) {
 		boolean inRange = false;
-		
+		Date orderDate = order.getDate();
+		Time orderTime = order.getTime();
+		//Check if date and time are within range
+		if (startDate.before(orderDate) || startDate.equals(orderDate)) {
+			if (startTime.before(orderTime) || startTime.equals(orderTime)) {
+				if (endDate.after(orderDate) || endDate.equals(orderDate)) {
+					if (endTime.after(orderTime) || endTime.equals(orderTime)) {
+						inRange = true;
+					}
+				}
+			}
+		}
 		return inRange;
 	}
 	
