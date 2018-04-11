@@ -27,10 +27,7 @@ import javax.swing.*;
 
 public class RestoController {
 	public static HashMap<String, Seat> hmap ;
-	public static HashMap<String, Seat> createHashMap(){
-		
-		return hmap;
-	}
+
 	public static HashMap<String, Seat> generateHashMap(){
 		hmap = new HashMap<String, Seat>();
 		RestoApp restoApp = RestoAppApplication.getRestoApp();
@@ -41,6 +38,9 @@ public class RestoController {
 				i++;
 				hmap.put(seatIdentifier, s);
 			}
+		}
+		for(String s: hmap.keySet()) {
+			System.out.println(s);
 		}
 		return hmap;
 	}
