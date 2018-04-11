@@ -7,10 +7,11 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
-import ca.mcgill.ecse223.resto.model.Bill;
 import ca.mcgill.ecse223.resto.model.Menu;
 import ca.mcgill.ecse223.resto.model.MenuItem;
 import ca.mcgill.ecse223.resto.model.Order;
@@ -21,12 +22,29 @@ import ca.mcgill.ecse223.resto.model.RestoApp;
 import ca.mcgill.ecse223.resto.model.Seat;
 import ca.mcgill.ecse223.resto.model.Table;
 import ca.mcgill.ecse223.resto.model.Table.Status;
+import ca.mcgill.ecse223.resto.model.Bill;
 
 import javax.swing.*;
 
 public class RestoController {
-	
+	public static HashMap<String, Seat> hmap ;
 
+	public static HashMap<String, Seat> generateHashMap(){
+		hmap = new HashMap<String, Seat>();
+		RestoApp restoApp = RestoAppApplication.getRestoApp();
+		for(Table t: restoApp.getCurrentTables() ) {
+			int i = 1;
+			for(Seat s: t.getCurrentSeats()) {
+				String seatIdentifier = "T"+ t.getNumber()+ "S"+ i; 
+				i++;
+				hmap.put(seatIdentifier, s);
+			}
+		}
+		for(String s: hmap.keySet()) {
+			System.out.println(s);
+		}
+		return hmap;
+	}
 
     public static List<MenuItem.ItemCategory> getItemCategories() {
         return Arrays.asList(MenuItem.ItemCategory.values());
@@ -159,10 +177,11 @@ public class RestoController {
                 throw new InvalidInputException(error);
             }
             restoApp.addCurrentTable(tableToAdd);
-
             for (int i = 0; i < numSeats; i++) {
-                Seat newSeat = tableToAdd.addSeat(i + 1);
+                Seat newSeat = tableToAdd.addSeat();
                 tableToAdd.addCurrentSeat(newSeat);
+                String seatIdentifier = "T"+ tableToAdd.getNumber()+ "S"+ (i+1); 
+                hmap.put(seatIdentifier, newSeat);
             }
         }
 
@@ -204,10 +223,21 @@ public class RestoController {
 
         try {
             r.removeCurrentTable(table);
-            RestoAppApplication.save();
         } catch (RuntimeException e) {
             throw new InvalidInputException(e.getMessage());
         }
+        Set<String> keys = hmap.keySet(); 
+        List<String> seatsForTable = new ArrayList<String>(); 
+        for(String s: keys) {
+        		String tablePartOfString = s.substring(0, 2);
+        		if(tablePartOfString.contains("T"+table.getNumber())) {
+        			seatsForTable.add(s);
+        		}
+        }
+        for(String s: seatsForTable) {
+        		hmap.remove(s);
+        }
+        RestoAppApplication.save();
     }
 
     /**
@@ -242,7 +272,7 @@ public class RestoController {
         if (inUse) {
             throw new InvalidInputException("Can't update a table that is currently in use.\n");
         }
-
+        int oldNum = table.getNumber();
         if (!table.setNumber(newNumber)) {
             throw new InvalidInputException(
                     "A table with this number already exists. Please use a different number.\n");
@@ -250,18 +280,41 @@ public class RestoController {
         /*
          * if(error.length() > 0) { throw new InvalidInputException(error.trim()); }
          */
-
+        Set<String> keys = hmap.keySet();
+        List<String> seatsForTable = new ArrayList<String>();
+        for(String s: keys) {
+            String tablePartOfString = s.substring(0, 2);
+            if(tablePartOfString.contains("T"+oldNum)) {
+                seatsForTable.add(s);
+            }
+        }
+        for(String s: seatsForTable) { //remove from hash map all items that have old table number
+            hmap.remove(s);
+        }
+		int j = 1;
+		for(Seat s: table.getCurrentSeats()) {
+			String seatIdentifier = "T"+ table.getNumber()+ "S"+ j;
+			hmap.put(seatIdentifier, s);
+            j++;
+		}
+        
         int n = table.numberOfCurrentSeats();
         // Add seats if new numberOfSeats > numberOfCurrentSeats:
         for (int i = 1; i <= numberOfSeats - n; i++) {
-            Seat seat = table.addSeat(n + 1);
+            Seat seat = table.addSeat();
             table.addCurrentSeat(seat);
+            String hmapIdentifier = "T"+newNumber+"S"+(n+i);
+            hmap.put(hmapIdentifier, seat);
         }
         // Remove seats if new numberOfSeats < numberOfCurrentSeats:
         for (int i = 1; i <= n - numberOfSeats; i++) {
-            Seat seat = table.getCurrentSeat(n - 1);
+            Seat seat = table.getCurrentSeat(table.numberOfCurrentSeats() - 1);
             table.removeCurrentSeat(seat);
+            hmap.remove("T"+newNumber+"S"+(n+1-i));
         }
+
+		
+		//
         RestoAppApplication.save();
     }
 
@@ -526,12 +579,6 @@ public class RestoController {
         return null;
     }
 
-    public static List<Bill> getCurrentBills() {
-        RestoApp restoApp = RestoAppApplication.getRestoApp();
-        return restoApp.getBills();
-    }
-  
-    
     // get largest Y coordinate of all the app's current tables
     public static int getMaxX() {
         RestoApp restoApp = RestoAppApplication.getRestoApp();
@@ -827,38 +874,40 @@ public class RestoController {
         OrderItem newItem = null;
 
         for (Seat seat : seats) {
-        	Table table = seat.getTable();
+            Table table = seat.getTable();
 
-        	if (itemCreated) {
-        		table.addToOrderItem(newItem, seat);
-        	} else {
-        		OrderItem lastItem = null;
+            if (itemCreated) {
+                table.addToOrderItem(newItem, seat);
+            } else {
+                OrderItem lastItem = null;
 
-        		if (lastOrder.numberOfOrderItems() > 0) {
-        			lastItem = lastOrder.getOrderItem(lastOrder.numberOfOrderItems() - 1);
-        		}
+                if (lastOrder.numberOfOrderItems() > 0) {
+                    lastItem = lastOrder.getOrderItem(lastOrder.numberOfOrderItems() - 1);
+                }
 
-        		table.orderItem(quantity, lastOrder, seat, pmi);
+                table.orderItem(quantity, lastOrder, seat, pmi);
 
-        		if ((lastOrder.numberOfOrderItems() > 0)
-        				&& (!lastOrder.getOrderItem(lastOrder.numberOfOrderItems() - 1).equals(lastItem))) {
-        			itemCreated = true;
-        			newItem = lastOrder.getOrderItem(lastOrder.numberOfOrderItems() - 1);
-        		}
-        	}
-
-
-
+                if ((lastOrder.numberOfOrderItems() > 0)
+                        && (!lastOrder.getOrderItem(lastOrder.numberOfOrderItems() - 1).equals(lastItem))) {
+                    itemCreated = true;
+                    newItem = lastOrder.getOrderItem(lastOrder.numberOfOrderItems() - 1);
+                }
+            }
         }
 
         if (!itemCreated) {
-        	throw new InvalidInputException("OrderItem not sucessfully created.\n");
+            throw new InvalidInputException("OrderItem not sucessfully created.\n");
         }
 
         RestoAppApplication.save();
 
     }
 
+
+    public static List<Bill> getCurrentBills() {
+        RestoApp restoApp = RestoAppApplication.getRestoApp();
+        return restoApp.getBills();
+    }
 
     public static void issueBill(List<Seat> seats) throws InvalidInputException{
         	RestoApp restoApp = RestoAppApplication.getRestoApp();
@@ -964,9 +1013,9 @@ public class RestoController {
     	lastOrder.addBill(s.getBill(0));
 	}
 
-	private static void removeBill() {}
-	
-	public static List<Seat> getSeats(Table table) throws InvalidInputException {
+    
+    
+    public static List<Seat> getSeats(Table table) throws InvalidInputException {
         if (table == null) {
             throw new InvalidInputException("No table entered.\n");
         }
@@ -1108,7 +1157,7 @@ public class RestoController {
 	
 	/**
 	 * Helper method for item statistics that return the top 10 items
-	 * @param tables
+	 * @param
 	 * @return
 	 */
 	public static List<StatisticsItem> sortAndTrimItems(List<StatisticsItem> items){

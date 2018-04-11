@@ -21,17 +21,14 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -41,8 +38,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JDialog;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
@@ -53,6 +52,7 @@ import com.github.lgooddatepicker.components.TimePickerSettings;
 
 import org.jdesktop.swingx.JXDatePicker;
 
+import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.controller.RestoController;
 import ca.mcgill.ecse223.resto.controller.StatisticsItem;
 import ca.mcgill.ecse223.resto.controller.StatisticsTable;
@@ -63,9 +63,8 @@ import ca.mcgill.ecse223.resto.model.Seat;
 import ca.mcgill.ecse223.resto.model.Table;
 import ca.mcgill.ecse223.resto.model.Bill;
 
-
-
 public class RestoAppPage extends JFrame {
+	public HashMap<String, Seat> hmap = RestoController.generateHashMap();
 	private static final long serialVersionUID = 6588228649238198455L;
 	
 	private final int UNIT_LENGTH = 75;
@@ -105,7 +104,7 @@ public class RestoAppPage extends JFrame {
 		// TODO before submitting split into different tabs (system, table, menu)
 		JMenuBar menubar = new JMenuBar();
 		JMenu actions = new JMenu("Actions");
-        JMenu manageBillsMenuItem= new JMenu("Manage Bills");
+		JMenu manageBillsMenuItem= new JMenu("Manage Bills");
 		JMenuItem exitMenuItem = createMenuItem("Exit", RestoAppActions.EXIT_ACTION);
 		JMenuItem addTableMenuItem = createMenuItem("Add Table", this::addTableAction);
 		JMenuItem changeTableMenuItem = createMenuItem("Change Table", this::updateTableAction);
@@ -117,10 +116,10 @@ public class RestoAppPage extends JFrame {
 		JMenuItem viewOrderMenuItem = createMenuItem("View Order", this::viewOrderAction);
 		JMenuItem endOrderMenuItem = createMenuItem("End Order", this::endOrderAction);
 		JMenuItem orderMenuItem = createMenuItem("Order Menu Item", this::orderMenuItemAction);
-		JMenuItem businessStatistics = createMenuItem("Business Statistics", this::businessStatisticsAction);
 		JMenuItem newBillMenuItem = createMenuItem("New Bill", this::newBillAction);
         JMenuItem viewBillMenuItem = createMenuItem("View Bill", this::viewBillAction);
         JMenuItem cancelBillMenuItem = createMenuItem("Cancel Bill", this::cancelBillAction);
+		JMenuItem businessStatistics = createMenuItem("Business Statistics", this::businessStatisticsAction);
 		
 		actions.add(businessStatistics);
 		actions.add(orderMenuItem);
@@ -133,13 +132,12 @@ public class RestoAppPage extends JFrame {
 		actions.add(moveTableMenuItem);
 		actions.add(removeTableMenuItem);
 		actions.add(menuMenuItem);
+        actions.add(manageBillsMenuItem);
+		actions.add(exitMenuItem);
+		menubar.add(actions);
 		manageBillsMenuItem.add(newBillMenuItem);
         manageBillsMenuItem.add(viewBillMenuItem);
         manageBillsMenuItem.add(cancelBillMenuItem);
-        actions.add(manageBillsMenuItem);
-        
-		actions.add(exitMenuItem);
-		menubar.add(actions);
 		setJMenuBar(menubar);
 	}
 	
@@ -176,6 +174,7 @@ public class RestoAppPage extends JFrame {
 		JButton businessStatisticsButton = createButton("businessStatistics.png", "View Business Statistics [Alt + 1]", KeyEvent.VK_1,
 		this::businessStatisticsAction);
 		JButton billManagerButton = createButton("billManager.png", "Start Bill Manager [Alt + B]", KeyEvent.VK_B, this::billManagerAction);
+		
 		
 		toolbar.add(exitButton);
 		toolbar.add(addTableButton);
@@ -240,7 +239,327 @@ public class RestoAppPage extends JFrame {
 		
 		updateScrollbarMax(RestoController.getMaxX(), RestoController.getMaxY());
 	}
-    
+	
+	private void reserveTableAction(ActionEvent event) {
+		JPanel panel = new JPanel(new GridLayout(7, 4, 5, 5));
+		
+		// create array of current table numbers
+		int currentLength = RestoController.getCurrentTables().size();
+		String currentTableNums[] = new String[currentLength];
+		for (int i = 0; i < currentLength; i++) {
+			currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+		}
+		
+		panel.add(new JLabel("Select tables to reserve:"));
+		DefaultListModel<String> listTableNums = new DefaultListModel<>();
+		for (int i = 0; i < currentTableNums.length; i++) { // fill list for UI with wanted list (element per element)
+			listTableNums.addElement(currentTableNums[i]);
+		}
+		JList<String> allTablesList = new JList<>(listTableNums); // now list has table nums of current tables
+		allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		allTablesList.setVisibleRowCount(3);
+		JScrollPane scrollPane = new JScrollPane(allTablesList);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		panel.add(scrollPane);
+		// panel.add(allTablesList);
+		
+		panel.add(new JLabel("Date:"));
+		
+		JXDatePicker picker = new JXDatePicker();
+		picker.setDate(Calendar.getInstance().getTime());
+		picker.setFormats(new SimpleDateFormat("dd.MM.yyyy"));
+		panel.add(picker);
+		
+		panel.add(new JLabel("Time:"));
+		TimePickerSettings timeSettings = new TimePickerSettings();
+		timeSettings.setColor(TimePickerSettings.TimeArea.TimePickerTextValidTime, Color.black);
+		timeSettings.generatePotentialMenuTimes(TimePickerSettings.TimeIncrement.OneHour, LocalTime.of(9, 0),
+		LocalTime.of(23, 0));
+		timeSettings.initialTime = LocalTime.now();
+		TimePicker timePicker = new TimePicker(timeSettings);
+		add(timePicker);
+		panel.add(timePicker);
+		
+		panel.add(new JLabel("Number of people:"));
+		JTextField numPeopleField = new JTextField();
+		numPeopleField.setAutoscrolls(true);
+		// numPeopleField.setVisibleRowCount(2);
+		// numPeopleField.setPreferredSize(new Dimension(1,1));
+		// numPeopleField.setBounds(0, 0, 5, 5);
+		panel.add(numPeopleField);
+		
+		panel.add(new JLabel("Contact name:"));
+		JTextField nameField = new JTextField();
+		panel.add(nameField);
+		
+		panel.add(new JLabel("Contact e-mail:"));
+		JTextField emailField = new JTextField();
+		panel.add(emailField);
+		
+		panel.add(new JLabel("Contact phone number:"));
+		JTextField phoneField = new JTextField();
+		panel.add(phoneField);
+		
+		int result = JOptionPane.showConfirmDialog(null, panel, "Add Table", JOptionPane.OK_CANCEL_OPTION,
+		JOptionPane.PLAIN_MESSAGE);
+		if (result == JOptionPane.OK_OPTION) {
+			try {
+				
+				Date date = new Date(picker.getDate().getTime());
+				Time time = Time.valueOf(timePicker.getTime());
+				int numberInParty = 0;
+				try { // need a try/catch here because if no number is inputed, an
+					// un-informative error gets thrown here for trying to parse an empty string
+					numberInParty = parseInt((String) numPeopleField.getText());
+				} catch (Exception error) {
+					
+				}
+				String contactName = nameField.getText();
+				String contactEmailAddress = emailField.getText();
+				String contactPhoneNumber = phoneField.getText();
+				List<String> selectedNumbers = allTablesList.getSelectedValuesList();
+				List<Table> selectedTables = new ArrayList<Table>();
+				for (int i = 0; i < selectedNumbers.size(); i++) {
+					int tableNum = Integer.parseInt((String) selectedNumbers.get(i));
+					Table selectedTable = RestoController.getTableByNum(tableNum);
+					selectedTables.add(selectedTable);
+				}
+				
+				RestoController.reserveTable(date, time, numberInParty, contactName, contactEmailAddress,
+				contactPhoneNumber, selectedTables);
+				
+				tablePanel.revalidate();
+				tablePanel.repaint();
+				
+				JOptionPane.showMessageDialog(null, "Reservation made successfully.");
+			} catch (Exception error) {
+				JOptionPane.showMessageDialog(null, error.getMessage(), "Reservation was not made.",
+				JOptionPane.ERROR_MESSAGE);
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "No reservation made.");
+		}
+		
+	}
+	
+	private void startOrderAction(ActionEvent event) {
+		JPanel panel = new JPanel(new GridLayout(2, 2, 5, 5));
+		
+		// create array of current table numbers
+		int currentLength = RestoController.getCurrentTables().size();
+		String currentTableNums[] = new String[currentLength];
+		for (int i = 0; i < currentLength; i++) {
+			currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+		}
+		
+		panel.add(new JLabel("Select tables for order:"));
+		DefaultListModel<String> listTableNums = new DefaultListModel<>();
+		for (int i = 0; i < currentTableNums.length; i++) { // fill list for UI with wanted list (element per element)
+			listTableNums.addElement(currentTableNums[i]);
+		}
+		JList<String> allTablesList = new JList<>(listTableNums); // now list has table nums of current tables
+		allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		
+		// SCROLLBAR:
+		allTablesList.setVisibleRowCount(3);
+		JScrollPane scrollPane = new JScrollPane(allTablesList);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		// panel.add(allTablesList); with new scrollbar, this is replaced by add
+		// scrollpane below
+		panel.add(scrollPane);
+		int result = JOptionPane.showConfirmDialog(null, panel, "Start Order", JOptionPane.OK_CANCEL_OPTION,
+		JOptionPane.PLAIN_MESSAGE);
+		if (result == JOptionPane.OK_OPTION) {
+			try {
+				List<String> selectedNumbers = allTablesList.getSelectedValuesList();
+				List<Table> selectedTables = new ArrayList<Table>();
+				for (int i = 0; i < selectedNumbers.size(); i++) {
+					int tableNum = Integer.parseInt((String) selectedNumbers.get(i));
+					Table selectedTable = RestoController.getTableByNum(tableNum);
+					selectedTables.add(selectedTable);
+				}
+				RestoController.startOrder(selectedTables);
+				
+				tablePanel.revalidate();
+				tablePanel.repaint();
+				
+				JOptionPane.showMessageDialog(null, "Order started successfully.");
+			} catch (Exception error) {
+				JOptionPane.showMessageDialog(null, error.getMessage(), "Could not start order",
+				JOptionPane.ERROR_MESSAGE);
+				
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "No orders were started.");
+		}
+		
+	}
+	
+	private void viewOrderAction(ActionEvent event){
+		JFrame f = new JFrame("View Order");
+		JPanel panel = new JPanel();
+		
+		GridBagLayout grid = new GridBagLayout();  
+		GridBagConstraints gbc = new GridBagConstraints();  
+		panel.setLayout(grid);  
+		
+		//create array of current table numbers
+		int currentLength = RestoController.getCurrentTables().size() + 1;
+		String currentTableNums[] = new String[currentLength];
+		currentTableNums[0] = " --- ";
+		for (int i = 1; i < currentLength; i++){
+			currentTableNums[i] = "" + RestoController.getCurrentTable(i-1).getNumber();
+		}
+		
+		JTextArea display  = new JTextArea(20, 60);
+		display.setEditable (false);
+		JScrollPane scroll = new JScrollPane(display);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		
+		JComboBox<String> allTablesList = new JComboBox<String>(currentTableNums);
+		allTablesList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				try {
+					JComboBox comboBox = (JComboBox) event.getSource();
+					int tableNum = Integer.parseInt((String) allTablesList.getSelectedItem());
+					Table selectedTable = RestoController.getTableByNum(tableNum);
+					String formattedOrderItems = getPrettyOrderItems(RestoController.getOrderItems(selectedTable));
+					display.setText(formattedOrderItems);
+				}catch (NumberFormatException e) {
+				}catch (Exception error)
+				{
+					JOptionPane.showMessageDialog(
+					null,
+					error.getMessage(),
+					"Could not retrieve table's order",
+					JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});       
+		
+		gbc.ipady = 0;  
+		gbc.gridx = 0;  
+		gbc.gridy = 0;  
+		gbc.gridwidth = 2;
+		gbc.insets = new Insets(10,0,0,0);
+		panel.add(new JLabel("Select table:"), gbc);  
+		
+		
+		gbc.gridx = 0;  
+		gbc.gridy = 1;  
+		gbc.gridwidth = 2;
+		panel.add(allTablesList, gbc);  
+		
+		gbc.gridx = 0;  
+		gbc.gridy = 3;  
+		gbc.gridwidth = 2;  
+		panel.add(scroll, gbc);  
+		
+		f.add(panel);
+		f.setSize(500,500);
+		// f.setLayout(new FlowLayout());
+		f.pack();
+		f.setLocationRelativeTo(null);
+		f.setVisible(true);
+		
+		panel.validate();
+		panel.repaint();
+	}
+	
+	private String getPrettyOrderItems(List<OrderItem> orderItems) {
+		String output = "";
+		String appetizers = "APPETIZERS\n";
+		String main = "MAIN\n";
+		String dessert = "DESSERT\n";
+		String alcoholicBev = "ALCOHOLIC BEVERAGES\n";
+		String nonAlcoholicBev = "NON-ALCOHOLIC BEVERAGES\n";
+
+		DecimalFormat df = new DecimalFormat("#.##");
+
+		for (OrderItem oi : orderItems)
+		{
+			int qty = oi.getQuantity();
+			double unitPrice = oi.getPricedMenuItem().getPrice();
+			String totalPrice = df.format(qty * unitPrice);
+			MenuItem menuItem = oi.getPricedMenuItem().getMenuItem();
+			switch (menuItem.getItemCategory()) {
+				case Appetizer: 
+				appetizers += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
+				break;
+				case Main: 
+				main += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
+				break;
+				case Dessert:
+				dessert += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
+				break;
+				case AlcoholicBeverage: 
+				alcoholicBev += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
+				break;
+				case NonAlcoholicBeverage: 
+				nonAlcoholicBev += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
+				break;
+			}
+		}
+		
+		output = appetizers + "\n" + main + "\n" + dessert + "\n" + alcoholicBev + "\n" + nonAlcoholicBev;
+		
+		return output;
+	}
+	
+	private void endOrderAction(ActionEvent event) {
+		JPanel panel = new JPanel(new GridLayout(2, 2, 5, 5));
+		
+		// create array of current orders
+		int numOrders = RestoController.getCurrentOrders().size();
+		if (numOrders > 0) {
+			displayEndOrderAction(panel, numOrders);
+		} else {
+			JOptionPane.showMessageDialog(null, "RestoApp currently has no table with orders",
+			"No Orders currently available", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+	
+	private void displayEndOrderAction(JPanel panel, int numOrders) {
+		String currOrderNums[] = new String[numOrders];
+		int i = 0;
+		for (Order o : RestoController.getCurrentOrders()) {
+			currOrderNums[i++] = "" + o.getNumber();
+		}
+		
+		panel.add(new JLabel("Select order to end:"));
+		DefaultListModel<String> orderNumList = new DefaultListModel<>();
+		for (i = 0; i < currOrderNums.length; i++) {
+			orderNumList.addElement(currOrderNums[i]);
+		}
+		JList<String> activeOrders = new JList<>(orderNumList);
+		activeOrders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		panel.add(activeOrders);
+		
+		int result = JOptionPane.showConfirmDialog(null, panel, "End Order", JOptionPane.OK_CANCEL_OPTION,
+		JOptionPane.PLAIN_MESSAGE);
+		if (result == JOptionPane.OK_OPTION) {
+			try {
+				int selectedNum = Integer.parseInt(activeOrders.getSelectedValuesList().get(0));
+				Order selectedOrder = RestoController.getCurrentOrder(selectedNum);
+				
+				RestoController.endOrder(selectedOrder);
+				
+				tablePanel.revalidate();
+				tablePanel.repaint();
+				
+				JOptionPane.showMessageDialog(null, "Order ended successfully.");
+			} catch (Exception error) {
+				JOptionPane.showMessageDialog(null, error.getMessage(), "Could not end order",
+				JOptionPane.ERROR_MESSAGE);
+				error.printStackTrace();
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "No order was ended.");
+		}
+	}
+	
     private void billManagerAction(ActionEvent event){
     	JFrame f = new JFrame("Bill Manager");
     	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
@@ -531,326 +850,7 @@ public class RestoAppPage extends JFrame {
 		panel.validate();
 		panel.repaint();
 	}
-
-	private void reserveTableAction(ActionEvent event) {
-		JPanel panel = new JPanel(new GridLayout(7, 4, 5, 5));
-		
-		// create array of current table numbers
-		int currentLength = RestoController.getCurrentTables().size();
-		String currentTableNums[] = new String[currentLength];
-		for (int i = 0; i < currentLength; i++) {
-			currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
-		}
-		
-		panel.add(new JLabel("Select tables to reserve:"));
-		DefaultListModel<String> listTableNums = new DefaultListModel<>();
-		for (int i = 0; i < currentTableNums.length; i++) { // fill list for UI with wanted list (element per element)
-			listTableNums.addElement(currentTableNums[i]);
-		}
-		JList<String> allTablesList = new JList<>(listTableNums); // now list has table nums of current tables
-		allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		allTablesList.setVisibleRowCount(3);
-		JScrollPane scrollPane = new JScrollPane(allTablesList);
-		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		panel.add(scrollPane);
-		// panel.add(allTablesList);
-		
-		panel.add(new JLabel("Date:"));
-		
-		JXDatePicker picker = new JXDatePicker();
-		picker.setDate(Calendar.getInstance().getTime());
-		picker.setFormats(new SimpleDateFormat("dd.MM.yyyy"));
-		panel.add(picker);
-		
-		panel.add(new JLabel("Time:"));
-		TimePickerSettings timeSettings = new TimePickerSettings();
-		timeSettings.setColor(TimePickerSettings.TimeArea.TimePickerTextValidTime, Color.black);
-		timeSettings.generatePotentialMenuTimes(TimePickerSettings.TimeIncrement.OneHour, LocalTime.of(9, 0),
-		LocalTime.of(23, 0));
-		timeSettings.initialTime = LocalTime.now();
-		TimePicker timePicker = new TimePicker(timeSettings);
-		add(timePicker);
-		panel.add(timePicker);
-		
-		panel.add(new JLabel("Number of people:"));
-		JTextField numPeopleField = new JTextField();
-		numPeopleField.setAutoscrolls(true);
-		// numPeopleField.setVisibleRowCount(2);
-		// numPeopleField.setPreferredSize(new Dimension(1,1));
-		// numPeopleField.setBounds(0, 0, 5, 5);
-		panel.add(numPeopleField);
-		
-		panel.add(new JLabel("Contact name:"));
-		JTextField nameField = new JTextField();
-		panel.add(nameField);
-		
-		panel.add(new JLabel("Contact e-mail:"));
-		JTextField emailField = new JTextField();
-		panel.add(emailField);
-		
-		panel.add(new JLabel("Contact phone number:"));
-		JTextField phoneField = new JTextField();
-		panel.add(phoneField);
-		
-		int result = JOptionPane.showConfirmDialog(null, panel, "Add Table", JOptionPane.OK_CANCEL_OPTION,
-		JOptionPane.PLAIN_MESSAGE);
-		if (result == JOptionPane.OK_OPTION) {
-			try {
-				
-				Date date = new Date(picker.getDate().getTime());
-				Time time = Time.valueOf(timePicker.getTime());
-				int numberInParty = 0;
-				try { // need a try/catch here because if no number is inputed, an
-					// un-informative error gets thrown here for trying to parse an empty string
-					numberInParty = parseInt((String) numPeopleField.getText());
-				} catch (Exception error) {
-					
-				}
-				String contactName = nameField.getText();
-				String contactEmailAddress = emailField.getText();
-				String contactPhoneNumber = phoneField.getText();
-				List<String> selectedNumbers = allTablesList.getSelectedValuesList();
-				List<Table> selectedTables = new ArrayList<Table>();
-				for (int i = 0; i < selectedNumbers.size(); i++) {
-					int tableNum = Integer.parseInt((String) selectedNumbers.get(i));
-					Table selectedTable = RestoController.getTableByNum(tableNum);
-					selectedTables.add(selectedTable);
-				}
-				
-				RestoController.reserveTable(date, time, numberInParty, contactName, contactEmailAddress,
-				contactPhoneNumber, selectedTables);
-				
-				tablePanel.revalidate();
-				tablePanel.repaint();
-				
-				JOptionPane.showMessageDialog(null, "Reservation made successfully.");
-			} catch (Exception error) {
-				JOptionPane.showMessageDialog(null, error.getMessage(), "Reservation was not made.",
-				JOptionPane.ERROR_MESSAGE);
-			}
-		} else {
-			JOptionPane.showMessageDialog(null, "No reservation made.");
-		}
-		
-	}
 	
-	private void startOrderAction(ActionEvent event) {
-		JPanel panel = new JPanel(new GridLayout(2, 2, 5, 5));
-		
-		// create array of current table numbers
-		int currentLength = RestoController.getCurrentTables().size();
-		String currentTableNums[] = new String[currentLength];
-		for (int i = 0; i < currentLength; i++) {
-			currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
-		}
-		
-		panel.add(new JLabel("Select tables for order:"));
-		DefaultListModel<String> listTableNums = new DefaultListModel<>();
-		for (int i = 0; i < currentTableNums.length; i++) { // fill list for UI with wanted list (element per element)
-			listTableNums.addElement(currentTableNums[i]);
-		}
-		JList<String> allTablesList = new JList<>(listTableNums); // now list has table nums of current tables
-		allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
-		// SCROLLBAR:
-		allTablesList.setVisibleRowCount(3);
-		JScrollPane scrollPane = new JScrollPane(allTablesList);
-		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		
-		// panel.add(allTablesList); with new scrollbar, this is replaced by add
-		// scrollpane below
-		panel.add(scrollPane);
-		int result = JOptionPane.showConfirmDialog(null, panel, "Start Order", JOptionPane.OK_CANCEL_OPTION,
-		JOptionPane.PLAIN_MESSAGE);
-		if (result == JOptionPane.OK_OPTION) {
-			try {
-				List<String> selectedNumbers = allTablesList.getSelectedValuesList();
-				List<Table> selectedTables = new ArrayList<Table>();
-				for (int i = 0; i < selectedNumbers.size(); i++) {
-					int tableNum = Integer.parseInt((String) selectedNumbers.get(i));
-					Table selectedTable = RestoController.getTableByNum(tableNum);
-					selectedTables.add(selectedTable);
-				}
-				RestoController.startOrder(selectedTables);
-				
-				tablePanel.revalidate();
-				tablePanel.repaint();
-				
-				JOptionPane.showMessageDialog(null, "Order started successfully.");
-			} catch (Exception error) {
-				JOptionPane.showMessageDialog(null, error.getMessage(), "Could not start order",
-				JOptionPane.ERROR_MESSAGE);
-				
-			}
-		} else {
-			JOptionPane.showMessageDialog(null, "No orders were started.");
-		}
-		
-	}
-	
-	private void viewOrderAction(ActionEvent event){
-		JFrame f = new JFrame("View Order");
-		JPanel panel = new JPanel();
-		
-		GridBagLayout grid = new GridBagLayout();  
-		GridBagConstraints gbc = new GridBagConstraints();  
-		panel.setLayout(grid);  
-		
-		//create array of current table numbers
-		int currentLength = RestoController.getCurrentTables().size() + 1;
-		String currentTableNums[] = new String[currentLength];
-		currentTableNums[0] = " --- ";
-		for (int i = 1; i < currentLength; i++){
-			currentTableNums[i] = "" + RestoController.getCurrentTable(i-1).getNumber();
-		}
-		
-		JTextArea display  = new JTextArea(20, 60);
-		display.setEditable (false);
-		JScrollPane scroll = new JScrollPane(display);
-		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-		
-		JComboBox<String> allTablesList = new JComboBox<String>(currentTableNums);
-		allTablesList.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				try {
-					int tableNum = Integer.parseInt((String) allTablesList.getSelectedItem());
-					Table selectedTable = RestoController.getTableByNum(tableNum);
-					String formattedOrderItems = getPrettyOrderItems(RestoController.getOrderItems(selectedTable));
-					display.setText(formattedOrderItems);
-				}catch (NumberFormatException e) {
-				}catch (Exception error)
-				{
-					JOptionPane.showMessageDialog(
-					null,
-					error.getMessage(),
-					"Could not retrieve table's order",
-					JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});       
-		
-		gbc.ipady = 0;  
-		gbc.gridx = 0;  
-		gbc.gridy = 0;  
-		gbc.gridwidth = 2;
-		gbc.insets = new Insets(10,0,0,0);
-		panel.add(new JLabel("Select table:"), gbc);  
-		
-		
-		gbc.gridx = 0;  
-		gbc.gridy = 1;  
-		gbc.gridwidth = 2;
-		panel.add(allTablesList, gbc);  
-		
-		gbc.gridx = 0;  
-		gbc.gridy = 3;  
-		gbc.gridwidth = 2;  
-		panel.add(scroll, gbc);  
-		
-		f.add(panel);
-		f.setSize(500,500);
-		// f.setLayout(new FlowLayout());
-		f.pack();
-		f.setLocationRelativeTo(null);
-		f.setVisible(true);
-		
-		panel.validate();
-		panel.repaint();
-	}
-	
-	private String getPrettyOrderItems(List<OrderItem> orderItems) {
-		String output = "";
-		String appetizers = "APPETIZERS\n";
-		String main = "MAIN\n";
-		String dessert = "DESSERT\n";
-		String alcoholicBev = "ALCOHOLIC BEVERAGES\n";
-		String nonAlcoholicBev = "NON-ALCOHOLIC BEVERAGES\n";
-
-		DecimalFormat df = new DecimalFormat("#.##");
-
-		for (OrderItem oi : orderItems)
-		{
-			int qty = oi.getQuantity();
-			double unitPrice = oi.getPricedMenuItem().getPrice();
-			String totalPrice = df.format(qty * unitPrice);
-			MenuItem menuItem = oi.getPricedMenuItem().getMenuItem();
-			switch (menuItem.getItemCategory()) {
-				case Appetizer: 
-				appetizers += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
-				break;
-				case Main: 
-				main += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
-				break;
-				case Dessert:
-				dessert += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
-				break;
-				case AlcoholicBeverage: 
-				alcoholicBev += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
-				break;
-				case NonAlcoholicBeverage: 
-				nonAlcoholicBev += qty + "x " + menuItem.getName() + " [" + df.format(unitPrice) + "$]" + "\t" + totalPrice + "$\n";
-				break;
-			}
-		}
-		
-		output = appetizers + "\n" + main + "\n" + dessert + "\n" + alcoholicBev + "\n" + nonAlcoholicBev;
-		
-		return output;
-	}
-	
-	private void endOrderAction(ActionEvent event) {
-		JPanel panel = new JPanel(new GridLayout(2, 2, 5, 5));
-		
-		// create array of current orders
-		int numOrders = RestoController.getCurrentOrders().size();
-		if (numOrders > 0) {
-			displayEndOrderAction(panel, numOrders);
-		} else {
-			JOptionPane.showMessageDialog(null, "RestoApp currently has no table with orders",
-			"No Orders currently available", JOptionPane.INFORMATION_MESSAGE);
-		}
-	}
-	
-	private void displayEndOrderAction(JPanel panel, int numOrders) {
-		String currOrderNums[] = new String[numOrders];
-		int i = 0;
-		for (Order o : RestoController.getCurrentOrders()) {
-			currOrderNums[i++] = "" + o.getNumber();
-		}
-		
-		panel.add(new JLabel("Select order to end:"));
-		DefaultListModel<String> orderNumList = new DefaultListModel<>();
-		for (i = 0; i < currOrderNums.length; i++) {
-			orderNumList.addElement(currOrderNums[i]);
-		}
-		JList<String> activeOrders = new JList<>(orderNumList);
-		activeOrders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
-		panel.add(activeOrders);
-		
-		int result = JOptionPane.showConfirmDialog(null, panel, "End Order", JOptionPane.OK_CANCEL_OPTION,
-		JOptionPane.PLAIN_MESSAGE);
-		if (result == JOptionPane.OK_OPTION) {
-			try {
-				int selectedNum = Integer.parseInt(activeOrders.getSelectedValuesList().get(0));
-				Order selectedOrder = RestoController.getCurrentOrder(selectedNum);
-				
-				RestoController.endOrder(selectedOrder);
-				
-				tablePanel.revalidate();
-				tablePanel.repaint();
-				
-				JOptionPane.showMessageDialog(null, "Order ended successfully.");
-			} catch (Exception error) {
-				JOptionPane.showMessageDialog(null, error.getMessage(), "Could not end order",
-				JOptionPane.ERROR_MESSAGE);
-				error.printStackTrace();
-			}
-		} else {
-			JOptionPane.showMessageDialog(null, "No order was ended.");
-		}
-	}
-
 	private void displayMenuAction(ActionEvent event) {
 		new MenuFrame();
 	}
@@ -947,6 +947,7 @@ public class RestoAppPage extends JFrame {
 				
 				JOptionPane.showMessageDialog(null, "Table updated successfully.");
 			} catch (Exception error) {
+				error.printStackTrace();
 				JOptionPane.showMessageDialog(null, error.getMessage(), "Could not update table",
 				JOptionPane.ERROR_MESSAGE);
 			}
@@ -1101,10 +1102,31 @@ public class RestoAppPage extends JFrame {
 		JLabel quantitylabel = new JLabel("Quantity");
 		JTextField quantity = new JTextField();
 		JLabel tablelabel = new JLabel("Table");
-		JComboBox<String> tables = new JComboBox<String>(currentTableNums);
+
+		//ILANA
+		Set<String> keys = hmap.keySet();
+		String[] keysArray = new String[hmap.keySet().size()];
+		int count = 0;
+		for(String s: keys) {
+			keysArray[count] = s;
+			count++;
+		}
+		DefaultListModel<String> listTablesAndSeats = new DefaultListModel<>();
+		for (int i = 0; i < keysArray.length; i++) { // fill list for UI with wanted list (element per element)
+			listTablesAndSeats.addElement(keysArray[i]);
+		}
+		JList<String> allTablesAndSeatsBox = new JList<>(listTablesAndSeats); // now list has table nums of current tables
+		allTablesAndSeatsBox.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		
+		// SCROLLBAR:
+		allTablesAndSeatsBox.setVisibleRowCount(4);
+		JScrollPane scrollPane = new JScrollPane(allTablesAndSeatsBox);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
 		JButton add = new JButton("Add to Order");
 		
-		panel.setPreferredSize(new Dimension(260, 360));
+		panel.setPreferredSize(new Dimension(260, 400));
+		//panel.setPreferredSize(new Dimension(260, 460));
 		panel.setLayout(null);
 		
 		
@@ -1114,7 +1136,8 @@ public class RestoAppPage extends JFrame {
 		panel.add(menuItemlabel);
 		panel.add(quantity);
 		panel.add(quantitylabel);
-		panel.add(tables);
+		//panel.add(tables);
+		panel.add(scrollPane);
 		panel.add(tablelabel);
 		panel.add(add);
 		
@@ -1125,8 +1148,9 @@ public class RestoAppPage extends JFrame {
 		quantitylabel.setBounds(30, 160, 100, 25);
 		quantity.setBounds(30, 190, 200, 30);
 		tablelabel.setBounds(30, 230, 100, 25);
-		tables.setBounds(30, 260, 200, 30);
-		add.setBounds(30, 310, 200, 30);
+		//tables.setBounds(30, 260, 200, 30);
+		scrollPane.setBounds(30, 260, 200, 60);
+		add.setBounds(30, 340, 200, 30);
 		
 		frame.getContentPane().add(panel);
 		frame.pack();
@@ -1181,9 +1205,16 @@ public class RestoAppPage extends JFrame {
 			try {
 				MenuItem menuitem = RestoController.getMenuItem((String) menuItem.getSelectedItem());
 				int qty = Integer.parseInt(quantity.getText());
-				List<Seat> seats = RestoController.getSeats(
-				RestoController.getCurrentTableByNum(Integer.parseInt((String) tables.getSelectedItem())));
-				RestoController.orderMenuItem(menuitem, qty, seats);
+				/*List<Seat> seats = RestoController.getSeats(
+				RestoController.getCurrentTableByNum(Integer.parseInt((String) tables.getSelectedItem())));*/
+				
+				List<String> selectedStrings = allTablesAndSeatsBox.getSelectedValuesList();
+				List<Seat> selectedSeats = new ArrayList<Seat>();
+				for (int i = 0; i < selectedStrings.size(); i++) {
+					Seat seat = hmap.get(selectedStrings.get(i)); //get seat associated to each hashmap string selected
+					selectedSeats.add(seat);
+				}
+				RestoController.orderMenuItem(menuitem, qty, selectedSeats);
 				tablePanel.revalidate();
 				tablePanel.repaint();
 				JOptionPane.showMessageDialog(null, "Item ordered sucessfully!", "Item Add Sucess",
@@ -1293,7 +1324,5 @@ public class RestoAppPage extends JFrame {
 		else {
 			JOptionPane.showMessageDialog(null, "Statistics exited.");
 		}
-		
 	}
-
 }
