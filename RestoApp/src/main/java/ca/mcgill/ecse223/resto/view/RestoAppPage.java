@@ -939,7 +939,7 @@ public class RestoAppPage extends JFrame {
 				Time endTime = Time.valueOf(endTimePicker.getTime());
 				
 				
-				JPanel topTables = new JPanel(new GridLayout(10, 4, 5, 5));
+				JPanel topTables = new JPanel(new GridLayout(15, 4, 5, 5));
 				topTables.add(new JLabel("Top 10 Tables: "));
 				List<StatisticsTable> top10Tables = RestoController.getTableStatistics(startDate, startTime, endDate, endTime);
 				for (StatisticsTable t : top10Tables) {
@@ -968,7 +968,7 @@ public class RestoAppPage extends JFrame {
 				Time endTime = Time.valueOf(endTimePicker.getTime());
 				
 				
-				JPanel topItems = new JPanel(new GridLayout(10, 4, 5, 5));
+				JPanel topItems = new JPanel(new GridLayout(15, 4, 5, 5));
 				topItems.add(new JLabel("Top 10 Menu Items: "));
 				List<StatisticsItem> top10Items = RestoController.getItemStatistics(startDate, startTime, endDate, endTime);
 				for (StatisticsItem sI : top10Items) {
