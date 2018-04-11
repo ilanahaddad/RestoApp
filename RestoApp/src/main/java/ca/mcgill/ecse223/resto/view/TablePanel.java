@@ -34,7 +34,7 @@ public class TablePanel extends JPanel
 
     private final float[] DASH = {4f, 0f, 2f};
     private final BasicStroke DASHED_STROKE = new BasicStroke(
-    1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, DASH, 2f);
+            1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND, 1.0f, DASH, 2f);
 
     // called everytime UI is refreshed
     @Override
@@ -89,14 +89,14 @@ public class TablePanel extends JPanel
         // draw rectangle
         switch(s) {
             case Available:
-            g2d.setColor(TABLE_COLOR_Available);
-            break;
+                g2d.setColor(TABLE_COLOR_Available);
+                break;
             case NothingOrdered:
-            g2d.setColor(TABLE_COLOR_NothingOrdered);
-            break;
+                g2d.setColor(TABLE_COLOR_NothingOrdered);
+                break;
             case Ordered:
-            g2d.setColor(TABLE_COLOR_Ordered);
-            break;
+                g2d.setColor(TABLE_COLOR_Ordered);
+                break;
         }// draw rectangle
         g2d.fillRect(x*UNIT_LENGTH, y*UNIT_LENGTH, table.getWidth()*UNIT_LENGTH, table.getLength()*UNIT_LENGTH);
 
@@ -191,7 +191,7 @@ public class TablePanel extends JPanel
         g2d.drawOval(table.getX()*UNIT_LENGTH+seatXOffset, table.getY()*UNIT_LENGTH+seatYOffset, seatDiameter, seatDiameter);
         g2d.setColor(Color.WHITE);
         g2d.fillOval(table.getX()*UNIT_LENGTH+seatXOffset, table.getY()*UNIT_LENGTH+seatYOffset, seatDiameter, seatDiameter);
-        
+
         int textPadding = (seatNum > 9) ? 2 : 7;
         g2d.setColor(Color.black);
         g2d.setFont(new Font("Purisa", Font.PLAIN, 13));
