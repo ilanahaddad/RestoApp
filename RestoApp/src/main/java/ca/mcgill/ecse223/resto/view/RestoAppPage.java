@@ -38,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
@@ -938,11 +939,11 @@ public class RestoAppPage extends JFrame {
 				
 				//TODO: new pop-up
 				
-				JPanel topTables = new JPanel();
+				JPanel topTables = new JPanel(new GridLayout(10, 4, 5, 5));
 				topTables.add(new JLabel("Top 10 Tables: "));
 				List<StatisticsTable> top10Tables = RestoController.getTableStatistics(startDate, startTime, endDate, endTime);
 				for (StatisticsTable t : top10Tables) {
-					topTables.add(new JLabel("" + t.getTable().getNumber()));
+					topTables.add(new JLabel("Table " + t.getTable().getNumber() + " used " + t.getTable().getNumUsed() + " times.\n"));
 				}
 				
 				//TODO: call getTableStatistics and display the tables
@@ -950,8 +951,14 @@ public class RestoAppPage extends JFrame {
 				//tablePanel.revalidate();
 				//tablePanel.repaint();
 				
-				
+				//JFrame f = new JFrame();
+				//f.setLayout(new BorderLayout());
+				//f.add(topTables);
+				//f.pack();
+				//f.setVisible(true);
 				JOptionPane.showMessageDialog(null, topTables);
+				//JOptionPane.showConfirmDialog(null, topTables, "Top Tables", JOptionPane.OK_OPTION,
+				//		JOptionPane.PLAIN_MESSAGE);
 			} catch (Exception error) {
 				JOptionPane.showMessageDialog(null, error.getMessage(), "Reservation was not made.",
 				JOptionPane.ERROR_MESSAGE);
