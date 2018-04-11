@@ -855,24 +855,62 @@ public class RestoController {
 
 	}
 	
-	
-	/*public static List<StatisticsTable> getTableStatistics()
-	List<StatisticsTable> tablesInTimeRange = null;
-	for (Table t : allTables) {
-		for (Order o: t.getOrders()) //looping thru all orders in history of app for one table
-			If (orderInTimeRange(o, dateTime)) {//tables in time range
-				if(!t.hasStatisticsTable){
-					StatisticsTable statTable = new StatisticsTable(t, 1)
-					tablesInTimeRange.add(statTable);
-				}
-				else{
-					t.getStatTable.setNumUsed(t.getStatisticsTable.getNumUsed() + 1)
-				}
-			}	
-		}
+	/**
+	 * Helper method that determines if an order is within a specified time range
+	 * @param order
+	 * @param startDate
+	 * @param startTime
+	 * @param endDate
+	 * @param endTime
+	 * @return
+	 */
+	public static boolean orderInTimeRange(Order order, Date startDate, Time startTime, Date endDate, Time endTime) {
+		boolean inRange = false;
+		
+		return inRange;
 	}
-	reverseSortTables(tablesInTimeRange);
-	return tablesInTimeRange; */
+	
+	/**
+	 * Gets the top 10 tables in the restaurant between a time frame
+	 * @param startDate
+	 * @param startTime
+	 * @param endDate
+	 * @param endTime
+	 * @return
+	 */
+	public static List<StatisticsTable> getTableStatistics(Date startDate, Time startTime, Date endDate, Time endTime) throws InvalidInputException {
+		//input validation
+		if (startDate == null) {
+			throw new InvalidInputException ("Start date must be specified.\n");
+		}
+		if (startTime == null) {
+			throw new InvalidInputException ("Start time must be specified.\n");
+		}
+		if (endDate == null) {
+			throw new InvalidInputException ("End date must be specified.\n");
+		}
+		if (endTime == null) {
+			throw new InvalidInputException ("End time must be specified.\n");
+		}
+		
+		RestoApp restoApp = RestoAppApplication.getRestoApp();
+		List<Table> allTables = restoApp.getTables();
+		int currentNumUsed = 0;
+		List<StatisticsTable> tablesInTimeRange = null;
+		for (Table t : allTables) {
+			t.setNumUsed(0);
+			for (Order o: t.getOrders()) { //looping thru all orders in history of app for one table
+				if (orderInTimeRange(o, startDate, startTime, endDate, endTime)) {//tables in time range
+					currentNumUsed = t.getNumUsed();
+					t.setNumUsed(currentNumUsed + 1);
+				}	
+			}
+			StatisticsTable statTable = new StatisticsTable(t, t.getNumUsed());
+			tablesInTimeRange.add(statTable);
+		}
+		//reverseSortTables(tablesInTimeRange);
+		return tablesInTimeRange; 
+	}
 
 
 	/*
