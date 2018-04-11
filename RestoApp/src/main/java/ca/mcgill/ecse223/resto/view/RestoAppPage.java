@@ -106,7 +106,9 @@ public class RestoAppPage extends JFrame {
 		JMenuItem viewOrderMenuItem = createMenuItem("View Order", this::viewOrderAction);
 		JMenuItem endOrderMenuItem = createMenuItem("End Order", this::endOrderAction);
 		JMenuItem orderMenuItem = createMenuItem("Order Menu Item", this::orderMenuItemAction);
+		JMenuItem businessStatistics = createMenuItem("Business Statistics", this::businessStatisticsAction);
 		
+		actions.add(businessStatistics);
 		actions.add(orderMenuItem);
 		actions.add(endOrderMenuItem);
 		actions.add(viewOrderMenuItem);
@@ -152,6 +154,8 @@ public class RestoAppPage extends JFrame {
 		this::endOrderAction);
 		JButton orderMenuItemButton = createButton("orderMenuItem.png", "Order Menu Item [Alt + I]", KeyEvent.VK_I,
 		this::orderMenuItemAction);
+		JButton businessStatisticsButton = createButton("businessStatistics.png", "View Business Statistics [Alt + 1]", KeyEvent.VK_1,
+		this::businessStatisticsAction);
 		
 		toolbar.add(exitButton);
 		toolbar.add(addTableButton);
@@ -164,6 +168,7 @@ public class RestoAppPage extends JFrame {
 		toolbar.add(viewOrderButton);
 		toolbar.add(endOrderButton);
 		toolbar.add(orderMenuItemButton);
+		toolbar.add(businessStatisticsButton);
 		add(toolbar, BorderLayout.NORTH);
 	}
 	
@@ -879,6 +884,69 @@ public class RestoAppPage extends JFrame {
 			}
 			
 		});
+		
+	}
+	
+	private void businessStatisticsAction(ActionEvent event) {
+		JPanel panel = new JPanel(new GridLayout(7, 4, 5, 5));
+
+		panel.add(new JLabel("Start Date:"));
+		
+		JXDatePicker startDatePicker = new JXDatePicker();
+		startDatePicker.setDate(Calendar.getInstance().getTime());
+		startDatePicker.setFormats(new SimpleDateFormat("dd.MM.yyyy"));
+		panel.add(startDatePicker);
+		
+		panel.add(new JLabel("Start Time:"));
+		TimePickerSettings timeSettings = new TimePickerSettings();
+		timeSettings.setColor(TimePickerSettings.TimeArea.TimePickerTextValidTime, Color.black);
+		timeSettings.generatePotentialMenuTimes(TimePickerSettings.TimeIncrement.OneHour, LocalTime.of(9, 0),
+		LocalTime.of(23, 0));
+		timeSettings.initialTime = LocalTime.now();
+		TimePicker startTimePicker = new TimePicker(timeSettings);
+		add(startTimePicker);
+		panel.add(startTimePicker);
+		
+		panel.add(new JLabel("End Date:"));
+		
+		JXDatePicker endDatePicker = new JXDatePicker();
+		endDatePicker.setDate(Calendar.getInstance().getTime());
+		endDatePicker.setFormats(new SimpleDateFormat("dd.MM.yyyy"));
+		panel.add(endDatePicker);
+		
+		panel.add(new JLabel("End Time:"));
+		TimePickerSettings timeSettings2 = new TimePickerSettings();
+		TimePicker endTimePicker = new TimePicker(timeSettings);
+		add(endTimePicker);
+		panel.add(endTimePicker);
+		
+		
+		int result = JOptionPane.showConfirmDialog(null, panel, "Business Statistics", JOptionPane.OK_CANCEL_OPTION,
+		JOptionPane.PLAIN_MESSAGE);
+		if (result == JOptionPane.OK_OPTION) {
+			try {
+				
+				Date startDate = new Date(startDatePicker.getDate().getTime());
+				Time startTime = Time.valueOf(startTimePicker.getTime());
+				Date endDate = new Date(startDatePicker.getDate().getTime());
+				Time endTime = Time.valueOf(startTimePicker.getTime());
+				
+				//TODO: new pop-up
+				JPanel topTables = new JPanel(new GridLayout(7, 4, 5, 5));
+				
+				//TODO: call getTableStatistics and display the tables
+				
+				//tablePanel.revalidate();
+				//tablePanel.repaint();
+				
+				JOptionPane.showMessageDialog(null, "Reservation made successfully.");
+			} catch (Exception error) {
+				JOptionPane.showMessageDialog(null, error.getMessage(), "Reservation was not made.",
+				JOptionPane.ERROR_MESSAGE);
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "No reservation made.");
+		}
 		
 	}
 	

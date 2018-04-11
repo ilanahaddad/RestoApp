@@ -927,7 +927,7 @@ public class RestoController {
 	 * @param startTime
 	 * @param endDate
 	 * @param endTime
-	 * @return
+	 * @return a list of 10 best-selling tables (of type StatisticsTable), in order of most popular to least popular
 	 */
 	public static List<StatisticsTable> getTableStatistics(Date startDate, Time startTime, Date endDate, Time endTime) throws InvalidInputException {
 		//input validation
