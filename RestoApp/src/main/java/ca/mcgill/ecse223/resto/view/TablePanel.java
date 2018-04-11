@@ -8,9 +8,11 @@ import java.awt.Graphics2D;
 //import java.util.Random;
 
 import javax.swing.JPanel;
+import java.util.List;
 
 import ca.mcgill.ecse223.resto.controller.RestoController;
 import ca.mcgill.ecse223.resto.model.Reservation;
+import ca.mcgill.ecse223.resto.model.Seat;
 import ca.mcgill.ecse223.resto.model.Table;
 
 public class TablePanel extends JPanel
@@ -137,7 +139,8 @@ public class TablePanel extends JPanel
         int drawnSeats = 0;
         int seatYOffset = 0;
         int seatXOffset = 3;
-        for (int i=0;i<seatsToDraw; i++)
+        List<Seat> currSeats = table.getCurrentSeats();
+        for (int i=0;i<currSeats.size(); i++)
         {
             if (filledTableSide(maxSeatsPerWidth, i))
             {
@@ -147,7 +150,7 @@ public class TablePanel extends JPanel
                 seatXOffset=3;
             }
 
-            drawSeat(table, g2d, seatYOffset, seatXOffset);
+            drawSeat(currSeats.get(i).getNumber(), table, g2d, seatYOffset, seatXOffset);
             drawnSeats++;
 
             seatXOffset+=seatDiameter + seatPadding;
@@ -164,7 +167,8 @@ public class TablePanel extends JPanel
         int drawnSeats = 0;
         int seatYOffset = seatDiameter+seatPadding;
         int seatXOffset = 3;
-        for (int i=0;i<seatsToDraw; i++)
+        List<Seat> currSeats = table.getCurrentSeats();
+        for (int i=0;i<currSeats.size(); i++)
         {
             if (filledTableSide(maxSeatsPerLength, i))
             {
@@ -174,7 +178,7 @@ public class TablePanel extends JPanel
                 seatYOffset=seatDiameter+seatPadding;
             }
 
-            drawSeat(table, g2d, seatYOffset, seatXOffset);
+            drawSeat(currSeats.get(i).getNumber(), table, g2d, seatYOffset, seatXOffset);
             drawnSeats++;
 
             seatYOffset+=seatDiameter + seatPadding;
@@ -183,12 +187,15 @@ public class TablePanel extends JPanel
         return drawnSeats;
     }
 
-    private void drawSeat(Table table, Graphics2D g2d, int seatYOffset, int seatXOffset)
+    private void drawSeat(int seatNum, Table table, Graphics2D g2d, int seatYOffset, int seatXOffset)
     {
         g2d.setColor(Color.BLACK);
         g2d.drawOval(table.getX()*UNIT_LENGTH+seatXOffset, table.getY()*UNIT_LENGTH+seatYOffset, seatDiameter, seatDiameter);
         g2d.setColor(Color.WHITE);
         g2d.fillOval(table.getX()*UNIT_LENGTH+seatXOffset, table.getY()*UNIT_LENGTH+seatYOffset, seatDiameter, seatDiameter);
+        g2d.setColor(Color.black);
+        g2d.setFont(new Font("Purisa", Font.PLAIN, 13));
+        g2d.drawString(seatNum+"", table.getX()*UNIT_LENGTH+seatXOffset+7, table.getY()*UNIT_LENGTH+seatYOffset+15);
     }
 
     // checks if already drawn the maximum possible number of seats in the table's side
