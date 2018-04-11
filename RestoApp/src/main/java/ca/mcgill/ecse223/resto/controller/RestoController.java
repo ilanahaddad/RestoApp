@@ -958,6 +958,46 @@ public class RestoController {
 	}
 	
 	/**
+	 * Helper method for item statistics that return the top 10 items
+	 * @param tables
+	 * @return
+	 */
+	public static List<StatisticsItem> sortAndTrimItems(List<StatisticsItem> items){
+		List<StatisticsItem> result = new ArrayList<>();
+		int resultSize = 0;
+		int insertIndex = 0;
+		for (StatisticsItem sI : items) {
+			if (result.isEmpty()) {
+				result.add(sI);
+			}
+			else {
+				resultSize = result.size();
+				if (sI.getNumUsed() > result.get(resultSize - 1).getNumUsed()) { //if numUsed greater than last element in result
+					insertIndex = resultSize - 1;
+					for (int i = resultSize - 2; i >= 0; i--) {
+						if (sI.getNumUsed() > result.get(i).getNumUsed()) {
+							insertIndex--;
+						}
+						else {
+							break;
+						}
+					}
+					result.add(insertIndex, sI);
+				}
+				else if (resultSize < 10) {
+					result.add(sI);
+				}
+			}
+		}
+		// pop objects until only top 10 remain
+		while (result.size() > 10){
+			result.remove(result.get(result.size() - 1)); // removes last element
+		}
+		
+		return result;
+	}
+	
+	/**
 	 * Gets the top 10 tables in the restaurant between a time frame
 	 * @param startDate
 	 * @param startTime
@@ -1026,10 +1066,33 @@ public class RestoController {
 				if (endTime == null) {
 					throw new InvalidInputException ("End time must be specified.\n");
 				}
-		
-		
-		//List<StatisticsItem> topTenItems = sortAndTrimItems(itemsInTimeRange);
-		return null;
+				
+				RestoApp restoApp = RestoAppApplication.getRestoApp();
+				List<Order> allOrders = restoApp.getOrders();
+				//clear all menu item numUsed
+				List<MenuItem> allMenuItems = restoApp.getMenu().getMenuItems();
+				for (MenuItem m : allMenuItems) {
+					m.setNumUsed(0);
+				}
+				for (Order order : allOrders) {
+					if(orderInTimeRange(order, startDate, startTime, endDate, endTime)){
+						List<OrderItem> orderItems = order.getOrderItems();
+						for (OrderItem item : orderItems) {
+							item.getPricedMenuItem().getMenuItem().setNumUsed(item.getPricedMenuItem().getMenuItem().getNumUsed() + 1);
+						}
+					}
+				}
+				
+				List<StatisticsItem> itemsInTimeRange = new ArrayList<>();
+				for (MenuItem menuItem : allMenuItems) {
+					if (menuItem.getNumUsed() != 0) {
+						StatisticsItem statItem = new StatisticsItem(menuItem, menuItem.getNumUsed());
+						itemsInTimeRange.add(statItem);
+					}
+				}
+	
+		List<StatisticsItem> topTenItems = sortAndTrimItems(itemsInTimeRange);
+		return topTenItems;
 	
 	}
 
