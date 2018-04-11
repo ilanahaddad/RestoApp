@@ -116,23 +116,21 @@ public class TablePanel extends JPanel
 
     private void drawSeats(Table table, Graphics2D g2d)
     {
-        int totalNumSeats = table.getCurrentSeats().size();
-
         if (table.getWidth() >= table.getLength())
         {
-            int tablesLeftToDraw = fillTopBottom(table, totalNumSeats,g2d);
-            fillLeftRight(table, totalNumSeats-tablesLeftToDraw, g2d);
+            int endSeatIdx = fillTopBottom(table, 0, g2d);
+            fillLeftRight(table, endSeatIdx, g2d);
             //TODO what if num chairs larger than what can be fit
         }
         else
         {
-            int tablesLeftToDraw = fillLeftRight(table, totalNumSeats,g2d);
-            fillTopBottom(table, (totalNumSeats-tablesLeftToDraw), g2d);
+            int endSeatIdx = fillLeftRight(table, 0, g2d);
+            fillTopBottom(table, endSeatIdx, g2d);
         }
     }
 
     // returns number of seats drawn
-    private int fillTopBottom(Table table, int seatsToDraw, Graphics2D g2d)
+    private int fillTopBottom(Table table, int startIdx, Graphics2D g2d)
     {
         int maxSeatsPerWidth = getMaxSeatsPerWidth(table);
 
@@ -140,7 +138,7 @@ public class TablePanel extends JPanel
         int seatYOffset = 0;
         int seatXOffset = 3;
         List<Seat> currSeats = table.getCurrentSeats();
-        for (int i=0;i<currSeats.size(); i++)
+        for (int i=startIdx;i<currSeats.size(); i++)
         {
             if (filledTableSide(maxSeatsPerWidth, i))
             {
@@ -160,7 +158,7 @@ public class TablePanel extends JPanel
     }
 
     // returns number of seats drawn
-    private int fillLeftRight(Table table, int seatsToDraw, Graphics2D g2d)
+    private int fillLeftRight(Table table, int startIdx, Graphics2D g2d)
     {
         int maxSeatsPerLength = getMaxSeatsPerLength(table);
 
@@ -168,7 +166,7 @@ public class TablePanel extends JPanel
         int seatYOffset = seatDiameter+seatPadding;
         int seatXOffset = 3;
         List<Seat> currSeats = table.getCurrentSeats();
-        for (int i=0;i<currSeats.size(); i++)
+        for (int i=startIdx;i<currSeats.size(); i++)
         {
             if (filledTableSide(maxSeatsPerLength, i))
             {
@@ -193,9 +191,11 @@ public class TablePanel extends JPanel
         g2d.drawOval(table.getX()*UNIT_LENGTH+seatXOffset, table.getY()*UNIT_LENGTH+seatYOffset, seatDiameter, seatDiameter);
         g2d.setColor(Color.WHITE);
         g2d.fillOval(table.getX()*UNIT_LENGTH+seatXOffset, table.getY()*UNIT_LENGTH+seatYOffset, seatDiameter, seatDiameter);
+        
+        int textPadding = (seatNum > 9) ? 2 : 7;
         g2d.setColor(Color.black);
         g2d.setFont(new Font("Purisa", Font.PLAIN, 13));
-        g2d.drawString(seatNum+"", table.getX()*UNIT_LENGTH+seatXOffset+7, table.getY()*UNIT_LENGTH+seatYOffset+15);
+        g2d.drawString(seatNum+"", table.getX()*UNIT_LENGTH+seatXOffset+textPadding, table.getY()*UNIT_LENGTH+seatYOffset+15);
     }
 
     // checks if already drawn the maximum possible number of seats in the table's side
