@@ -3,7 +3,7 @@
 
 package ca.mcgill.ecse223.resto.model;
 
-// line 91 "../../../../../RestoApp-v3.ump"
+// line 92 "../../../../../RestoApp-v3.ump"
 public class StatisticsItem
 {
 

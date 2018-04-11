@@ -4,7 +4,7 @@
 package ca.mcgill.ecse223.resto.model;
 import java.util.*;
 
-// line 81 "../../../../../RestoApp-v3.ump"
+// line 82 "../../../../../RestoApp-v3.ump"
 public class Statistics
 {
 

@@ -1,11 +1,8 @@
 package ca.mcgill.ecse223.resto.view;
 
-import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.controller.InvalidInputException;
 import ca.mcgill.ecse223.resto.controller.RestoController;
 import ca.mcgill.ecse223.resto.model.MenuItem;
-import com.sun.codemodel.internal.JOp;
-
 
 import javax.swing.*;
 import java.awt.*;
