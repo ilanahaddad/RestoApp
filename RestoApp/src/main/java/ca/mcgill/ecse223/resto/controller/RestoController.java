@@ -896,7 +896,7 @@ public class RestoController {
 		RestoApp restoApp = RestoAppApplication.getRestoApp();
 		List<Table> allTables = restoApp.getTables();
 		int currentNumUsed = 0;
-		List<StatisticsTable> tablesInTimeRange = null;
+		List<StatisticsTable> tablesInTimeRange = new ArrayList<>();
 		for (Table t : allTables) {
 			t.setNumUsed(0);
 			for (Order o: t.getOrders()) { //looping thru all orders in history of app for one table
