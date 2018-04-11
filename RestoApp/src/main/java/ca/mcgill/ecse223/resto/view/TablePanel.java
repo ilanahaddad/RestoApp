@@ -21,8 +21,8 @@ import ca.mcgill.ecse223.resto.model.Table;
 
 public class TablePanel extends JPanel
 {
-	HashMap<String, Seat> hmap = RestoController.generateHashMap();
-	
+//	public HashMap<String, Seat> hmap = RestoController.generateHashMap();
+	public HashMap<String, Seat> hmap = RestoController.hmap;
     private static final long serialVersionUID = 8978498317881881901L;
 
     private final int UNIT_LENGTH = 75;

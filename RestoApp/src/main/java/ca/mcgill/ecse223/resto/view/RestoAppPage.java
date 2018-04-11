@@ -21,7 +21,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -60,6 +62,7 @@ import ca.mcgill.ecse223.resto.model.Seat;
 import ca.mcgill.ecse223.resto.model.Table;
 
 public class RestoAppPage extends JFrame {
+	public HashMap<String, Seat> hmap = RestoController.generateHashMap();
 	private static final long serialVersionUID = 6588228649238198455L;
 	
 	private final int UNIT_LENGTH = 75;
@@ -795,10 +798,31 @@ public class RestoAppPage extends JFrame {
 		JLabel quantitylabel = new JLabel("Quantity");
 		JTextField quantity = new JTextField();
 		JLabel tablelabel = new JLabel("Table");
-		JComboBox<String> tables = new JComboBox<String>(currentTableNums);
+
+		//ILANA
+		Set<String> keys = hmap.keySet();
+		String[] keysArray = new String[hmap.keySet().size()];
+		int count = 0;
+		for(String s: keys) {
+			keysArray[count] = s;
+			count++;
+		}
+		DefaultListModel<String> listTablesAndSeats = new DefaultListModel<>();
+		for (int i = 0; i < keysArray.length; i++) { // fill list for UI with wanted list (element per element)
+			listTablesAndSeats.addElement(keysArray[i]);
+		}
+		JList<String> allTablesAndSeatsBox = new JList<>(listTablesAndSeats); // now list has table nums of current tables
+		allTablesAndSeatsBox.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		
+		// SCROLLBAR:
+		allTablesAndSeatsBox.setVisibleRowCount(4);
+		JScrollPane scrollPane = new JScrollPane(allTablesAndSeatsBox);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
 		JButton add = new JButton("Add to Order");
 		
-		panel.setPreferredSize(new Dimension(260, 360));
+		panel.setPreferredSize(new Dimension(260, 400));
+		//panel.setPreferredSize(new Dimension(260, 460));
 		panel.setLayout(null);
 		
 		
@@ -808,7 +832,8 @@ public class RestoAppPage extends JFrame {
 		panel.add(menuItemlabel);
 		panel.add(quantity);
 		panel.add(quantitylabel);
-		panel.add(tables);
+		//panel.add(tables);
+		panel.add(scrollPane);
 		panel.add(tablelabel);
 		panel.add(add);
 		
@@ -819,8 +844,9 @@ public class RestoAppPage extends JFrame {
 		quantitylabel.setBounds(30, 160, 100, 25);
 		quantity.setBounds(30, 190, 200, 30);
 		tablelabel.setBounds(30, 230, 100, 25);
-		tables.setBounds(30, 260, 200, 30);
-		add.setBounds(30, 310, 200, 30);
+		//tables.setBounds(30, 260, 200, 30);
+		scrollPane.setBounds(30, 260, 200, 60);
+		add.setBounds(30, 340, 200, 30);
 		
 		frame.getContentPane().add(panel);
 		frame.pack();
@@ -875,9 +901,16 @@ public class RestoAppPage extends JFrame {
 			try {
 				MenuItem menuitem = RestoController.getMenuItem((String) menuItem.getSelectedItem());
 				int qty = Integer.parseInt(quantity.getText());
-				List<Seat> seats = RestoController.getSeats(
-				RestoController.getCurrentTableByNum(Integer.parseInt((String) tables.getSelectedItem())));
-				RestoController.orderMenuItem(menuitem, qty, seats);
+				/*List<Seat> seats = RestoController.getSeats(
+				RestoController.getCurrentTableByNum(Integer.parseInt((String) tables.getSelectedItem())));*/
+				
+				List<String> selectedStrings = allTablesAndSeatsBox.getSelectedValuesList();
+				List<Seat> selectedSeats = new ArrayList<Seat>();
+				for (int i = 0; i < selectedStrings.size(); i++) {
+					Seat seat = hmap.get(selectedStrings.get(i)); //get seat associated to each hashmap string selected
+					selectedSeats.add(seat);
+				}
+				RestoController.orderMenuItem(menuitem, qty, selectedSeats);
 				tablePanel.revalidate();
 				tablePanel.repaint();
 				JOptionPane.showMessageDialog(null, "Item ordered sucessfully!", "Item Add Sucess",
