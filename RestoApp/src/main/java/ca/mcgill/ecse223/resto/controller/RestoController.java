@@ -271,7 +271,7 @@ public class RestoController {
         if (inUse) {
             throw new InvalidInputException("Can't update a table that is currently in use.\n");
         }
-
+        int oldNum = table.getNumber();
         if (!table.setNumber(newNumber)) {
             throw new InvalidInputException(
                     "A table with this number already exists. Please use a different number.\n");
@@ -280,21 +280,21 @@ public class RestoController {
          * if(error.length() > 0) { throw new InvalidInputException(error.trim()); }
          */
         Set<String> keys = hmap.keySet();
-		List<String> seatsForTable = new ArrayList<String>(); 
-		for(String s: keys) {
-			String tablePartOfString = s.substring(0, 2);
-			if(tablePartOfString.contains("T"+table.getNumber())) {
-				seatsForTable.add(s);
-			}
-		}
+        List<String> seatsForTable = new ArrayList<String>();
+        for(String s: keys) {
+            String tablePartOfString = s.substring(0, 2);
+            if(tablePartOfString.contains("T"+oldNum)) {
+                seatsForTable.add(s);
+            }
+        }
         for(String s: seatsForTable) { //remove from hash map all items that have old table number
-			hmap.remove(s);
-		}
+            hmap.remove(s);
+        }
 		int j = 1;
 		for(Seat s: table.getCurrentSeats()) {
-			String seatIdentifier = "T"+ table.getNumber()+ "S"+ j; 
-			j++;
+			String seatIdentifier = "T"+ table.getNumber()+ "S"+ j;
 			hmap.put(seatIdentifier, s);
+            j++;
 		}
         
         int n = table.numberOfCurrentSeats();
@@ -302,14 +302,14 @@ public class RestoController {
         for (int i = 1; i <= numberOfSeats - n; i++) {
             Seat seat = table.addSeat();
             table.addCurrentSeat(seat);
-            String hmapIdentifier = "T"+table.getNumber()+"S"+(n+i); 
+            String hmapIdentifier = "T"+newNumber+"S"+(n+i);
             hmap.put(hmapIdentifier, seat);
         }
         // Remove seats if new numberOfSeats < numberOfCurrentSeats:
         for (int i = 1; i <= n - numberOfSeats; i++) {
-            Seat seat = table.getCurrentSeat(n - 1);
+            Seat seat = table.getCurrentSeat(table.numberOfCurrentSeats() - 1);
             table.removeCurrentSeat(seat);
-            hmap.remove("T"+table.getNumber()+"S"+(n+1-i));
+            hmap.remove("T"+newNumber+"S"+(n+1-i));
         }
 
 		
@@ -1044,7 +1044,7 @@ public class RestoController {
 	
 	/**
 	 * Helper method for item statistics that return the top 10 items
-	 * @param tables
+	 * @param
 	 * @return
 	 */
 	public static List<StatisticsItem> sortAndTrimItems(List<StatisticsItem> items){
