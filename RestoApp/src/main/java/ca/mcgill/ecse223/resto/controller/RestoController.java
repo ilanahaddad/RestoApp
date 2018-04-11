@@ -1002,7 +1002,36 @@ public class RestoController {
 		List<StatisticsTable> topTenTables = sortAndTrimTables(tablesInTimeRange); //sort stat tables per highest numUsed
 		return topTenTables; 
 	}
-
+	
+	/**
+	 * Gets the top 10 Menu Items within a specified time frame
+	 * @param startDate
+	 * @param startTime
+	 * @param endDate
+	 * @param endTime
+	 * @return
+	 * @throws InvalidInputException
+	 */
+	public static List<StatisticsItem> getItemStatistics(Date startDate, Time startTime, Date endDate, Time endTime) throws InvalidInputException {
+		//input validation
+				if (startDate == null) {
+					throw new InvalidInputException ("Start date must be specified.\n");
+				}
+				if (startTime == null) {
+					throw new InvalidInputException ("Start time must be specified.\n");
+				}
+				if (endDate == null) {
+					throw new InvalidInputException ("End date must be specified.\n");
+				}
+				if (endTime == null) {
+					throw new InvalidInputException ("End time must be specified.\n");
+				}
+		
+		
+		//List<StatisticsItem> topTenItems = sortAndTrimItems(itemsInTimeRange);
+		return null;
+	
+	}
 
 	/*
 	 * RestoApp r = RestoAppApplication.getRestoApp(); // boolean
