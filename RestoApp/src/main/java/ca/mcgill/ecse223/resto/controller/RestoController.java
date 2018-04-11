@@ -7,7 +7,9 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.model.Menu;
@@ -24,8 +26,24 @@ import ca.mcgill.ecse223.resto.model.Table.Status;
 import javax.swing.*;
 
 public class RestoController {
-	
-
+	public static HashMap<String, Seat> hmap ;
+	public static HashMap<String, Seat> createHashMap(){
+		
+		return hmap;
+	}
+	public static HashMap<String, Seat> generateHashMap(){
+		hmap = new HashMap<String, Seat>();
+		RestoApp restoApp = RestoAppApplication.getRestoApp();
+		for(Table t: restoApp.getCurrentTables() ) {
+			int i = 1;
+			for(Seat s: t.getCurrentSeats()) {
+				String seatIdentifier = "T"+ t.getNumber()+ "S"+ i; 
+				i++;
+				hmap.put(seatIdentifier, s);
+			}
+		}
+		return hmap;
+	}
 
     public static List<MenuItem.ItemCategory> getItemCategories() {
         return Arrays.asList(MenuItem.ItemCategory.values());
@@ -158,10 +176,11 @@ public class RestoController {
                 throw new InvalidInputException(error);
             }
             restoApp.addCurrentTable(tableToAdd);
-
             for (int i = 0; i < numSeats; i++) {
-                Seat newSeat = tableToAdd.addSeat(i + 1);
+                Seat newSeat = tableToAdd.addSeat();
                 tableToAdd.addCurrentSeat(newSeat);
+                String seatIdentifier = "T"+ tableToAdd.getNumber()+ "S"+ (i+1); 
+                hmap.put(seatIdentifier, newSeat);
             }
         }
 
@@ -203,10 +222,21 @@ public class RestoController {
 
         try {
             r.removeCurrentTable(table);
-            RestoAppApplication.save();
         } catch (RuntimeException e) {
             throw new InvalidInputException(e.getMessage());
         }
+        Set<String> keys = hmap.keySet(); 
+        List<String> seatsForTable = new ArrayList<String>(); 
+        for(String s: keys) {
+        		String tablePartOfString = s.substring(0, 2);
+        		if(tablePartOfString.contains("T"+table.getNumber())) {
+        			seatsForTable.add(s);
+        		}
+        }
+        for(String s: seatsForTable) {
+        		hmap.remove(s);
+        }
+        RestoAppApplication.save();
     }
 
     /**
@@ -249,18 +279,41 @@ public class RestoController {
         /*
          * if(error.length() > 0) { throw new InvalidInputException(error.trim()); }
          */
-
+        Set<String> keys = hmap.keySet();
+		List<String> seatsForTable = new ArrayList<String>(); 
+		for(String s: keys) {
+			String tablePartOfString = s.substring(0, 2);
+			if(tablePartOfString.contains("T"+table.getNumber())) {
+				seatsForTable.add(s);
+			}
+		}
+        for(String s: seatsForTable) { //remove from hash map all items that have old table number
+			hmap.remove(s);
+		}
+		int j = 1;
+		for(Seat s: table.getCurrentSeats()) {
+			String seatIdentifier = "T"+ table.getNumber()+ "S"+ j; 
+			j++;
+			hmap.put(seatIdentifier, s);
+		}
+        
         int n = table.numberOfCurrentSeats();
         // Add seats if new numberOfSeats > numberOfCurrentSeats:
         for (int i = 1; i <= numberOfSeats - n; i++) {
-            Seat seat = table.addSeat(n + 1);
+            Seat seat = table.addSeat();
             table.addCurrentSeat(seat);
+            String hmapIdentifier = "T"+table.getNumber()+"S"+(n+i); 
+            hmap.put(hmapIdentifier, seat);
         }
         // Remove seats if new numberOfSeats < numberOfCurrentSeats:
         for (int i = 1; i <= n - numberOfSeats; i++) {
             Seat seat = table.getCurrentSeat(n - 1);
             table.removeCurrentSeat(seat);
+            hmap.remove("T"+table.getNumber()+"S"+(n+1-i));
         }
+
+		
+		//
         RestoAppApplication.save();
     }
 
