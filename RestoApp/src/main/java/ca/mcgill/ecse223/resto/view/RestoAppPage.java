@@ -51,6 +51,7 @@ import org.jdesktop.swingx.JXDatePicker;
 
 import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.controller.RestoController;
+import ca.mcgill.ecse223.resto.controller.StatisticsItem;
 import ca.mcgill.ecse223.resto.controller.StatisticsTable;
 import ca.mcgill.ecse223.resto.model.MenuItem;
 import ca.mcgill.ecse223.resto.model.Order;
@@ -969,10 +970,10 @@ public class RestoAppPage extends JFrame {
 				
 				JPanel topItems = new JPanel(new GridLayout(10, 4, 5, 5));
 				topItems.add(new JLabel("Top 10 Menu Items: "));
-				/*List<StatisticsTable> top10Tables = RestoController.getTableStatistics(startDate, startTime, endDate, endTime);
-				for (StatisticsTable t : top10Tables) {
-					topTables.add(new JLabel("Table " + t.getTable().getNumber() + " used " + t.getTable().getNumUsed() + " times.\n"));
-				} */
+				List<StatisticsItem> top10Items = RestoController.getItemStatistics(startDate, startTime, endDate, endTime);
+				for (StatisticsItem sI : top10Items) {
+					topItems.add(new JLabel("" + sI.getItem().getName() + " ordered " + sI.getNumUsed() + " times.\n"));
+				}
 				
 				JOptionPane.showMessageDialog(null, topItems);
 
