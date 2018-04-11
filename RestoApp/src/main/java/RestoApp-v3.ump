@@ -31,7 +31,7 @@ class Table {
    Integer y;
    Integer width;
    Integer length;
-   Integer numUsed;
+   lazy Integer numUsed;
    1 <@>- 1..* Seat seats;
    0..1 -> * Seat currentSeats; // subsets seats
 }
@@ -61,7 +61,7 @@ class MenuItem {
    unique name;
    enum ItemCategory { Appetizer, Main, Dessert, AlcoholicBeverage, NonAlcoholicBeverage }
    lazy ItemCategory itemCategory;
-   Integer numUsed;
+   lazy Integer numUsed;
    1 -- 1..* PricedMenuItem pricedMenuItems;
    0..1 -> 0..1 PricedMenuItem currentPricedMenuItem; // subsets priced menus items
 }

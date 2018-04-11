@@ -7,7 +7,7 @@ import java.util.*;
 
 // line 13 "../../../../../RestoAppPersistence.ump"
 // line 1 "../../../../../RestoAppTableStateMachine.ump"
-// line 31 "../../../../../RestoApp-v3.ump"
+// line 28 "../../../../../RestoApp-v3.ump"
 public class Table implements Serializable
 {
 
@@ -27,6 +27,7 @@ public class Table implements Serializable
   private int y;
   private int width;
   private int length;
+  private int numUsed;
 
   //Table State Machines
   public enum Status { Available, NothingOrdered, Ordered }
@@ -35,7 +36,6 @@ public class Table implements Serializable
   //Table Associations
   private List<Seat> seats;
   private List<Seat> currentSeats;
-  private StatisticsTable statisticTable;
   private RestoApp restoApp;
   private List<Reservation> reservations;
   private List<Order> orders;
@@ -50,6 +50,7 @@ public class Table implements Serializable
     y = aY;
     width = aWidth;
     length = aLength;
+    numUsed = 0;
     if (!setNumber(aNumber))
     {
       throw new RuntimeException("Cannot create due to duplicate number");
@@ -118,6 +119,14 @@ public class Table implements Serializable
     return wasSet;
   }
 
+  public boolean setNumUsed(int aNumUsed)
+  {
+    boolean wasSet = false;
+    numUsed = aNumUsed;
+    wasSet = true;
+    return wasSet;
+  }
+
   public int getNumber()
   {
     return number;
@@ -151,6 +160,11 @@ public class Table implements Serializable
   public int getLength()
   {
     return length;
+  }
+
+  public int getNumUsed()
+  {
+    return numUsed;
   }
 
   public String getStatusFullName()
@@ -466,17 +480,6 @@ public class Table implements Serializable
     return index;
   }
 
-  public StatisticsTable getStatisticTable()
-  {
-    return statisticTable;
-  }
-
-  public boolean hasStatisticTable()
-  {
-    boolean has = statisticTable != null;
-    return has;
-  }
-
   public RestoApp getRestoApp()
   {
     return restoApp;
@@ -691,39 +694,6 @@ public class Table implements Serializable
     return wasAdded;
   }
 
-  public boolean setStatisticTable(StatisticsTable aNewStatisticTable)
-  {
-    boolean wasSet = false;
-    if (aNewStatisticTable == null)
-    {
-      StatisticsTable existingStatisticTable = statisticTable;
-      statisticTable = null;
-      
-      if (existingStatisticTable != null && existingStatisticTable.getTable() != null)
-      {
-        existingStatisticTable.setTable(null);
-      }
-      wasSet = true;
-      return wasSet;
-    }
-
-    StatisticsTable currentStatisticTable = getStatisticTable();
-    if (currentStatisticTable != null && !currentStatisticTable.equals(aNewStatisticTable))
-    {
-      currentStatisticTable.setTable(null);
-    }
-
-    statisticTable = aNewStatisticTable;
-    Table existingTable = aNewStatisticTable.getTable();
-
-    if (!equals(existingTable))
-    {
-      aNewStatisticTable.setTable(this);
-    }
-    wasSet = true;
-    return wasSet;
-  }
-
   public boolean setRestoApp(RestoApp aRestoApp)
   {
     boolean wasSet = false;
@@ -918,10 +888,6 @@ public class Table implements Serializable
     }
     
     currentSeats.clear();
-    if (statisticTable != null)
-    {
-      statisticTable.setTable(null);
-    }
     RestoApp placeholderRestoApp = restoApp;
     this.restoApp = null;
     if(placeholderRestoApp != null)
@@ -1030,8 +996,8 @@ public class Table implements Serializable
             "x" + ":" + getX()+ "," +
             "y" + ":" + getY()+ "," +
             "width" + ":" + getWidth()+ "," +
-            "length" + ":" + getLength()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "statisticTable = "+(getStatisticTable()!=null?Integer.toHexString(System.identityHashCode(getStatisticTable())):"null") + System.getProperties().getProperty("line.separator") +
+            "length" + ":" + getLength()+ "," +
+            "numUsed" + ":" + getNumUsed()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "restoApp = "+(getRestoApp()!=null?Integer.toHexString(System.identityHashCode(getRestoApp())):"null");
   }  
   //------------------------
