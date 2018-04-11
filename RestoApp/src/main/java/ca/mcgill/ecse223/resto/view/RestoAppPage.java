@@ -937,7 +937,6 @@ public class RestoAppPage extends JFrame {
 				Date endDate = new Date(endDatePicker.getDate().getTime());
 				Time endTime = Time.valueOf(endTimePicker.getTime());
 				
-				//TODO: new pop-up
 				
 				JPanel topTables = new JPanel(new GridLayout(10, 4, 5, 5));
 				topTables.add(new JLabel("Top 10 Tables: "));
@@ -945,11 +944,6 @@ public class RestoAppPage extends JFrame {
 				for (StatisticsTable t : top10Tables) {
 					topTables.add(new JLabel("Table " + t.getTable().getNumber() + " used " + t.getTable().getNumUsed() + " times.\n"));
 				}
-				
-				//TODO: call getTableStatistics and display the tables
-				
-				//tablePanel.revalidate();
-				//tablePanel.repaint();
 				
 				//JFrame f = new JFrame();
 				//f.setLayout(new BorderLayout());
@@ -960,12 +954,33 @@ public class RestoAppPage extends JFrame {
 				//JOptionPane.showConfirmDialog(null, topTables, "Top Tables", JOptionPane.OK_OPTION,
 				//		JOptionPane.PLAIN_MESSAGE);
 			} catch (Exception error) {
-				JOptionPane.showMessageDialog(null, error.getMessage(), "Reservation was not made.",
+				JOptionPane.showMessageDialog(null, error.getMessage(), "Top 10 Tables failed to generate.",
 				JOptionPane.ERROR_MESSAGE);
 			}
 		} 
 		else if (result == 1) {
-			JOptionPane.showMessageDialog(null, "Top 10 Items.");
+			try {
+				
+				Date startDate = new Date(startDatePicker.getDate().getTime());
+				Time startTime = Time.valueOf(startTimePicker.getTime());
+				Date endDate = new Date(endDatePicker.getDate().getTime());
+				Time endTime = Time.valueOf(endTimePicker.getTime());
+				
+				
+				JPanel topItems = new JPanel(new GridLayout(10, 4, 5, 5));
+				topItems.add(new JLabel("Top 10 Menu Items: "));
+				/*List<StatisticsTable> top10Tables = RestoController.getTableStatistics(startDate, startTime, endDate, endTime);
+				for (StatisticsTable t : top10Tables) {
+					topTables.add(new JLabel("Table " + t.getTable().getNumber() + " used " + t.getTable().getNumUsed() + " times.\n"));
+				} */
+				
+				JOptionPane.showMessageDialog(null, topItems);
+
+			} catch (Exception error) {
+				JOptionPane.showMessageDialog(null, error.getMessage(), "Top 10 Menu Items Failed to Generate.",
+				JOptionPane.ERROR_MESSAGE);
+			}
+			//JOptionPane.showMessageDialog(null, "Top 10 Items.");
 		}
 		else {
 			JOptionPane.showMessageDialog(null, "Statistics exited.");
