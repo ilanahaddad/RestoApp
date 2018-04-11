@@ -526,6 +526,12 @@ public class RestoController {
         return null;
     }
 
+    public static List<Bill> getCurrentBills() {
+        RestoApp restoApp = RestoAppApplication.getRestoApp();
+        return restoApp.getBills();
+    }
+  
+    
     // get largest Y coordinate of all the app's current tables
     public static int getMaxX() {
         RestoApp restoApp = RestoAppApplication.getRestoApp();
@@ -853,10 +859,10 @@ public class RestoController {
 
     }
 
-        
 
-        public static void issueBill(List<Seat> seats) throws InvalidInputException{
-            if(seats == null) {
+    public static void issueBill(List<Seat> seats) throws InvalidInputException{
+        	RestoApp restoApp = RestoAppApplication.getRestoApp();
+        	if(seats == null) {
                 throw new InvalidInputException("Error: Seats can't be null.\n");
             }
             RestoApp r = RestoAppApplication.getRestoApp();
@@ -905,28 +911,62 @@ public class RestoController {
             for(Seat s: seats) {
             	t = s.getTable();
             	if(billCreated) {
-            		t.addToBill(newBill, s);
+            		tempaddToBill(newBill, s);
             	}
             	else {
             		Bill lastBill = null;
             		if(lastOrder.numberOfBills() > 0) {
             			lastBill = lastOrder.getBill(lastOrder.numberOfBills()-1);
             		}
-            		t.billForSeat(lastOrder, s);
+            		tempbillForSeat(lastOrder, s);
             		if((lastOrder.numberOfBills() > 0) && (!lastOrder.getBill(lastOrder.numberOfBills() - 1).equals(lastBill))) {
             			billCreated = true;
             			newBill = lastOrder.getBill(lastOrder.numberOfBills() - 1);
             		}
             	}
             }
-            if (billCreated) {
+            if (!billCreated) {
             	throw new InvalidInputException("Error: Bill not created");
             }
             RestoAppApplication.save();
         }
 
 
-    public static List<Seat> getSeats(Table table) throws InvalidInputException {
+
+    private static void tempaddToBill(Bill newBill, Seat s) {
+		List<Bill> otherBills = s.getBills();	
+		if (otherBills.size() > 0) {
+   			for(int i = 0; i < otherBills.size(); i++) {
+   				if(otherBills.get(i).numberOfIssuedForSeats() == 1) {
+   					otherBills.get(i).delete();
+					}
+				else {
+					s.removeBill(otherBills.get(i));
+				}
+			}
+		}
+    	s.addBill(newBill);
+    }
+
+	private static void tempbillForSeat(Order lastOrder, Seat s) {
+		List<Bill> otherBills = s.getBills();	
+    	if (otherBills.size() > 0) {
+   			for(int i = 0; i < otherBills.size(); i++) {
+   				if(otherBills.get(i).numberOfIssuedForSeats() == 1) {
+   					otherBills.get(i).delete();
+				}
+				else {
+					s.removeBill(otherBills.get(i));
+				}
+			}
+		}
+    	s.addBill(new Bill(lastOrder, RestoAppApplication.getRestoApp(), s));
+    	lastOrder.addBill(s.getBill(0));
+	}
+
+	private static void removeBill() {}
+	
+	public static List<Seat> getSeats(Table table) throws InvalidInputException {
         if (table == null) {
             throw new InvalidInputException("No table entered.\n");
         }

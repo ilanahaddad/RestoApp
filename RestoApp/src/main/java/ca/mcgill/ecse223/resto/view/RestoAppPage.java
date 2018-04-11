@@ -60,6 +60,8 @@ import ca.mcgill.ecse223.resto.model.Order;
 import ca.mcgill.ecse223.resto.model.OrderItem;
 import ca.mcgill.ecse223.resto.model.Seat;
 import ca.mcgill.ecse223.resto.model.Table;
+import ca.mcgill.ecse223.resto.model.Bill;
+
 
 
 public class RestoAppPage extends JFrame {
@@ -116,8 +118,7 @@ public class RestoAppPage extends JFrame {
 		JMenuItem orderMenuItem = createMenuItem("Order Menu Item", this::orderMenuItemAction);
 		JMenuItem businessStatistics = createMenuItem("Business Statistics", this::businessStatisticsAction);
 		JMenuItem newBillMenuItem = createMenuItem("New Bill", this::newBillAction);
-        JMenuItem reissueBillMenuItem = createMenuItem("Reissue Bill", this::reissueBillAction);
-        JMenuItem resolveBillMenuItem = createMenuItem("Resolve Bill", this::resolveBillAction);
+        JMenuItem viewBillMenuItem = createMenuItem("View Bill", this::viewBillAction);
         JMenuItem cancelBillMenuItem = createMenuItem("Cancel Bill", this::cancelBillAction);
 		
 		actions.add(businessStatistics);
@@ -132,8 +133,7 @@ public class RestoAppPage extends JFrame {
 		actions.add(removeTableMenuItem);
 		actions.add(menuMenuItem);
 		manageBillsMenuItem.add(newBillMenuItem);
-        manageBillsMenuItem.add(reissueBillMenuItem);
-        manageBillsMenuItem.add(resolveBillMenuItem);
+        manageBillsMenuItem.add(viewBillMenuItem);
         manageBillsMenuItem.add(cancelBillMenuItem);
         actions.add(manageBillsMenuItem);
         
@@ -245,12 +245,9 @@ public class RestoAppPage extends JFrame {
         JButton newBill = new JButton("New Bill");
         newBill.addActionListener(this::newBillAction);
         panel.add(newBill);
-        JButton reissueBill = new JButton("Reissue Bill");
-        reissueBill.addActionListener(this::reissueBillAction);
-        panel.add(reissueBill);
-        JButton resolveBill = new JButton("Resolve Bill");
-        resolveBill.addActionListener(this::resolveBillAction);
-        panel.add(resolveBill);
+        JButton viewBill = new JButton("View Bill");
+        viewBill.addActionListener(this::viewBillAction);
+        panel.add(viewBill);
         JButton cancelBill = new JButton("Cancel Bill");
         cancelBill.addActionListener(this::cancelBillAction);
         panel.add(cancelBill);
@@ -352,28 +349,50 @@ public class RestoAppPage extends JFrame {
         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.OK_OPTION){
             try{
-                List<String> selectedSeatNums = allTablesList.getSelectedValuesList();
-                List<String> passedSeatNums = new ArrayList<String>();
-                List<String> discardedSeatNums = new ArrayList<String>();
+            	List<String> selectedTablesNums = allTablesList.getSelectedValuesList();
+            	List<String> selectedOrderNums = allOrdersList.getSelectedValuesList();
+                List<String> selectedSeatNums = allSeatsList.getSelectedValuesList();
                 List<Seat> passedSeats = new ArrayList<Seat>();
-                for(int i = 0; i < selectedSeatNums.size(); i++) {
-                	passedSeats.add(hmap.get(selectedSeatNums.get(i)));
+                for (int i = 0; i <selectedOrderNums.size(); i++) {
+                	int orderNum = Integer.parseInt((String) selectedOrderNums.get(i));
+                	Order O = RestoController.getCurrentOrder(orderNum);
+                	for (Table t: O.getTables()) {
+                		for(Seat s: t.getSeats()) {
+                    		if(!passedSeats.contains(s)) {
+                    			passedSeats.add(s);
+                    		}
+                    	} 
+                	}
                 }
-                
-                
+                for (int i = 0; i < selectedTablesNums.size(); i++) {
+                	int tableNum = Integer.parseInt((String) selectedTablesNums.get(i));
+                	Table t = RestoController.getTableByNum(tableNum);
+                	List<Seat> seatsAtTable = t.getSeats();
+                	for(Seat s: seatsAtTable) {
+                		if(!passedSeats.contains(s)) {
+                			passedSeats.add(s);
+                		}
+                	}
+                }           
+                for(int i = 0; i < selectedSeatNums.size(); i++) {
+                	if (!passedSeats.contains(hmap.get(selectedSeatNums.get(i)))) {
+                    	passedSeats.add(hmap.get(selectedSeatNums.get(i)));                		
+                	}
+
+                }
                 RestoController.issueBill(passedSeats);
 
                 tablePanel.revalidate();
                 tablePanel.repaint();
 
-                JOptionPane.showMessageDialog(null, "Order started successfully.");
+                JOptionPane.showMessageDialog(null, "Bill started successfully.");
             }
             catch (Exception error)
             {
-                JOptionPane.showMessageDialog(
+            	JOptionPane.showMessageDialog(
                 null,
                 error.getMessage(),
-                "Could not start order",
+                "Could not start bill",
                 JOptionPane.ERROR_MESSAGE);
 
             }
@@ -383,49 +402,51 @@ public class RestoAppPage extends JFrame {
         }
     }    
 
-    private void reissueBillAction(ActionEvent event){
-    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
-    	List<Order> orders = RestoController.getCurrentOrders();
-    	int numBills = 0;
-    	for (Order o: orders) {
-    		numBills = numBills + o.getBills().size();
-    	}
-        if (numBills > 0)
-        {
-            displayEndOrderAction(panel, numBills);
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(
-            null,
-            "RestoApp currently has no bills issued",
-            "Reissue Bills",
-            JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
     private void cancelBillAction(ActionEvent event){
-    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
-    	List<Order> orders = RestoController.getCurrentOrders();
-    	int numBills = 0;
-    	for (Order o: orders) {
-    		numBills = numBills + o.getBills().size();
-    	}
-        if (numBills > 0)
-        {
-            displayEndOrderAction(panel, numBills);
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(
-            null,
-            "RestoApp currently has no bills issued",
-            "Cancel Bills",
-            JOptionPane.INFORMATION_MESSAGE);
-        }
+    	JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
+		// create array of current table numbers
+    	List<Bill> bills = RestoController.getCurrentBills();
+		int currentLength = bills.size();
+		String currentBillNums[] = new String[currentLength];
+		System.out.print("cancel bill time, there are" +currentLength + " bills");
+		for (int i = 0; i < currentLength; i++) {
+			String billName = "b" + i;
+			Bill bill = bills.get(i);
+			List<Seat> seatsToShow = bill.getIssuedForSeats();
+			int count = 0;
+			for(Seat s: seatsToShow) {
+				count++;
+				billName = billName + " t" + s.getTable().getNumber() + "s" + count;
+			}
+			currentBillNums[i] = billName;
+		}
+		
+		panel.add(new JLabel("Select bill to cancel"));
+		JComboBox<String> currentBillList = new JComboBox<String>(currentBillNums);
+		panel.add(currentBillList);
+		
+		int result = JOptionPane.showConfirmDialog(null, panel, "Cancel Bill", JOptionPane.OK_CANCEL_OPTION,
+		JOptionPane.PLAIN_MESSAGE);
+		if (result == JOptionPane.OK_OPTION) {
+			try {
+				// RestoController.removeTable((Table)currentTableList.getSelectedItem());
+				int billNum = currentBillList.getSelectedIndex();
+				RestoController.getCurrentBills().get(billNum).delete();
+				
+				tablePanel.revalidate();
+				tablePanel.repaint();
+				
+				JOptionPane.showMessageDialog(null, "Bill canceled successfully.");
+			} catch (Exception error) {
+				JOptionPane.showMessageDialog(null, error.getMessage(), "Could not cancel Bill",
+				JOptionPane.ERROR_MESSAGE);
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "Unsuccessful cancellation.");
+		}
     }
     
-    private void resolveBillAction(ActionEvent event){
+    private void viewBillAction(ActionEvent event){
     	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
     	List<Order> orders = RestoController.getCurrentOrders();
     	int numBills = 0;
@@ -441,7 +462,7 @@ public class RestoAppPage extends JFrame {
             JOptionPane.showMessageDialog(
             null,
             "RestoApp currently has no bills issued",
-            "Resolve Bills",
+            "View Bills",
             JOptionPane.INFORMATION_MESSAGE);
         }
     }
