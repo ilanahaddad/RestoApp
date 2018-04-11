@@ -9,7 +9,6 @@ import java.util.*;
 
 // line 54 "../../../../../RestoAppPersistence.ump"
 // line 42 "../../../../../RestoApp-v3.ump"
-
 public class Order implements Serializable
 {
 

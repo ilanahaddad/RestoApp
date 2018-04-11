@@ -8,7 +8,11 @@ import java.awt.Graphics2D;
 //import java.util.Random;
 
 import javax.swing.JPanel;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import ca.mcgill.ecse223.resto.controller.RestoController;
 import ca.mcgill.ecse223.resto.model.Reservation;
@@ -17,6 +21,8 @@ import ca.mcgill.ecse223.resto.model.Table;
 
 public class TablePanel extends JPanel
 {
+	HashMap<String, Seat> hmap = RestoController.generateHashMap();
+	
     private static final long serialVersionUID = 8978498317881881901L;
 
     private final int UNIT_LENGTH = 75;
@@ -30,7 +36,7 @@ public class TablePanel extends JPanel
     private final Color TABLE_COLOR_Available = new Color(70,200,70);//70,200,70
     private final Color TABLE_COLOR_NothingOrdered = new Color(250,200,20);//250,200,20
     private final Color TABLE_COLOR_Ordered = new Color(255,30,30);//255,30,30
-
+    
 
     private final float[] DASH = {4f, 0f, 2f};
     private final BasicStroke DASHED_STROKE = new BasicStroke(
@@ -129,6 +135,22 @@ public class TablePanel extends JPanel
         }
     }
 
+    private List<String> getStringsForSeatsOfTable(Table table){
+
+	    	if(hmap != null) {
+	    		Set<String> keys = hmap.keySet();
+	
+	    		List<String> seatsForTable = new ArrayList<String>(); 
+	    		for(String s: keys) {
+	    			String tablePartOfString = s.substring(0, 2);
+	    			if(tablePartOfString.contains("T"+table.getNumber())) {
+	    				seatsForTable.add(s);
+	    			}
+	    		}
+	    		return seatsForTable;
+	    	}
+	    	return null;
+    }
     // returns number of seats drawn
     private int fillTopBottom(Table table, int startIdx, Graphics2D g2d)
     {
@@ -138,6 +160,7 @@ public class TablePanel extends JPanel
         int seatYOffset = 0;
         int seatXOffset = 3;
         List<Seat> currSeats = table.getCurrentSeats();
+        List<String> seatStrings = getStringsForSeatsOfTable(table);
         for (int i=startIdx;i<currSeats.size(); i++)
         {
             if (filledTableSide(maxSeatsPerWidth, i))
@@ -147,8 +170,9 @@ public class TablePanel extends JPanel
                 seatYOffset=getTableBottomCoordinates(table);
                 seatXOffset=3;
             }
-
-            drawSeat(currSeats.get(i).getNumber(), table, g2d, seatYOffset, seatXOffset);
+            String stringForSeat = seatStrings.get(i);
+            int numInString = Integer.parseInt(stringForSeat.substring(3));
+            drawSeat(numInString, table, g2d, seatYOffset, seatXOffset);
             drawnSeats++;
 
             seatXOffset+=seatDiameter + seatPadding;
@@ -166,6 +190,7 @@ public class TablePanel extends JPanel
         int seatYOffset = seatDiameter+seatPadding;
         int seatXOffset = 3;
         List<Seat> currSeats = table.getCurrentSeats();
+        List<String> seatStrings = getStringsForSeatsOfTable(table);
         for (int i=startIdx;i<currSeats.size(); i++)
         {
             if (filledTableSide(maxSeatsPerLength, i))
@@ -175,8 +200,9 @@ public class TablePanel extends JPanel
                 seatXOffset=getTableRightCoordinates(table);
                 seatYOffset=seatDiameter+seatPadding;
             }
-
-            drawSeat(currSeats.get(i).getNumber(), table, g2d, seatYOffset, seatXOffset);
+            String stringForSeat = seatStrings.get(i);
+            int numInString = Integer.parseInt(stringForSeat.substring(3));
+            drawSeat(numInString, table, g2d, seatYOffset, seatXOffset);
             drawnSeats++;
 
             seatYOffset+=seatDiameter + seatPadding;
