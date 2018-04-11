@@ -640,6 +640,7 @@ public class RestoAppPage extends JFrame {
 				
 				JOptionPane.showMessageDialog(null, "Table updated successfully.");
 			} catch (Exception error) {
+				error.printStackTrace();
 				JOptionPane.showMessageDialog(null, error.getMessage(), "Could not update table",
 				JOptionPane.ERROR_MESSAGE);
 			}
