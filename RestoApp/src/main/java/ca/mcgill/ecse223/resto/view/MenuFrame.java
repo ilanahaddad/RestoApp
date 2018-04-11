@@ -4,6 +4,7 @@ import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.controller.InvalidInputException;
 import ca.mcgill.ecse223.resto.controller.RestoController;
 import ca.mcgill.ecse223.resto.model.MenuItem;
+import com.sun.codemodel.internal.JOp;
 
 
 import javax.swing.*;
@@ -245,8 +246,14 @@ public class MenuFrame {
                             try {
                                 RestoController.updateMenuItem(appetizerMenuItems.get(appetizerJList.getSelectedIndex()), name.getText(), MenuItem.ItemCategory.Appetizer, Double.parseDouble(price.getText()));
                                 appetizers.set(appetizerJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
-                                JOptionPane.showMessageDialog(null, "Menu item edited successfully");
+                                JOptionPane.showMessageDialog(null, "Menu item edited successfully", "Edit success", JOptionPane.INFORMATION_MESSAGE);
                             } catch (InvalidInputException ex) {
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Could not edit menu item (name must be a string, price must be a double)",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                            } catch (NumberFormatException ex) {
                                 JOptionPane.showMessageDialog(
                                         null,
                                         "Could not edit menu item (name must be a string, price must be a double)",
@@ -261,10 +268,12 @@ public class MenuFrame {
                     delete.addActionListener(e -> {
                         try {
                             RestoController.removeMenuItem(appetizerMenuItems.get(appetizerJList.getSelectedIndex()));
+                            appetizers.remove(appetizerJList.getSelectedIndex());
+                            JOptionPane.showMessageDialog(null, "item deleted succesfully", "Delete success", JOptionPane.INFORMATION_MESSAGE);
                         } catch (InvalidInputException ex) {
                             ex.getMessage();
+                            JOptionPane.showMessageDialog(null, "item could not be deleted", "Error", JOptionPane.ERROR_MESSAGE);
                         }
-                        appetizers.remove(appetizerJList.getSelectedIndex());
                     });
                     menu.add(edit);
                     menu.add(delete);
@@ -297,10 +306,21 @@ public class MenuFrame {
                         if (option == JOptionPane.OK_OPTION) {
                             try {
                                 RestoController.updateMenuItem(mainMenuItems.get(mainJList.getSelectedIndex()), name.getText(), MenuItem.ItemCategory.Main, Double.parseDouble(price.getText()));
+                                mains.set(mainJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
+                                JOptionPane.showMessageDialog(null, "Menu item edited successfully", "Edit success", JOptionPane.INFORMATION_MESSAGE);
                             } catch (InvalidInputException ex) {
-                                ex.getMessage();
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Could not edit menu item (name must be a string, price must be a double)",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Could not edit menu item (name must be a string, price must be a double)",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
                             }
-                            mains.set(mainJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
                         } else {
                             System.out.println("error");
                         }
@@ -309,10 +329,12 @@ public class MenuFrame {
                     delete.addActionListener(e -> {
                         try {
                             RestoController.removeMenuItem(mainMenuItems.get(mainJList.getSelectedIndex()));
+                            mains.remove(mainJList.getSelectedIndex());
+                            JOptionPane.showMessageDialog(null, "Menu item deleted successfully", "Delete success", JOptionPane.INFORMATION_MESSAGE);
                         } catch (InvalidInputException ex) {
                             ex.getMessage();
+                            JOptionPane.showMessageDialog(null, "item could not be deleted", "Error", JOptionPane.ERROR_MESSAGE);
                         }
-                        mains.remove(mainJList.getSelectedIndex());
                     });
                     menu.add(edit);
                     menu.add(delete);
@@ -346,10 +368,22 @@ public class MenuFrame {
                         if (option == JOptionPane.OK_OPTION) {
                             try {
                                 RestoController.updateMenuItem(dessertMenuItems.get(dessertJList.getSelectedIndex()), name.getText(), MenuItem.ItemCategory.Dessert, Double.parseDouble(price.getText()));
+                                desserts.set(dessertJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
+                                JOptionPane.showMessageDialog(null, "Menu item edited successfully", "Edit success", JOptionPane.INFORMATION_MESSAGE);
+
                             } catch (InvalidInputException ex) {
-                                ex.getMessage();
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Could not edit menu item (name must be a string, price must be a double)",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Could not edit menu item (name must be a string, price must be a double)",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
                             }
-                            desserts.set(dessertJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
                         } else {
                             System.out.println("error");
                         }
@@ -358,10 +392,12 @@ public class MenuFrame {
                     delete.addActionListener(e -> {
                         try {
                             RestoController.removeMenuItem(dessertMenuItems.get(dessertJList.getSelectedIndex()));
+                            desserts.remove(dessertJList.getSelectedIndex());
+                            JOptionPane.showMessageDialog(null, "Menu item deleted successfully", "Delete success", JOptionPane.INFORMATION_MESSAGE);
                         } catch (InvalidInputException ex) {
                             ex.getMessage();
+                            JOptionPane.showMessageDialog(null, "item could not be deleted", "Error", JOptionPane.ERROR_MESSAGE);
                         }
-                        desserts.remove(dessertJList.getSelectedIndex());
                     });
                     menu.add(edit);
                     menu.add(delete);
@@ -395,10 +431,21 @@ public class MenuFrame {
                         if (option == JOptionPane.OK_OPTION) {
                             try {
                                 RestoController.updateMenuItem(alcoholicBevMenuItems.get(alcoholicBevJList.getSelectedIndex()), name.getText(), MenuItem.ItemCategory.AlcoholicBeverage, Double.parseDouble(price.getText()));
+                                alcoholicBevs.set(alcoholicBevJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
+                                JOptionPane.showMessageDialog(null, "Menu item edited successfully", "Edit success", JOptionPane.INFORMATION_MESSAGE);
                             } catch (InvalidInputException ex) {
-                                ex.getMessage();
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Could not edit menu item (name must be a string, price must be a double)",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Could not edit menu item (name must be a string, price must be a double)",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
                             }
-                            alcoholicBevs.set(alcoholicBevJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
                         } else {
                             System.out.println("error");
                         }
@@ -407,10 +454,11 @@ public class MenuFrame {
                     delete.addActionListener(e -> {
                         try {
                             RestoController.removeMenuItem(alcoholicBevMenuItems.get(alcoholicBevJList.getSelectedIndex()));
+                            alcoholicBevs.remove(alcoholicBevJList.getSelectedIndex());
                         } catch (InvalidInputException ex) {
                             ex.getMessage();
+                            JOptionPane.showMessageDialog(null, "item could not be deleted", "Error", JOptionPane.ERROR_MESSAGE);
                         }
-                        alcoholicBevs.remove(alcoholicBevJList.getSelectedIndex());
                     });
                     menu.add(edit);
                     menu.add(delete);
@@ -444,10 +492,21 @@ public class MenuFrame {
                         if (option == JOptionPane.OK_OPTION) {
                             try {
                                 RestoController.updateMenuItem(nonAlcoholicBevMenuItems.get(nonAlcoholicBevJList.getSelectedIndex()), name.getText(), MenuItem.ItemCategory.NonAlcoholicBeverage, Double.parseDouble(price.getText()));
+                                nonAlcoholicBevs.set(alcoholicBevJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
+                                JOptionPane.showMessageDialog(null, "Menu item edited successfully", "Edit success", JOptionPane.INFORMATION_MESSAGE);
                             } catch (InvalidInputException ex) {
-                                ex.getMessage();
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Could not edit menu item (name must be a string, price must be a double)",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        "Could not edit menu item (name must be a string, price must be a double)",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE);
                             }
-                            nonAlcoholicBevs.set(alcoholicBevJList.getSelectedIndex(), name.getText() + " $" + String.valueOf(Double.parseDouble(price.getText())));
                         } else {
                             System.out.println("error");
                         }
@@ -456,10 +515,11 @@ public class MenuFrame {
                     delete.addActionListener(e -> {
                         try {
                             RestoController.removeMenuItem(nonAlcoholicBevMenuItems.get(nonAlcoholicBevJList.getSelectedIndex()));
+                            nonAlcoholicBevs.remove(nonAlcoholicBevJList.getSelectedIndex());
                         } catch (InvalidInputException ex) {
                             ex.getMessage();
+                            JOptionPane.showMessageDialog(null, "item could not be deleted", "Error", JOptionPane.ERROR_MESSAGE);
                         }
-                        nonAlcoholicBevs.remove(nonAlcoholicBevJList.getSelectedIndex());
                     });
                     menu.add(edit);
                     menu.add(delete);

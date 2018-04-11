@@ -13,6 +13,8 @@ import ca.mcgill.ecse223.resto.application.RestoAppApplication;
 import ca.mcgill.ecse223.resto.model.*;
 import ca.mcgill.ecse223.resto.view.MenuFrame;
 
+import javax.swing.*;
+
 public class RestoController
 {
 	public static List<MenuItem.ItemCategory> getItemCategories() {
@@ -59,11 +61,8 @@ public class RestoController
     public static void updateMenuItem(MenuItem menuItem, String name, MenuItem.ItemCategory itemCategory, double price) throws InvalidInputException{
 
 	    if(!(name instanceof String)){
-	        throw new InvalidInputException("name is not a string");
-        }
-        if(! (price instanceof Double)) {
-	        
-
+            JOptionPane.showMessageDialog(null, "abababa");
+            //throw new InvalidInputException("name is not a string");
         }
 
 	    if( (menuItem == null) || (name == null) || (name.equals("")) || (itemCategory == null) || (price < 0) ) {
