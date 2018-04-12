@@ -176,10 +176,20 @@ public class RestoController {
                 }
                 throw new InvalidInputException(error);
             }
-            restoApp.addCurrentTable(tableToAdd);
+        }    
+        restoApp.addCurrentTable(tableToAdd);
+        System.out.print("hello there " + tableToAdd.getSeats().size());
+        if(!(numSeats==tableToAdd.getSeats().size())) {
             for (int i = 0; i < numSeats; i++) {
                 Seat newSeat = tableToAdd.addSeat();
                 tableToAdd.addCurrentSeat(newSeat);
+                String seatIdentifier = "T"+ tableToAdd.getNumber()+ "S"+ (i+1); 
+                hmap.put(seatIdentifier, newSeat);
+            }
+        }
+        else {
+        	for (int i = 0; i < tableToAdd.getSeats().size(); i++) {
+                Seat newSeat = tableToAdd.getCurrentSeats().get(i);
                 String seatIdentifier = "T"+ tableToAdd.getNumber()+ "S"+ (i+1); 
                 hmap.put(seatIdentifier, newSeat);
             }
