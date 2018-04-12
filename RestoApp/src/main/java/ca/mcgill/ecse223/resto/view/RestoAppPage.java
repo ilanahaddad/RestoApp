@@ -104,7 +104,9 @@ public class RestoAppPage extends JFrame {
 		// TODO before submitting split into different tabs (system, table, menu)
 		JMenuBar menubar = new JMenuBar();
 		JMenu actions = new JMenu("Actions");
-		JMenu manageBillsMenuItem= new JMenu("Manage Bills");
+		JMenu manageBillsMenuItem = new JMenu("Bills");
+		JMenu manageTablesMenuItem = new JMenu("Tables");
+		JMenu manageOrderMenuItem = new JMenu("Orders");
 		JMenuItem exitMenuItem = createMenuItem("Exit", RestoAppActions.EXIT_ACTION);
 		JMenuItem addTableMenuItem = createMenuItem("Add Table", this::addTableAction);
 		JMenuItem changeTableMenuItem = createMenuItem("Change Table", this::updateTableAction);
@@ -120,21 +122,26 @@ public class RestoAppPage extends JFrame {
         JMenuItem viewBillMenuItem = createMenuItem("View Bill", this::viewBillAction);
         JMenuItem cancelBillMenuItem = createMenuItem("Cancel Bill", this::cancelBillAction);
 		JMenuItem businessStatistics = createMenuItem("Business Statistics", this::businessStatisticsAction);
-		
-		actions.add(businessStatistics);
-		actions.add(orderMenuItem);
-		actions.add(endOrderMenuItem);
-		actions.add(viewOrderMenuItem);
-		actions.add(startOrderMenuItem);
-		actions.add(reservationMenuItem);
-		actions.add(addTableMenuItem);
-		actions.add(changeTableMenuItem);
-		actions.add(moveTableMenuItem);
-		actions.add(removeTableMenuItem);
+
 		actions.add(menuMenuItem);
+		actions.add(reservationMenuItem);
+		actions.add(manageTablesMenuItem);
+		actions.add(manageOrderMenuItem);
         actions.add(manageBillsMenuItem);
+		actions.add(businessStatistics);
 		actions.add(exitMenuItem);
 		menubar.add(actions);
+		
+		manageTablesMenuItem.add(addTableMenuItem);
+		manageTablesMenuItem.add(changeTableMenuItem);
+		manageTablesMenuItem.add(moveTableMenuItem);
+		manageTablesMenuItem.add(removeTableMenuItem);
+		
+		manageOrderMenuItem.add(startOrderMenuItem);
+		manageOrderMenuItem.add(orderMenuItem);
+		manageOrderMenuItem.add(viewOrderMenuItem);
+		manageOrderMenuItem.add(endOrderMenuItem);
+		
 		manageBillsMenuItem.add(newBillMenuItem);
         manageBillsMenuItem.add(viewBillMenuItem);
         manageBillsMenuItem.add(cancelBillMenuItem);
