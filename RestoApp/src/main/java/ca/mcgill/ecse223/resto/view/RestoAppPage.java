@@ -284,9 +284,8 @@ public class RestoAppPage extends JFrame {
 	
 	private void cancelOrderItemAction(ActionEvent event) { //author: ilanahaddad
 		JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
-		
 		List<String> orderItems = RestoController.getAllCurrentOrderItemsNamesWithSeatKey();
-		//List<String> orderItems = RestoController.getAllCurrentOrderItemsNamesWithSeatKey2();
+
 		if(orderItems != null) {
 			displayCancelOrderItemAction(panel,orderItems);
 		}
@@ -342,46 +341,7 @@ public class RestoAppPage extends JFrame {
 		}
 		
 	}
-	/*
-	private void displayCancelOrderItemAction(JPanel panel, List<MenuItem> menuItemsOrdered) { //author: ilanahaddad
-		int numMenuItems = menuItemsOrdered.size();
-		//create array to fill combo box with menu items ordered:
-		String menuItemNamesArray[] = new String[numMenuItems];
-		for(int i=0; i< numMenuItems; i++) {
-			menuItemNamesArray[i] = menuItemsOrdered.get(i).getName();
-		}
-		
-		panel.add(new JLabel("Select order item to cancel:"));
-		JComboBox<String> menuItemsOrderedList = new JComboBox<String>(menuItemNamesArray);
-		panel.add(menuItemsOrderedList);
-		
-		int result = JOptionPane.showConfirmDialog(null, panel, "Cancel Order Item",
-		JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-		if (result == JOptionPane.OK_OPTION){
-			try{
-				String menuItemNameSelected = (String) menuItemsOrderedList.getSelectedItem();
-				OrderItem orderItemSelected = RestoController.getOrderItemFromMenuItemName(menuItemNameSelected);
-				RestoController.cancelOrderItem(orderItemSelected);
-				
-				tablePanel.revalidate();
-				tablePanel.repaint();
-				
-				JOptionPane.showMessageDialog(null, "Order items cancelled successfully.");
-			}
-			catch (Exception error){
-				error.printStackTrace();
-				JOptionPane.showMessageDialog(
-				null,
-				error.getMessage(),
-				"Could not cancel order item",
-				JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		else {
-			JOptionPane.showMessageDialog(null, "No order items were cancelled.");
-		}
-		
-	}*/
+
 	private void cancelOrderAction(ActionEvent event) { //author: ilanahaddad
 		JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
 		

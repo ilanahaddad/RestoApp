@@ -95,10 +95,11 @@ class Table {
 
    // check that the provided order item is the last item of the current order of the table
    private boolean iIsLastItem(OrderItem i) {
-      Order curOrder = this.getOrder(this.numberOfOrders()-1);
-      boolean oneItemLeftOnOrder = curOrder.numberOfOrderItems() ==1;
-      OrderItem lastOrderItem = curOrder.getOrderItem(0);
-      return lastOrderItem.equals(i);
+      Order order = i.getOrder();
+	   if(order.numberOfOrderItems()==1) {
+		   return true;
+	   }
+	   return false;
    }
 
    // check that all seats of the table have a bill that belongs to the current order of the table 

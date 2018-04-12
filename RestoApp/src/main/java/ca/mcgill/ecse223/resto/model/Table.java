@@ -976,17 +976,18 @@ public class Table implements Serializable
    */
   // line 98 "../../../../../RestoAppTableStateMachine.ump"
    private boolean iIsLastItem(OrderItem i){
-    Order curOrder = this.getOrder(this.numberOfOrders()-1);
-      boolean oneItemLeftOnOrder = curOrder.numberOfOrderItems() ==1;
-      OrderItem lastOrderItem = curOrder.getOrderItem(0);
-      return lastOrderItem.equals(i);
+    Order order = i.getOrder();
+	   if(order.numberOfOrderItems()==1) {
+		   return true;
+	   }
+	   return false;
   }
 
 
   /**
    * check that all seats of the table have a bill that belongs to the current order of the table
    */
-  // line 106 "../../../../../RestoAppTableStateMachine.ump"
+  // line 107 "../../../../../RestoAppTableStateMachine.ump"
    private boolean allSeatsBilled(){
     boolean billed= true;
 	   Order curOrder =this.getOrder(this.numberOfOrders()-1);
