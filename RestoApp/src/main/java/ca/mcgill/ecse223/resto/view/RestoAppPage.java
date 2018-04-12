@@ -38,6 +38,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JDialog;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -60,6 +61,7 @@ import ca.mcgill.ecse223.resto.model.Order;
 import ca.mcgill.ecse223.resto.model.OrderItem;
 import ca.mcgill.ecse223.resto.model.Seat;
 import ca.mcgill.ecse223.resto.model.Table;
+import ca.mcgill.ecse223.resto.model.Bill;
 
 public class RestoAppPage extends JFrame {
 	public HashMap<String, Seat> hmap = RestoController.generateHashMap();
@@ -102,6 +104,7 @@ public class RestoAppPage extends JFrame {
 		// TODO before submitting split into different tabs (system, table, menu)
 		JMenuBar menubar = new JMenuBar();
 		JMenu actions = new JMenu("Actions");
+		JMenu manageBillsMenuItem= new JMenu("Manage Bills");
 		JMenuItem exitMenuItem = createMenuItem("Exit", RestoAppActions.EXIT_ACTION);
 		JMenuItem addTableMenuItem = createMenuItem("Add Table", this::addTableAction);
 		JMenuItem changeTableMenuItem = createMenuItem("Change Table", this::updateTableAction);
@@ -113,6 +116,9 @@ public class RestoAppPage extends JFrame {
 		JMenuItem viewOrderMenuItem = createMenuItem("View Order", this::viewOrderAction);
 		JMenuItem endOrderMenuItem = createMenuItem("End Order", this::endOrderAction);
 		JMenuItem orderMenuItem = createMenuItem("Order Menu Item", this::orderMenuItemAction);
+		JMenuItem newBillMenuItem = createMenuItem("New Bill", this::newBillAction);
+        JMenuItem viewBillMenuItem = createMenuItem("View Bill", this::viewBillAction);
+        JMenuItem cancelBillMenuItem = createMenuItem("Cancel Bill", this::cancelBillAction);
 		JMenuItem businessStatistics = createMenuItem("Business Statistics", this::businessStatisticsAction);
 		
 		actions.add(businessStatistics);
@@ -126,8 +132,12 @@ public class RestoAppPage extends JFrame {
 		actions.add(moveTableMenuItem);
 		actions.add(removeTableMenuItem);
 		actions.add(menuMenuItem);
+        actions.add(manageBillsMenuItem);
 		actions.add(exitMenuItem);
 		menubar.add(actions);
+		manageBillsMenuItem.add(newBillMenuItem);
+        manageBillsMenuItem.add(viewBillMenuItem);
+        manageBillsMenuItem.add(cancelBillMenuItem);
 		setJMenuBar(menubar);
 	}
 	
@@ -163,6 +173,8 @@ public class RestoAppPage extends JFrame {
 		this::orderMenuItemAction);
 		JButton businessStatisticsButton = createButton("businessStatistics.png", "View Business Statistics [Alt + 1]", KeyEvent.VK_1,
 		this::businessStatisticsAction);
+		JButton billManagerButton = createButton("billManager.png", "Start Bill Manager [Alt + B]", KeyEvent.VK_B, this::billManagerAction);
+		
 		
 		toolbar.add(exitButton);
 		toolbar.add(addTableButton);
@@ -176,6 +188,7 @@ public class RestoAppPage extends JFrame {
 		toolbar.add(endOrderButton);
 		toolbar.add(orderMenuItemButton);
 		toolbar.add(businessStatisticsButton);
+		toolbar.add(billManagerButton);
 		add(toolbar, BorderLayout.NORTH);
 	}
 	
@@ -545,6 +558,299 @@ public class RestoAppPage extends JFrame {
 		} else {
 			JOptionPane.showMessageDialog(null, "No order was ended.");
 		}
+	}
+	
+    private void billManagerAction(ActionEvent event){
+    	JFrame f = new JFrame("Bill Manager");
+    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+        JButton newBill = new JButton("New Bill");
+        newBill.addActionListener(this::newBillAction);
+        panel.add(newBill);
+        JButton viewBill = new JButton("View Bill");
+        viewBill.addActionListener(this::viewBillAction);
+        panel.add(viewBill);
+        JButton cancelBill = new JButton("Cancel Bill");
+        cancelBill.addActionListener(this::cancelBillAction);
+        panel.add(cancelBill);
+    	f.add(panel);
+		f.setSize(400,150);
+		// f.setLayout(new FlowLayout());
+		f.setLocationRelativeTo(null);
+		f.setVisible(true);
+		f.setResizable(false);
+		panel.validate();
+		panel.repaint();
+        }
+    
+    private void newBillAction(ActionEvent event){
+    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+
+        int currentTableLength = RestoController.getCurrentTables().size();
+        String currentTableNums[] = new String[currentTableLength];
+        for (int i = 0; i < currentTableLength; i++){
+            currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+        }
+
+
+        int currentSeatLength = RestoController.hmap.keySet().size();
+        String currentSeats[] = new String[currentSeatLength];
+        int count = 0;
+        for (String s: RestoController.hmap.keySet()) {
+        	currentSeats[count] = s;
+        	count++;
+        }
+        panel.add(new JLabel("Select seats to add to Bill:"));
+        panel.add(new JLabel("Select tables to add to Bill:"));
+        panel.add(new JLabel("Select orders to add to Bill:"));
+        DefaultListModel<String> listSeatNums = new DefaultListModel<>();
+        for(int i=0; i<currentSeats.length;i++) { //fill list for UI with wanted list (element per element)
+            listSeatNums.addElement(currentSeats[i]);
+        }
+        JList<String> allSeatsList  = new JList<>(currentSeats); //now list has table nums of current tables
+        allSeatsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        //SCROLLBAR:
+        allSeatsList.setVisibleRowCount(3);
+        JScrollPane scrollPaneSeats = new JScrollPane(allSeatsList);
+        scrollPaneSeats.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        //panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
+        panel.add(scrollPaneSeats);
+
+        
+
+        DefaultListModel<String> listTableNums = new DefaultListModel<>();
+        for(int i=0; i<currentTableNums.length;i++) { //fill list for UI with wanted list (element per element)
+            listTableNums.addElement(currentTableNums[i]);
+        }
+        JList<String> allTablesList  = new JList<>(listTableNums); //now list has table nums of current tables
+        allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        //SCROLLBAR:
+        allTablesList.setVisibleRowCount(3);
+        JScrollPane scrollPaneTable = new JScrollPane(allTablesList);
+        scrollPaneTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        //panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
+        panel.add(scrollPaneTable);
+    	
+      //create array of current order numbers
+        int currentOrderLength = RestoController.getCurrentOrders().size();
+        String currentOrderNums[] = new String[currentOrderLength];
+        List<Order> currentOrders = RestoController.getCurrentOrders();
+        for (int i = 0; i < currentOrderLength; i++){
+            currentOrderNums[i] = "" + currentOrders.get(i).getNumber();
+        }
+
+        DefaultListModel<String> listOrderNums = new DefaultListModel<>();
+        for(int i=0; i<currentOrderNums.length;i++) { //fill list for UI with wanted list (element per element)
+            listOrderNums.addElement(currentOrderNums[i]);
+        }
+        JList<String> allOrdersList  = new JList<>(listOrderNums); //now list has order nums of current tables
+        allOrdersList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        //SCROLLBAR:
+        allOrdersList.setVisibleRowCount(3);
+        JScrollPane scrollPaneOrder = new JScrollPane(allOrdersList);
+        scrollPaneOrder.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        //panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
+        panel.add(scrollPaneOrder);
+    	
+
+        
+        int result = JOptionPane.showConfirmDialog(null, panel, "New Bill",
+        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION){
+            try{
+            	List<String> selectedTablesNums = allTablesList.getSelectedValuesList();
+            	List<String> selectedOrderNums = allOrdersList.getSelectedValuesList();
+                List<String> selectedSeatNums = allSeatsList.getSelectedValuesList();
+                List<Seat> passedSeats = new ArrayList<Seat>();
+                for (int i = 0; i <selectedOrderNums.size(); i++) {
+                	int orderNum = Integer.parseInt((String) selectedOrderNums.get(i));
+                	Order O = RestoController.getCurrentOrder(orderNum);
+                	for (Table t: O.getTables()) {
+                		for(Seat s: t.getSeats()) {
+                    		if(!passedSeats.contains(s)) {
+                    			passedSeats.add(s);
+                    		}
+                    	} 
+                	}
+                }
+                for (int i = 0; i < selectedTablesNums.size(); i++) {
+                	int tableNum = Integer.parseInt((String) selectedTablesNums.get(i));
+                	Table t = RestoController.getTableByNum(tableNum);
+                	List<Seat> seatsAtTable = t.getSeats();
+                	for(Seat s: seatsAtTable) {
+                		if(!passedSeats.contains(s)) {
+                			passedSeats.add(s);
+                		}
+                	}
+                }           
+                                
+                for(int i = 0; i < selectedSeatNums.size(); i++) {
+                	if(!passedSeats.contains(RestoController.hmap.get(selectedSeatNums.get(i)))) {
+                		passedSeats.add(RestoController.hmap.get(selectedSeatNums.get(i)));
+                	}
+                }
+                RestoController.issueBill(passedSeats);
+
+                tablePanel.revalidate();
+                tablePanel.repaint();
+
+                JOptionPane.showMessageDialog(null, "Bill started successfully.");
+            }
+            catch (Exception error)
+            {
+            	JOptionPane.showMessageDialog(
+                null,
+                error.getMessage(),
+                "Could not start bill",
+                JOptionPane.ERROR_MESSAGE);
+
+            }
+        }
+        else {
+            JOptionPane.showMessageDialog(null, "No orders were started.");
+        }
+    }    
+
+    private void cancelBillAction(ActionEvent event){
+    	JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
+		// create array of bills
+    	List<Bill> bills = RestoController.getCurrentBills();
+		int currentLength = bills.size();
+		String currentBillNums[] = new String[currentLength];
+		for (int i = 0; i < currentLength; i++) {
+			String billName = "b" + i;
+			Bill bill = bills.get(i);
+			List<Seat> seatsToShow = bill.getIssuedForSeats();
+			for(Seat s: seatsToShow) {
+				billName = billName + " " + RestoController.getKeyForSeat(s);
+			}
+			currentBillNums[i] = billName;
+		}
+		
+		panel.add(new JLabel("Select bill to cancel"));
+		JComboBox<String> currentBillList = new JComboBox<String>(currentBillNums);
+		panel.add(currentBillList);
+		
+		int result = JOptionPane.showConfirmDialog(null, panel, "Cancel Bill", JOptionPane.OK_CANCEL_OPTION,
+		JOptionPane.PLAIN_MESSAGE);
+		if (result == JOptionPane.OK_OPTION) {
+			try {
+				// RestoController.removeTable((Table)currentTableList.getSelectedItem());
+				int billNum = currentBillList.getSelectedIndex();
+				bills.get(billNum).delete();
+				
+				tablePanel.revalidate();
+				tablePanel.repaint();
+				
+				JOptionPane.showMessageDialog(null, "Bill canceled successfully.");
+			} catch (Exception error) {
+				JOptionPane.showMessageDialog(null, error.getMessage(), "Could not cancel Bill",
+				JOptionPane.ERROR_MESSAGE);
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "Unsuccessful cancellation.");
+		}
+    }
+    
+    private void viewBillAction(ActionEvent event){
+    	JFrame f = new JFrame("View Bills");
+    	JDialog d = new JDialog(f, "View Bills");
+		JPanel panel = new JPanel();
+		
+		GridBagLayout grid = new GridBagLayout();  
+		GridBagConstraints gbc = new GridBagConstraints();  
+		panel.setLayout(grid);  
+		
+		//create array of current table numbers
+		List<Bill> bills = RestoController.getCurrentBills();
+		int currentLength = bills.size();
+		String currentBillNums[] = new String[currentLength];
+		for (int i = 0; i < currentLength; i++) {
+			String billName = "b" + i;
+			Bill bill = bills.get(i);
+			List<Seat> seatsToShow = bill.getIssuedForSeats();
+			int count = 0;
+			for(Seat s: seatsToShow) {
+				count++;
+				billName = billName + " t" + s.getTable().getNumber() + "s" + count;
+			}
+			currentBillNums[i] = billName;
+		}
+		
+		JTextArea display  = new JTextArea(20, 60);
+		display.setEditable (false);
+		JScrollPane scroll = new JScrollPane(display);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		
+		JComboBox<String> allBillList = new JComboBox<String>(currentBillNums);
+		allBillList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				try {
+					DecimalFormat df = new DecimalFormat("#.##");
+					int billNum = allBillList.getSelectedIndex();
+					Bill selectedBill = RestoController.getCurrentBills().get(billNum);
+					String displayItems = "Bill " + billNum + "\n";
+					List<Seat> seats = selectedBill.getIssuedForSeats();
+					double totalBillPrice = 0;
+					for (Seat s: seats) {
+						displayItems = displayItems + "\nSeat " + RestoController.getKeyForSeat(s);
+						List<OrderItem> items = s.getOrderItems();
+						for(OrderItem item: items) {
+							int qty = item.getQuantity();
+							int splitBetween = item.getSeats().size();
+							String name = item.getPricedMenuItem().getMenuItem().getName();
+							double unitPrice = item.getPricedMenuItem().getPrice();
+							String totalPrice = df.format(qty * unitPrice / splitBetween);
+							totalBillPrice = totalBillPrice + (qty * unitPrice / splitBetween);
+							displayItems = displayItems + "\n" + qty + "/" + splitBetween + " " + name + "---" + totalPrice; 
+						}
+					}
+					displayItems = displayItems + "\n\nBILL TOTAL = $" + df.format(totalBillPrice);
+					display.setText(displayItems);
+				}catch (NumberFormatException e) {
+				}catch (Exception error)
+				{
+					JOptionPane.showMessageDialog(
+					null,
+					error.getMessage(),
+					"Could not retrieve table's order",
+					JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});       
+		
+		gbc.ipady = 0;  
+		gbc.gridx = 0;  
+		gbc.gridy = 0;  
+		gbc.gridwidth = 2;
+		gbc.insets = new Insets(10,0,0,0);
+		panel.add(new JLabel("Select bill:"), gbc);  
+		
+		
+		gbc.gridx = 0;  
+		gbc.gridy = 1;  
+		gbc.gridwidth = 2;
+		panel.add(allBillList, gbc);  
+		
+		gbc.gridx = 0;  
+		gbc.gridy = 3;  
+		gbc.gridwidth = 2;  
+		panel.add(scroll, gbc);  
+		
+		d.add(panel);
+		d.setSize(500,500);
+		// f.setLayout(new FlowLayout());
+		d.pack();
+		d.setLocationRelativeTo(null);
+		d.setVisible(true);
+		
+		panel.validate();
+		panel.repaint();
 	}
 	
 	private void displayMenuAction(ActionEvent event) {
@@ -1020,7 +1326,5 @@ public class RestoAppPage extends JFrame {
 		else {
 			JOptionPane.showMessageDialog(null, "Statistics exited.");
 		}
-		
 	}
-	
 }
