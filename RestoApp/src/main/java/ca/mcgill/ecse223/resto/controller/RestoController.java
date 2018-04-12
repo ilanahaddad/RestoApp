@@ -694,7 +694,12 @@ public class RestoController {
             throw new InvalidInputException("Order to end is not part of current orders");
         }
 
-        List<Table> tablesInOrder = orderToEnd.getTables();
+        if (orderToEnd.getBills().size() < 1) {
+            throw new InvalidInputException("The bill hasnt been paid for some tables"); 
+        }
+
+        // create new list of tables
+        List<Table> tablesInOrder = new ArrayList<Table>(orderToEnd.getTables());
 
         List<Table> tablesMarked = new ArrayList<Table>();
         for (Table table : tablesInOrder) {

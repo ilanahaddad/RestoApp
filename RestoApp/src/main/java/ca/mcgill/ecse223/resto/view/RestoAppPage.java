@@ -676,9 +676,13 @@ public class RestoAppPage extends JFrame {
 	
 	private void displayEndOrderAction(JPanel panel, int numOrders) {
 		String currOrderNums[] = new String[numOrders];
+		Order associatedOrder[] = new Order[numOrders];
 		int i = 0;
-		for (Order o : RestoController.getCurrentOrders()) {
-			currOrderNums[i++] = "" + o.getNumber();
+		List<Order> currOrder = RestoController.getCurrentOrders();
+		for (Order o : currOrder) {
+			currOrderNums[i] = "T" + o.getTable(0).getNumber() + " Order "  + o.getNumber();
+			associatedOrder[i] = o;
+			i++;
 		}
 		
 		panel.add(new JLabel("Select order to end:"));
@@ -695,19 +699,18 @@ public class RestoAppPage extends JFrame {
 		JOptionPane.PLAIN_MESSAGE);
 		if (result == JOptionPane.OK_OPTION) {
 			try {
-				int selectedNum = Integer.parseInt(activeOrders.getSelectedValuesList().get(0));
-				Order selectedOrder = RestoController.getCurrentOrder(selectedNum);
-				
-				RestoController.endOrder(selectedOrder);
-				
-				tablePanel.revalidate();
-				tablePanel.repaint();
-				
-				JOptionPane.showMessageDialog(null, "Order ended successfully.");
+				int selectedOrderIdx = activeOrders.getSelectedIndex();
+				if (selectedOrderIdx >= 0) {
+					RestoController.endOrder(associatedOrder[selectedOrderIdx]);
+					
+					tablePanel.revalidate();
+					tablePanel.repaint();
+					
+					JOptionPane.showMessageDialog(null, "Order ended successfully.");
+				}
 			} catch (Exception error) {
 				JOptionPane.showMessageDialog(null, error.getMessage(), "Could not end order",
 				JOptionPane.ERROR_MESSAGE);
-				error.printStackTrace();
 			}
 		} else {
 			JOptionPane.showMessageDialog(null, "No order was ended.");
