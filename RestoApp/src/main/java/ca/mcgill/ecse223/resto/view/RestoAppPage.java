@@ -872,7 +872,7 @@ public class RestoAppPage extends JFrame {
 			}
 		}
 		else {
-			JOptionPane.showMessageDialog(null, "No orders were started.");
+			JOptionPane.showMessageDialog(null, "No bills were started.");
 		}
 	}    
 	
@@ -1263,7 +1263,7 @@ public class RestoAppPage extends JFrame {
 		JComboBox<String> menuItem = new JComboBox<String>();
 		JLabel quantitylabel = new JLabel("Quantity");
 		JTextField quantity = new JTextField();
-		JLabel tablelabel = new JLabel("Table");
+		JLabel tablelabel = new JLabel("Seats");
 		
 		//ILANA
 		Set<String> keys = hmap.keySet();
