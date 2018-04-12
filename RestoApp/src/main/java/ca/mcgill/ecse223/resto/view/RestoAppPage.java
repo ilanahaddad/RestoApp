@@ -934,10 +934,8 @@ public class RestoAppPage extends JFrame {
 			String billName = "b" + i;
 			Bill bill = bills.get(i);
 			List<Seat> seatsToShow = bill.getIssuedForSeats();
-			int count = 0;
 			for(Seat s: seatsToShow) {
-				count++;
-				billName = billName + " t" + s.getTable().getNumber() + "s" + count;
+				billName = billName + " " + RestoController.getKeyForSeat(s);
 			}
 			currentBillNums[i] = billName;
 		}
@@ -961,13 +959,15 @@ public class RestoAppPage extends JFrame {
 						displayItems = displayItems + "\nSeat " + RestoController.getKeyForSeat(s);
 						List<OrderItem> items = s.getOrderItems();
 						for(OrderItem item: items) {
-							int qty = item.getQuantity();
-							int splitBetween = item.getSeats().size();
-							String name = item.getPricedMenuItem().getMenuItem().getName();
-							double unitPrice = item.getPricedMenuItem().getPrice();
-							String totalPrice = df.format(qty * unitPrice / splitBetween);
-							totalBillPrice = totalBillPrice + (qty * unitPrice / splitBetween);
-							displayItems = displayItems + "\n" + qty + "/" + splitBetween + " " + name + "---" + totalPrice; 
+							if(RestoController.getCurrentOrders().contains(item.getOrder())) {
+								int qty = item.getQuantity();
+								int splitBetween = item.getSeats().size();
+								String name = item.getPricedMenuItem().getMenuItem().getName();
+								double unitPrice = item.getPricedMenuItem().getPrice();
+								String totalPrice = df.format(qty * unitPrice / splitBetween);
+								totalBillPrice = totalBillPrice + (qty * unitPrice / splitBetween);
+								displayItems = displayItems + "\n" + qty + "/" + splitBetween + " " + name + "---" + totalPrice; 
+							}
 						}
 					}
 					displayItems = displayItems + "\n\nBILL TOTAL = $" + df.format(totalBillPrice);
