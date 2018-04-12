@@ -1135,14 +1135,14 @@ public class RestoController {
             for(Seat s: seats) {
             	t = s.getTable();
             	if(billCreated) {
-            		t.addToBill(newBill, s);
+            		tempaddToBill(newBill, s);
             	}
             	else {
             		Bill lastBill = null;
             		if(lastOrder.numberOfBills() > 0) {
             			lastBill = lastOrder.getBill(lastOrder.numberOfBills()-1);
             		}
-            		t.billForSeat(lastOrder, s);
+            		tempbillForSeat(lastOrder, s);
             		if((lastOrder.numberOfBills() > 0) && (!lastOrder.getBill(lastOrder.numberOfBills() - 1).equals(lastBill))) {
             			billCreated = true;
             			newBill = lastOrder.getBill(lastOrder.numberOfBills() - 1);

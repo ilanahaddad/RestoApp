@@ -855,19 +855,20 @@ public class RestoAppPage extends JFrame {
 					}
 				}
 				Bill b = RestoController.issueBill(passedSeats);
-				
 				DecimalFormat df = new DecimalFormat("#.##");
 				String displayItems = "";
 				List<Seat> seats = b.getIssuedForSeats();
 				double totalBillPrice = 0;
 				for (Seat s: seats) {
-					List<OrderItem> items = s.getOrderItems();
-					for(OrderItem item: items) {
-						if(RestoController.getCurrentOrders().contains(item.getOrder())) {
-							int qty = item.getQuantity();
-							int splitBetween = item.getSeats().size();
-							double unitPrice = item.getPricedMenuItem().getPrice();
-							totalBillPrice = totalBillPrice + (qty * unitPrice / splitBetween); 
+					if (s.getOrderItems().size() > 0) {
+						List<OrderItem> items = s.getOrderItems();
+						for(OrderItem item: items) {
+							if(RestoController.getCurrentOrders().contains(item.getOrder())) {
+								int qty = item.getQuantity();
+								int splitBetween = item.getSeats().size();
+								double unitPrice = item.getPricedMenuItem().getPrice();
+								totalBillPrice = totalBillPrice + (qty * unitPrice / splitBetween); 
+							}
 						}
 					}
 				}
