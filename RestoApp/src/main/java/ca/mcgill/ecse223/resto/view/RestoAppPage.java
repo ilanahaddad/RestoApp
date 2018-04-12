@@ -185,19 +185,10 @@ public class RestoAppPage extends JFrame {
 		this::displayMenuAction);
 		JButton reserveTableButton = createButton("reserveTable.png", "Make Reservation [Alt + R]", KeyEvent.VK_R,
 		this::reserveTableAction);
-		JButton startOrderButton = createButton("startOrder.png", "Start Order [Alt + O]", KeyEvent.VK_O,
-		this::startOrderAction);
-		JButton viewOrderButton = createButton("viewOrder.png", "View Order [Alt + V]", KeyEvent.VK_V, 
-		this::viewOrderAction);
-		JButton endOrderButton = createButton("endOrder.png", "Start Order [Alt + E]", KeyEvent.VK_E,
-		this::endOrderAction);
-		JButton orderMenuItemButton = createButton("orderMenuItem.png", "Order Menu Item [Alt + I]", KeyEvent.VK_I,
-		this::orderMenuItemAction);
 		JButton businessStatisticsButton = createButton("businessStatistics.png", "View Business Statistics [Alt + 1]", KeyEvent.VK_1,
 		this::businessStatisticsAction);
-		JButton cancelOrderItemButton = createButton("cancelOrderItem.png", "Cancel Order Item [Alt + C]", KeyEvent.VK_E, this::cancelOrderItemAction);
-		JButton cancelOrderButton = createButton("cancelOrder.png", "Cancel Order [Alt + F]", KeyEvent.VK_E, this::cancelOrderAction);
-		JButton billManagerButton = createButton("billManager.png", "Start Bill Manager [Alt + B]", KeyEvent.VK_B, this::billManagerAction);
+		JButton billManagerButton = createButton("issueBill.png", "Start Bill Manager [Alt + B]", KeyEvent.VK_B, this::billManagerAction);
+		JButton orderManagerButton = createButton("orderManager.png", "Start Order Manager [Alt + O]", KeyEvent.VK_U, this::orderManagerAction);
 		
 		toolbar.add(exitButton);
 		toolbar.add(addTableButton);
@@ -206,13 +197,8 @@ public class RestoAppPage extends JFrame {
 		toolbar.add(removeTableButton);
 		toolbar.add(displayMenuButton);
 		toolbar.add(reserveTableButton);
-		toolbar.add(startOrderButton);
-		toolbar.add(viewOrderButton);
-		toolbar.add(endOrderButton);
-		toolbar.add(orderMenuItemButton);
 		toolbar.add(businessStatisticsButton);
-		toolbar.add(cancelOrderItemButton);
-		toolbar.add(cancelOrderButton);      
+		toolbar.add(orderManagerButton);
 		toolbar.add(billManagerButton);
 		add(toolbar, BorderLayout.NORTH);
 	}
@@ -255,6 +241,37 @@ public class RestoAppPage extends JFrame {
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
+	
+    private void orderManagerAction(ActionEvent event){
+    	JFrame f = new JFrame("Order Manager");
+    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+		JButton startOrderButton = createButton("startOrder.png", "Start Order [Alt + O]", KeyEvent.VK_O,
+		this::startOrderAction);
+		JButton orderMenuItemButton = createButton("orderMenuItem.png", "Order Menu Item [Alt + I]", KeyEvent.VK_I,
+		this::orderMenuItemAction);
+		JButton viewOrderButton = createButton("viewOrder.png", "View Order [Alt + V]", KeyEvent.VK_V, 
+		this::viewOrderAction);
+		JButton cancelOrderItemButton = createButton("cancelOrderItem.png", "Cancel Order Item [Alt + C]", KeyEvent.VK_E, this::cancelOrderItemAction);
+		JButton cancelOrderButton = createButton("cancelOrder.png", "Cancel Order [Alt + F]", KeyEvent.VK_E, this::cancelOrderAction);
+		JButton endOrderButton = createButton("endOrder.png", "Start Order [Alt + E]", KeyEvent.VK_E,
+		this::endOrderAction);
+        panel.add(startOrderButton);
+        panel.add(viewOrderButton);
+        panel.add(orderMenuItemButton);
+        panel.add(cancelOrderItemButton);
+        panel.add(cancelOrderButton);
+        panel.add(endOrderButton);
+        
+		f.add(panel);
+		f.setSize(400,150);
+		// f.setLayout(new FlowLayout());
+		f.setLocationRelativeTo(null);
+		f.setVisible(true);
+		f.setResizable(false);
+		panel.validate();
+		panel.repaint();
+        }
+	
 	
 	private void configureScrollbar(JScrollPane scrollbar) {
 		scrollbar.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
