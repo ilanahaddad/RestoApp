@@ -693,7 +693,7 @@ public class RestoAppPage extends JFrame {
 		
 		int result = JOptionPane.showConfirmDialog(null, panel, "End Order", JOptionPane.OK_CANCEL_OPTION,
 		JOptionPane.PLAIN_MESSAGE);
-		if (result == JOptionPane.OK_OPTION) {
+		if (result == JOptionPane.OK_OPTION && (activeOrders.getSelectedValuesList().size() > 0)) {
 			try {
 				int selectedOrderIdx = activeOrders.getSelectedIndex();
 				System.out.println("SELECTED IDX: " + selectedOrderIdx);
