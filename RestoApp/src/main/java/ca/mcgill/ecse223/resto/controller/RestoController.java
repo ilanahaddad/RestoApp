@@ -694,7 +694,12 @@ public class RestoController {
             throw new InvalidInputException("Order to end is not part of current orders");
         }
 
-        List<Table> tablesInOrder = orderToEnd.getTables();
+        if (orderToEnd.getBills().size() < 1) {
+            throw new InvalidInputException("The bill hasnt been paid for some tables"); 
+        }
+
+        // create new list of tables
+        List<Table> tablesInOrder = new ArrayList<Table>(orderToEnd.getTables());
 
         List<Table> tablesMarked = new ArrayList<Table>();
         for (Table table : tablesInOrder) {
@@ -799,7 +804,7 @@ public class RestoController {
     }
     
     //USING THIS NOW: ILANA2
-    public static List<String> getAllCurrentOrderItemsNamesWithSeatKey(){
+  /*  public static List<String> getAllCurrentOrderItemsNamesWithSeatKey(){
 	    	RestoApp r = RestoAppApplication.getRestoApp();
 	    	List<String> allOrderItemNames = new ArrayList<String>();
 	    	List<Table> curTables = r.getCurrentTables();
@@ -821,8 +826,8 @@ public class RestoController {
 	    	}
 	    	return allOrderItemNamesWithSeatNum;
 	    	
-    }
-    public static List<String> getAllCurrentOrderItemsNamesWithSeatKey2(){
+    }*/
+    public static List<String> getAllCurrentOrderItemsNamesWithSeatKey(){
     	RestoApp r = RestoAppApplication.getRestoApp();
     	List<Table> curTables = r.getCurrentTables();
     	List<String> allOrderItemNamesWithSeatNum = new ArrayList<String>();
@@ -928,9 +933,6 @@ public class RestoController {
 					return oi;
 				}
 			}
-		//	if(oiName.equals(orderItemName)) {
-		//		orderItemWanted= i;
-		//	}
 		}
 		return null;
     }
@@ -1368,6 +1370,9 @@ public class RestoController {
 		
 		RestoApp restoApp = RestoAppApplication.getRestoApp();
 		List<Table> allTables = restoApp.getTables();
+		if (allTables.isEmpty()) {
+			throw new InvalidInputException("No tables have yet been created in this app.");
+		}
 		int currentNumUsed = 0;
 		List<StatisticsTable> tablesInTimeRange = new ArrayList<>();
 		for (Table t : allTables) {
@@ -1384,6 +1389,9 @@ public class RestoController {
 				StatisticsTable statTable = new StatisticsTable(t, t.getNumUsed());
 				tablesInTimeRange.add(statTable);
 			}
+		}
+		if (tablesInTimeRange.isEmpty()) {
+			throw new InvalidInputException("No tables have been used in the specified time range.");
 		}
 		List<StatisticsTable> topTenTables = sortAndTrimTables(tablesInTimeRange); //sort stat tables per highest numUsed
 		return topTenTables; 
@@ -1415,8 +1423,14 @@ public class RestoController {
 				
 				RestoApp restoApp = RestoAppApplication.getRestoApp();
 				List<Order> allOrders = restoApp.getOrders();
+				if (allOrders.isEmpty()) {
+					throw new InvalidInputException ("No orders have been placed yet.");
+				}
 				//clear all menu item numUsed
 				List<MenuItem> allMenuItems = restoApp.getMenu().getMenuItems();
+				if (allMenuItems.isEmpty()) {
+					throw new InvalidInputException ("No history of menu items detected.");
+				}
 				for (MenuItem m : allMenuItems) {
 					m.setNumUsed(0);
 				}
@@ -1436,8 +1450,13 @@ public class RestoController {
 						itemsInTimeRange.add(statItem);
 					}
 				}
-	
+				if(itemsInTimeRange.isEmpty()) {
+					throw new InvalidInputException("No items were ordered in the specified time range.");
+				}
 		List<StatisticsItem> topTenItems = sortAndTrimItems(itemsInTimeRange);
+		if(topTenItems.isEmpty()) {
+			throw new InvalidInputException("No items were ordered in the specified time range.");
+		}
 		return topTenItems;
 	
 	}
