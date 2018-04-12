@@ -399,8 +399,20 @@ public class RestoController {
         if (contactPhoneNumber.equals("") || contactPhoneNumber == null) {
             error += "Please enter a contact phone number.\n";
         }
-        Date currentDate = new Date(Calendar.getInstance().getTime().getTime());
-        if (date.before(currentDate) || (date.equals(currentDate) && time.before(currentDate))) {
+        Date currentDateTime = new Date(Calendar.getInstance().getTime().getTime());
+        //Calendar currentDateTime = Calendar.getInstance();
+        
+		Calendar resDate = Calendar.getInstance();
+		resDate.setTime(date);
+		Calendar resTime = Calendar.getInstance();
+		resTime.setTime(time);
+		resDate.set(Calendar.HOUR_OF_DAY, resTime.get(Calendar.HOUR_OF_DAY));
+		resDate.set(Calendar.MINUTE, resTime.get(Calendar.MINUTE));
+		resDate.set(Calendar.SECOND, resTime.get(Calendar.SECOND));
+		
+		java.util.Date timeOfRes = resDate.getTime();
+
+        if (timeOfRes.before(currentDateTime)) {
             error += "Cannot make reservation in the past.\n";
         }
         if (numberInParty < 1) {
