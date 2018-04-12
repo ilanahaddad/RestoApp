@@ -792,10 +792,10 @@ public class RestoAppPage extends JFrame {
 		String currentOrderNums[] = new String[currentOrderLength];
 		List<Order> currentOrders = RestoController.getCurrentOrders();
 		for (int i = 0; i < currentOrderLength; i++){
-			currentOrderNums[i] = "O" + currentOrders.get(i).getNumber();
-			for (Table t: currentOrders.get(i).getTables()) {
-				currentOrderNums[i] = currentOrderNums[i] + " T" + t.getNumber();
-			}
+			currentOrderNums[i] = "" + currentOrders.get(i).getNumber();
+			//for (Table t: currentOrders.get(i).getTables()) {
+				//currentOrderNums[i] = currentOrderNums[i] + " T" + t.getNumber();
+			//}
 		}
 		
 		DefaultListModel<String> listOrderNums = new DefaultListModel<>();
