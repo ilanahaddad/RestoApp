@@ -360,9 +360,9 @@ public class Table implements Serializable
         // delete all order items of the table
         	 	Order curOrder = this.getOrder(this.numberOfOrders()-1);
         		List<OrderItem> orderItemsOfTable = curOrder.getOrderItems();
-        		for(OrderItem o: orderItemsOfTable) {
-        			o.delete(); //delete all order items of the table 
-        		}
+        		for(int i=0;i<orderItemsOfTable.size();i++) {
+				orderItemsOfTable.get(i).delete(); //delete all order items of the table
+			}
         setStatus(Status.NothingOrdered);
         wasEventProcessed = true;
         break;

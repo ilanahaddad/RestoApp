@@ -43,9 +43,9 @@ class Table {
          cancelOrder() / { // delete all order items of the table
         	 	Order curOrder = this.getOrder(this.numberOfOrders()-1);
         		List<OrderItem> orderItemsOfTable = curOrder.getOrderItems();
-        		for(OrderItem o: orderItemsOfTable) {
-        			o.delete(); //delete all order items of the table 
-        		}
+        		for(int i=0;i<orderItemsOfTable.size();i++) {
+				orderItemsOfTable.get(i).delete(); //delete all order items of the table
+			}
          } -> NothingOrdered;
          billForSeat(Order o, Seat s) / {
             // create a new bill with the provided order and seat; if the provided seat is already assigned to

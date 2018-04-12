@@ -27,7 +27,7 @@ import javax.swing.*;
 
 public class RestoController {
 	public static HashMap<String, Seat> hmap ;
-
+	public static HashMap<String, MenuItem> hmap_orderItemsOfSeat;
 	public static HashMap<String, Seat> generateHashMap(){
 		hmap = new HashMap<String, Seat>();
 		RestoApp restoApp = RestoAppApplication.getRestoApp();
@@ -738,7 +738,7 @@ public class RestoController {
     		}
     		List<Seat> seats = orderItem.getSeats();
     		Order order = orderItem.getOrder();
-    		List<Table> tables = null;
+    		List<Table> tables = new ArrayList<Table>();
     		for(Seat seat: seats) {
     			Table table = seat.getTable();
     			Order lastOrder = null;
@@ -780,21 +780,76 @@ public class RestoController {
     
     public static List<OrderItem> getAllCurrentOrderItems(){
         	RestoApp r = RestoAppApplication.getRestoApp();
-        	List<OrderItem> allOrderItems = null;
+        	List<OrderItem> allOrderItems = new ArrayList<OrderItem>();
         	List<Table> curTables = r.getCurrentTables();
         	for(Table t: curTables) {
         		List<Seat> curSeatsAtTable = t.getCurrentSeats();
         		for(Seat s: curSeatsAtTable) {
-        			List<OrderItem> orderItemsForSeat = s.getOrderItems();
-        			for(OrderItem i: orderItemsForSeat) {
-        				allOrderItems.add(i);
+        			List<OrderItem> orderItemsForSeat = s.getOrderItems(); 
+        			if(s.hasOrderItems()) {
+            			for(OrderItem i: orderItemsForSeat) {
+            				allOrderItems.add(i);
+            			}
         			}
+
         		}
         	}
         	return allOrderItems;
     }
-    public static List<MenuItem> getMenuItemsFromAllCurrentOrderItems(){
-    		List<MenuItem> menuItems= null;
+    
+    //USING THIS NOW: ILANA2
+    public static List<String> getAllCurrentOrderItemsNamesWithSeatKey(){
+	    	RestoApp r = RestoAppApplication.getRestoApp();
+	    	List<String> allOrderItemNames = new ArrayList<String>();
+	    	List<Table> curTables = r.getCurrentTables();
+	    	List<String> allOrderItemNamesWithSeatNum = new ArrayList<String>();
+	    	for(Table t: curTables) {
+	    		List<Seat> curSeatsAtTable = t.getCurrentSeats();
+	    		for(Seat s: curSeatsAtTable) {
+	    			List<OrderItem> orderItemsForSeat = s.getOrderItems(); 
+	    			if(s.hasOrderItems()) {
+	        			for(OrderItem i: orderItemsForSeat) {
+	        				allOrderItemNames.add(i.getPricedMenuItem().getMenuItem().getName());
+	        				String orderItemName = i.getPricedMenuItem().getMenuItem().getName();
+	        				String num = getKeyForSeat(s);
+	        				allOrderItemNamesWithSeatNum.add(orderItemName + " " + num);
+	        			}
+	    			}
+	
+	    		}
+	    	}
+	    	return allOrderItemNamesWithSeatNum;
+	    	
+    }
+    public static List<String> getAllCurrentOrderItemsNamesWithSeatKey2(){
+    	RestoApp r = RestoAppApplication.getRestoApp();
+ //   	List<OrderItem> allOrderItems = new ArrayList<OrderItem>();
+    	List<String> allOrderItemNames = new ArrayList<String>();
+    	List<Table> curTables = r.getCurrentTables();
+    	List<String> allOrderItemNamesWithSeatNum = new ArrayList<String>();
+    	for(Table t: curTables) {
+    		List<Seat> curSeatsAtTable = t.getCurrentSeats();
+    		for(Seat s: curSeatsAtTable) {
+    			List<OrderItem> orderItemsForSeat = s.getOrderItems(); 
+    			if(s.hasOrderItems()) {
+    				int count = 1;
+        			for(OrderItem i: orderItemsForSeat) {
+        		//		allOrderItems.add(i);
+        				allOrderItemNames.add(i.getPricedMenuItem().getMenuItem().getName());
+        				String orderItemName = i.getPricedMenuItem().getMenuItem().getName();
+        				String num = getKeyForSeat(s);
+        				allOrderItemNamesWithSeatNum.add(count+". "+orderItemName + " " + num);
+        				count++;
+        			}
+    			}
+
+    		}
+    	}
+    	return allOrderItemNamesWithSeatNum;
+    	
+    }
+    /*  public static List<MenuItem> getMenuItemsFromAllCurrentOrderItems(){
+    		List<MenuItem> menuItems= new ArrayList<MenuItem>();
     		List<OrderItem> orderItems = getAllCurrentOrderItems();
     		if(orderItems == null) {
     			return null;
@@ -809,7 +864,44 @@ public class RestoController {
     		}
     		return menuItems;
     }
-    
+    public static HashMap<String, String> getMapOfSeatsWithOrderItemNames(){
+    		HashMap<String, String> map = new HashMap<String, String>();
+    		RestoApp r = RestoAppApplication.getRestoApp();
+        	List<OrderItem> allOrderItems = new ArrayList<OrderItem>();
+        	List<Table> curTables = r.getCurrentTables();
+        	for(Table t: curTables) {
+        		List<Seat> curSeatsAtTable = t.getCurrentSeats();
+        		for(Seat s: curSeatsAtTable) {
+        			List<OrderItem> orderItemsForSeat = s.getOrderItems(); 
+        			if(s.hasOrderItems()) {
+            			for(OrderItem i: orderItemsForSeat) { //for every order item of the seat
+            				allOrderItems.add(i);
+            				
+            			}
+        			}
+
+        		}
+        	}
+        	for(String keyString: hmap.keySet()) {
+        		if(keyString.)
+        	}
+        	for(Seat s: hmap.values()) { //for all seats in map
+            	for(String keyString: hmap.keySet()) {
+            		if(hmap.get(keyString).equals(s)) {
+            			
+            		}
+            	}
+        	}
+    		
+    }*/
+    public static String getKeyForSeat(Seat seat) {
+	    	for(String keyString: hmap.keySet()) { //for all keys
+	    		if(hmap.get(keyString).equals(seat)) {
+	    			return keyString;
+	    		}
+	    	}
+	    	return null;
+    }
     public static OrderItem getOrderItemFromMenuItemName(String name) {
     		List<OrderItem> allOrderItems = getAllCurrentOrderItems();
     		OrderItem orderItem = null;
@@ -820,7 +912,38 @@ public class RestoController {
     		}
     		return orderItem;
     }
-
+    public static OrderItem getOrderItemFromNameWithSeatKey(String orderItemNameWithSeatKey) {
+    		int length = orderItemNameWithSeatKey.length();
+    		String orderItemName = orderItemNameWithSeatKey.substring(0, length-5);
+    		String seatKey = orderItemNameWithSeatKey.substring(length-4, length);
+    		Seat seat = hmap.get(seatKey);
+    		
+		List<OrderItem> currOrderItems = getAllCurrentOrderItems();
+		//OrderItem orderItemWanted = null;
+		for(OrderItem oi: currOrderItems) {
+			String oiName = oi.getPricedMenuItem().getMenuItem().getName();
+			List<Seat> oi_seats = oi.getSeats();
+			for(Seat s: oi_seats) {
+				if(oiName.equals(orderItemName) && s.equals(seat)) {
+					return oi;
+				}
+			}
+		//	if(oiName.equals(orderItemName)) {
+		//		orderItemWanted= i;
+		//	}
+		}
+		return null;
+    }
+  /*  public static void tempCancelOrder(Table table) {
+	 	Order curOrder = table.getOrder(table.numberOfOrders()-1);
+		List<OrderItem> orderItemsOfTable = curOrder.getOrderItems();
+		for(int i=0;i<orderItemsOfTable.size();i++) {
+			orderItemsOfTable.get(i).delete();
+		}*/
+	/*	for(OrderItem o: orderItemsOfTable) {
+			o.delete(); //delete all order items of the table 
+		}*/
+  //  }
 
     /**
      * Order a menu item to a seat
@@ -833,7 +956,6 @@ public class RestoController {
      */
 
     public static void orderMenuItem(MenuItem menuItem, int quantity, List<Seat> seats) throws InvalidInputException {
-
         if (!(quantity > 0)) {
             throw new InvalidInputException("Please enter a positive quantity.\n");
         }
