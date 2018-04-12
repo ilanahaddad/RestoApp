@@ -987,7 +987,11 @@ public class RestoAppPage extends JFrame {
 								double unitPrice = item.getPricedMenuItem().getPrice();
 								String totalPrice = df.format(qty * unitPrice / splitBetween);
 								totalBillPrice = totalBillPrice + (qty * unitPrice / splitBetween);
-								displayItems = displayItems + "\n" + qty + "/" + splitBetween + " " + name + "---" + totalPrice; 
+								String displayNum = "" + qty;
+								if (splitBetween != 1) {
+									displayNum = displayNum + "/"+ splitBetween;
+								}
+								displayItems = displayItems + "\n" + displayNum + " " + name + "---" + totalPrice; 
 							}
 						}
 					}
