@@ -694,7 +694,7 @@ public class RestoController {
             throw new InvalidInputException("Order to end is not part of current orders");
         }
         
-        if (orderToEnd.getBills().size() < 1) {
+        if (!orderToEnd.hasBills() && orderToEnd.getOrderItems().size() >0) {
             throw new InvalidInputException("The bill hasnt been paid for some tables"); 
         }
 
