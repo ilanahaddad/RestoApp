@@ -35,13 +35,17 @@ class Table {
 		i.addSeat(s);
          } -> Ordered;
          cancelOrderItem(OrderItem i) [iIsLastItem(i)] / {
-            // delete order item
+            i.delete(); // delete order item
          } -> NothingOrdered;
          cancelOrderItem(OrderItem i) [!iIsLastItem(i)] / {
-            // delete order item
+            i.delete(); // delete order item
          } -> Ordered;
-         cancelOrder() / {
-            // delete all order items of the table
+         cancelOrder() / { // delete all order items of the table
+        	 	Order curOrder = this.getOrder(this.numberOfOrders()-1);
+        		List<OrderItem> orderItemsOfTable = curOrder.getOrderItems();
+        		for(int i=0;i<orderItemsOfTable.size();i++) {
+				orderItemsOfTable.get(i).delete(); //delete all order items of the table
+			}
          } -> NothingOrdered;
          billForSeat(Order o, Seat s) / {
             // create a new bill with the provided order and seat; if the provided seat is already assigned to
@@ -91,8 +95,10 @@ class Table {
 
    // check that the provided order item is the last item of the current order of the table
    private boolean iIsLastItem(OrderItem i) {
-      // TODO
-      return false;
+      Order curOrder = this.getOrder(this.numberOfOrders()-1);
+      boolean oneItemLeftOnOrder = curOrder.numberOfOrderItems() ==1;
+      OrderItem lastOrderItem = curOrder.getOrderItem(0);
+      return lastOrderItem.equals(i);
    }
 
    // check that all seats of the table have a bill that belongs to the current order of the table 
