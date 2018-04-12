@@ -591,27 +591,14 @@ public class RestoAppPage extends JFrame {
             currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
         }
 
-        List<Table> currentTables = RestoController.getCurrentTables();
-        List<Seat> seats = new ArrayList<Seat>();
-        for(Table t: currentTables) {
-        	seats.addAll(t.getSeats());
-        }
-        int currentSeatLength = seats.size();
+
+        int currentSeatLength = RestoController.hmap.keySet().size();
         String currentSeats[] = new String[currentSeatLength];
-        HashMap<String, Seat> hmap = new HashMap<String, Seat>();
         int count = 0;
-        int seatCount = 0;
-        for(Table t: currentTables) {
-        	List<Seat> seatsAtTable = t.getSeats();
-        	seatCount = 1;
-        	for(Seat s: seatsAtTable) {
-        		currentSeats[count] = "t" + t.getNumber() + "s" + seatCount;
-        		hmap.put(currentSeats[count], s);
-        		seatCount++;
-        		count++;
-        	}       	
-        }       
-        
+        for (String s: RestoController.hmap.keySet()) {
+        	currentSeats[count] = s;
+        	count++;
+        }
         panel.add(new JLabel("Select seats to add to Bill:"));
         panel.add(new JLabel("Select tables to add to Bill:"));
         panel.add(new JLabel("Select orders to add to Bill:"));
@@ -701,11 +688,11 @@ public class RestoAppPage extends JFrame {
                 		}
                 	}
                 }           
+                                
                 for(int i = 0; i < selectedSeatNums.size(); i++) {
-                	if (!passedSeats.contains(hmap.get(selectedSeatNums.get(i)))) {
-                    	passedSeats.add(hmap.get(selectedSeatNums.get(i)));                		
+                	if(!passedSeats.contains(RestoController.hmap.get(selectedSeatNums.get(i)))) {
+                		passedSeats.add(RestoController.hmap.get(selectedSeatNums.get(i)));
                 	}
-
                 }
                 RestoController.issueBill(passedSeats);
 
@@ -739,10 +726,8 @@ public class RestoAppPage extends JFrame {
 			String billName = "b" + i;
 			Bill bill = bills.get(i);
 			List<Seat> seatsToShow = bill.getIssuedForSeats();
-			int count = 0;
 			for(Seat s: seatsToShow) {
-				count++;
-				billName = billName + " t" + s.getTable().getNumber() + "s" + count;
+				billName = billName + " " + RestoController.getKeyForSeat(s);
 			}
 			currentBillNums[i] = billName;
 		}
@@ -757,7 +742,7 @@ public class RestoAppPage extends JFrame {
 			try {
 				// RestoController.removeTable((Table)currentTableList.getSelectedItem());
 				int billNum = currentBillList.getSelectedIndex();
-				RestoController.getCurrentBills().get(billNum).delete();
+				bills.get(billNum).delete();
 				
 				tablePanel.revalidate();
 				tablePanel.repaint();
@@ -806,9 +791,26 @@ public class RestoAppPage extends JFrame {
 		allBillList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				try {
+					DecimalFormat df = new DecimalFormat("#.##");
 					int billNum = allBillList.getSelectedIndex();
 					Bill selectedBill = RestoController.getCurrentBills().get(billNum);
-					String displayItems = "hello there";
+					String displayItems = "Bill " + billNum + "\n";
+					List<Seat> seats = selectedBill.getIssuedForSeats();
+					double totalBillPrice = 0;
+					for (Seat s: seats) {
+						displayItems = displayItems + "\nSeat " + RestoController.getKeyForSeat(s);
+						List<OrderItem> items = s.getOrderItems();
+						for(OrderItem item: items) {
+							int qty = item.getQuantity();
+							int splitBetween = item.getSeats().size();
+							String name = item.getPricedMenuItem().getMenuItem().getName();
+							double unitPrice = item.getPricedMenuItem().getPrice();
+							String totalPrice = df.format(qty * unitPrice / splitBetween);
+							totalBillPrice = totalBillPrice + (qty * unitPrice / splitBetween);
+							displayItems = displayItems + "\n" + qty + "/" + splitBetween + " " + name + "---" + totalPrice; 
+						}
+					}
+					displayItems = displayItems + "\n\nBILL TOTAL = $" + df.format(totalBillPrice);
 					display.setText(displayItems);
 				}catch (NumberFormatException e) {
 				}catch (Exception error)
@@ -827,7 +829,7 @@ public class RestoAppPage extends JFrame {
 		gbc.gridy = 0;  
 		gbc.gridwidth = 2;
 		gbc.insets = new Insets(10,0,0,0);
-		panel.add(new JLabel("Select table:"), gbc);  
+		panel.add(new JLabel("Select bill:"), gbc);  
 		
 		
 		gbc.gridx = 0;  

@@ -903,7 +903,16 @@ public class RestoController {
 
     }
 
-
+    public static String getKeyForSeat(Seat seat) {
+    	for(String k: hmap.keySet()) {
+    		if(hmap.get(k).equals(seat)) {
+    			return k;
+    		}
+    	}
+       	return null;
+    }
+    
+    
     public static List<Bill> getCurrentBills() {
         RestoApp restoApp = RestoAppApplication.getRestoApp();
         return restoApp.getBills();
@@ -997,7 +1006,7 @@ public class RestoController {
     	s.addBill(newBill);
     }
 
-	private static void tempbillForSeat(Order lastOrder, Seat s) {
+	private static void tempbillForSeat(Order o, Seat s) {
 		List<Bill> otherBills = s.getBills();	
     	if (otherBills.size() > 0) {
    			for(int i = 0; i < otherBills.size(); i++) {
@@ -1009,8 +1018,8 @@ public class RestoController {
 				}
 			}
 		}
-    	s.addBill(new Bill(lastOrder, RestoAppApplication.getRestoApp(), s));
-    	lastOrder.addBill(s.getBill(0));
+    	s.addBill(new Bill(o, RestoAppApplication.getRestoApp(), s));
+    	o.addBill(s.getBill(0));
 	}
 
     
