@@ -1072,7 +1072,7 @@ public class RestoController {
         return restoApp.getBills();
     }
 
-    public static void issueBill(List<Seat> seats) throws InvalidInputException{
+    public static Bill issueBill(List<Seat> seats) throws InvalidInputException{
         	RestoApp restoApp = RestoAppApplication.getRestoApp();
         	if(seats == null) {
                 throw new InvalidInputException("Error: Seats can't be null.\n");
@@ -1123,14 +1123,14 @@ public class RestoController {
             for(Seat s: seats) {
             	t = s.getTable();
             	if(billCreated) {
-            		tempaddToBill(newBill, s);
+            		t.addToBill(newBill, s);
             	}
             	else {
             		Bill lastBill = null;
             		if(lastOrder.numberOfBills() > 0) {
             			lastBill = lastOrder.getBill(lastOrder.numberOfBills()-1);
             		}
-            		tempbillForSeat(lastOrder, s);
+            		t.billForSeat(lastOrder, s);
             		if((lastOrder.numberOfBills() > 0) && (!lastOrder.getBill(lastOrder.numberOfBills() - 1).equals(lastBill))) {
             			billCreated = true;
             			newBill = lastOrder.getBill(lastOrder.numberOfBills() - 1);
@@ -1141,6 +1141,7 @@ public class RestoController {
             	throw new InvalidInputException("Error: Bill not created");
             }
             RestoAppApplication.save();
+            return newBill;
         }
 
 

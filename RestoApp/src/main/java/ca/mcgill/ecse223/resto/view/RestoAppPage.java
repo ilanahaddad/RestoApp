@@ -854,12 +854,29 @@ public class RestoAppPage extends JFrame {
 						passedSeats.add(RestoController.hmap.get(selectedSeatNums.get(i)));
 					}
 				}
-				RestoController.issueBill(passedSeats);
+				Bill b = RestoController.issueBill(passedSeats);
+				
+				DecimalFormat df = new DecimalFormat("#.##");
+				String displayItems = "";
+				List<Seat> seats = b.getIssuedForSeats();
+				double totalBillPrice = 0;
+				for (Seat s: seats) {
+					List<OrderItem> items = s.getOrderItems();
+					for(OrderItem item: items) {
+						if(RestoController.getCurrentOrders().contains(item.getOrder())) {
+							int qty = item.getQuantity();
+							int splitBetween = item.getSeats().size();
+							double unitPrice = item.getPricedMenuItem().getPrice();
+							totalBillPrice = totalBillPrice + (qty * unitPrice / splitBetween); 
+						}
+					}
+				}
+				displayItems = displayItems + "BILL TOTAL = $" + df.format(totalBillPrice);
 				
 				tablePanel.revalidate();
 				tablePanel.repaint();
 				
-				JOptionPane.showMessageDialog(null, "Bill started successfully.");
+				JOptionPane.showMessageDialog(null, "Bill started successfully.\n" + displayItems);
 			}
 			catch (Exception error)
 			{
