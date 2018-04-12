@@ -1405,7 +1405,6 @@ public class RestoAppPage extends JFrame {
 			} catch (Exception error) {
 				JOptionPane.showMessageDialog(null, error.getMessage(), "Could not add item to order",
 				JOptionPane.ERROR_MESSAGE);
-				error.printStackTrace();
 			}
 			
 		});
