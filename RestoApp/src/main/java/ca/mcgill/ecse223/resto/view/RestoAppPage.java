@@ -795,7 +795,11 @@ public class RestoAppPage extends JFrame {
 		String currentOrderNums[] = new String[currentOrderLength];
 		List<Order> currentOrders = RestoController.getCurrentOrders();
 		for (int i = 0; i < currentOrderLength; i++){
-			currentOrderNums[i] = "" + currentOrders.get(i).getNumber();
+			currentOrderNums[i] = "O" + currentOrders.get(i).getNumber() +" -";
+			for (Table t: currentOrders.get(i).getTables()) {
+					String seatName = " T" + t.getNumber();
+					currentOrderNums[i] = currentOrderNums[i] + seatName;
+			}
 			//for (Table t: currentOrders.get(i).getTables()) {
 				//currentOrderNums[i] = currentOrderNums[i] + " T" + t.getNumber();
 			//}
@@ -824,12 +828,11 @@ public class RestoAppPage extends JFrame {
 		if (result == JOptionPane.OK_OPTION){
 			try{
 				List<String> selectedTablesNums = allTablesList.getSelectedValuesList();
-				List<String> selectedOrderNums = allOrdersList.getSelectedValuesList();
+				int selectedOrderIndices[] = allOrdersList.getSelectedIndices();
 				List<String> selectedSeatNums = allSeatsList.getSelectedValuesList();
 				List<Seat> passedSeats = new ArrayList<Seat>();
-				for (int i = 0; i <selectedOrderNums.size(); i++) {
-					int orderNum = Integer.parseInt((String) selectedOrderNums.get(i));
-					Order O = RestoController.getCurrentOrder(orderNum);
+				for (int i = 0; i <selectedOrderIndices.length; i++) {
+					Order O = currentOrders.get(selectedOrderIndices[i]);
 					for (Table t: O.getTables()) {
 						for(Seat s: t.getSeats()) {
 							if(!passedSeats.contains(s)) {
