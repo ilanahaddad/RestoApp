@@ -25,15 +25,12 @@ public class RestoApp implements Serializable
   private Menu menu;
   private List<PricedMenuItem> pricedMenuItems;
   private List<Bill> bills;
-  private Statistics statistics;
-  private List<StatisticsTable> statisticsTables;
-  private List<StatisticsItem> statisticsItems;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public RestoApp(Menu aMenu, Statistics aStatistics)
+  public RestoApp(Menu aMenu)
   {
     reservations = new ArrayList<Reservation>();
     tables = new ArrayList<Table>();
@@ -47,13 +44,6 @@ public class RestoApp implements Serializable
     menu = aMenu;
     pricedMenuItems = new ArrayList<PricedMenuItem>();
     bills = new ArrayList<Bill>();
-    if (aStatistics == null || aStatistics.getRestoApp() != null)
-    {
-      throw new RuntimeException("Unable to create RestoApp due to aStatistics");
-    }
-    statistics = aStatistics;
-    statisticsTables = new ArrayList<StatisticsTable>();
-    statisticsItems = new ArrayList<StatisticsItem>();
   }
 
   public RestoApp()
@@ -66,9 +56,6 @@ public class RestoApp implements Serializable
     menu = new Menu(this);
     pricedMenuItems = new ArrayList<PricedMenuItem>();
     bills = new ArrayList<Bill>();
-    statistics = new Statistics(this);
-    statisticsTables = new ArrayList<StatisticsTable>();
-    statisticsItems = new ArrayList<StatisticsItem>();
   }
 
   //------------------------
@@ -296,71 +283,6 @@ public class RestoApp implements Serializable
   public int indexOfBill(Bill aBill)
   {
     int index = bills.indexOf(aBill);
-    return index;
-  }
-
-  public Statistics getStatistics()
-  {
-    return statistics;
-  }
-
-  public StatisticsTable getStatisticsTable(int index)
-  {
-    StatisticsTable aStatisticsTable = statisticsTables.get(index);
-    return aStatisticsTable;
-  }
-
-  public List<StatisticsTable> getStatisticsTables()
-  {
-    List<StatisticsTable> newStatisticsTables = Collections.unmodifiableList(statisticsTables);
-    return newStatisticsTables;
-  }
-
-  public int numberOfStatisticsTables()
-  {
-    int number = statisticsTables.size();
-    return number;
-  }
-
-  public boolean hasStatisticsTables()
-  {
-    boolean has = statisticsTables.size() > 0;
-    return has;
-  }
-
-  public int indexOfStatisticsTable(StatisticsTable aStatisticsTable)
-  {
-    int index = statisticsTables.indexOf(aStatisticsTable);
-    return index;
-  }
-
-  public StatisticsItem getStatisticsItem(int index)
-  {
-    StatisticsItem aStatisticsItem = statisticsItems.get(index);
-    return aStatisticsItem;
-  }
-
-  public List<StatisticsItem> getStatisticsItems()
-  {
-    List<StatisticsItem> newStatisticsItems = Collections.unmodifiableList(statisticsItems);
-    return newStatisticsItems;
-  }
-
-  public int numberOfStatisticsItems()
-  {
-    int number = statisticsItems.size();
-    return number;
-  }
-
-  public boolean hasStatisticsItems()
-  {
-    boolean has = statisticsItems.size() > 0;
-    return has;
-  }
-
-  public int indexOfStatisticsItem(StatisticsItem aStatisticsItem)
-  {
-    int index = statisticsItems.indexOf(aStatisticsItem);
     return index;
   }
 
@@ -838,150 +760,6 @@ public class RestoApp implements Serializable
     return wasAdded;
   }
 
-  public static int minimumNumberOfStatisticsTables()
-  {
-    return 0;
-  }
-  /* Code from template association_AddManyToOne */
-  public StatisticsTable addStatisticsTable(int aNumUsed, Statistics aStatistics)
-  {
-    return new StatisticsTable(aNumUsed, this, aStatistics);
-  }
-
-  public boolean addStatisticsTable(StatisticsTable aStatisticsTable)
-  {
-    boolean wasAdded = false;
-    if (statisticsTables.contains(aStatisticsTable)) { return false; }
-    RestoApp existingRestoApp = aStatisticsTable.getRestoApp();
-    boolean isNewRestoApp = existingRestoApp != null && !this.equals(existingRestoApp);
-    if (isNewRestoApp)
-    {
-      aStatisticsTable.setRestoApp(this);
-    }
-    else
-    {
-      statisticsTables.add(aStatisticsTable);
-    }
-    wasAdded = true;
-    return wasAdded;
-  }
-
-  public boolean removeStatisticsTable(StatisticsTable aStatisticsTable)
-  {
-    boolean wasRemoved = false;
-    //Unable to remove aStatisticsTable, as it must always have a restoApp
-    if (!this.equals(aStatisticsTable.getRestoApp()))
-    {
-      statisticsTables.remove(aStatisticsTable);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-
-  public boolean addStatisticsTableAt(StatisticsTable aStatisticsTable, int index)
-  {  
-    boolean wasAdded = false;
-    if(addStatisticsTable(aStatisticsTable))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfStatisticsTables()) { index = numberOfStatisticsTables() - 1; }
-      statisticsTables.remove(aStatisticsTable);
-      statisticsTables.add(index, aStatisticsTable);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveStatisticsTableAt(StatisticsTable aStatisticsTable, int index)
-  {
-    boolean wasAdded = false;
-    if(statisticsTables.contains(aStatisticsTable))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfStatisticsTables()) { index = numberOfStatisticsTables() - 1; }
-      statisticsTables.remove(aStatisticsTable);
-      statisticsTables.add(index, aStatisticsTable);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addStatisticsTableAt(aStatisticsTable, index);
-    }
-    return wasAdded;
-  }
-
-  public static int minimumNumberOfStatisticsItems()
-  {
-    return 0;
-  }
-  /* Code from template association_AddManyToOne */
-  public StatisticsItem addStatisticsItem(int aNumOrdered, Statistics aStatistics)
-  {
-    return new StatisticsItem(aNumOrdered, this, aStatistics);
-  }
-
-  public boolean addStatisticsItem(StatisticsItem aStatisticsItem)
-  {
-    boolean wasAdded = false;
-    if (statisticsItems.contains(aStatisticsItem)) { return false; }
-    RestoApp existingRestoApp = aStatisticsItem.getRestoApp();
-    boolean isNewRestoApp = existingRestoApp != null && !this.equals(existingRestoApp);
-    if (isNewRestoApp)
-    {
-      aStatisticsItem.setRestoApp(this);
-    }
-    else
-    {
-      statisticsItems.add(aStatisticsItem);
-    }
-    wasAdded = true;
-    return wasAdded;
-  }
-
-  public boolean removeStatisticsItem(StatisticsItem aStatisticsItem)
-  {
-    boolean wasRemoved = false;
-    //Unable to remove aStatisticsItem, as it must always have a restoApp
-    if (!this.equals(aStatisticsItem.getRestoApp()))
-    {
-      statisticsItems.remove(aStatisticsItem);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-
-  public boolean addStatisticsItemAt(StatisticsItem aStatisticsItem, int index)
-  {  
-    boolean wasAdded = false;
-    if(addStatisticsItem(aStatisticsItem))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfStatisticsItems()) { index = numberOfStatisticsItems() - 1; }
-      statisticsItems.remove(aStatisticsItem);
-      statisticsItems.add(index, aStatisticsItem);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveStatisticsItemAt(StatisticsItem aStatisticsItem, int index)
-  {
-    boolean wasAdded = false;
-    if(statisticsItems.contains(aStatisticsItem))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfStatisticsItems()) { index = numberOfStatisticsItems() - 1; }
-      statisticsItems.remove(aStatisticsItem);
-      statisticsItems.add(index, aStatisticsItem);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addStatisticsItemAt(aStatisticsItem, index);
-    }
-    return wasAdded;
-  }
-
   public void delete()
   {
     while (reservations.size() > 0)
@@ -1025,26 +803,6 @@ public class RestoApp implements Serializable
       Bill aBill = bills.get(bills.size() - 1);
       aBill.delete();
       bills.remove(aBill);
-    }
-    
-    Statistics existingStatistics = statistics;
-    statistics = null;
-    if (existingStatistics != null)
-    {
-      existingStatistics.delete();
-    }
-    while (statisticsTables.size() > 0)
-    {
-      StatisticsTable aStatisticsTable = statisticsTables.get(statisticsTables.size() - 1);
-      aStatisticsTable.delete();
-      statisticsTables.remove(aStatisticsTable);
-    }
-    
-    while (statisticsItems.size() > 0)
-    {
-      StatisticsItem aStatisticsItem = statisticsItems.get(statisticsItems.size() - 1);
-      aStatisticsItem.delete();
-      statisticsItems.remove(aStatisticsItem);
     }
     
   }
