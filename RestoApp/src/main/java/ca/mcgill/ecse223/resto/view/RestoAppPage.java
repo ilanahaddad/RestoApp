@@ -832,12 +832,16 @@ public class RestoAppPage extends JFrame {
 		String currentOrderNums[] = new String[currentOrderLength];
 		List<Order> currentOrders = RestoController.getCurrentOrders();
 		for (int i = 0; i < currentOrderLength; i++){
-			currentOrderNums[i] = "" + currentOrders.get(i).getNumber();
+			currentOrderNums[i] = "O" + currentOrders.get(i).getNumber();
+			for (Table t: currentOrders.get(i).getTables()) {
+				currentOrderNums[i] = currentOrderNums[i] + " T" + t.getNumber();
+			}
 		}
 		
 		DefaultListModel<String> listOrderNums = new DefaultListModel<>();
 		for(int i=0; i<currentOrderNums.length;i++) { //fill list for UI with wanted list (element per element)
 			listOrderNums.addElement(currentOrderNums[i]);
+			
 		}
 		JList<String> allOrdersList  = new JList<>(listOrderNums); //now list has order nums of current tables
 		allOrdersList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
