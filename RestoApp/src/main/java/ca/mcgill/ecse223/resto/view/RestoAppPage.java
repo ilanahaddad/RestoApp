@@ -104,7 +104,9 @@ public class RestoAppPage extends JFrame {
 		// TODO before submitting split into different tabs (system, table, menu)
 		JMenuBar menubar = new JMenuBar();
 		JMenu actions = new JMenu("Actions");
-		JMenu manageBillsMenuItem= new JMenu("Manage Bills");
+		JMenu manageBillsMenuItem = new JMenu("Bills");
+		JMenu manageTablesMenuItem = new JMenu("Tables");
+		JMenu manageOrderMenuItem = new JMenu("Orders");
 		JMenuItem exitMenuItem = createMenuItem("Exit", RestoAppActions.EXIT_ACTION);
 		JMenuItem addTableMenuItem = createMenuItem("Add Table", this::addTableAction);
 		JMenuItem changeTableMenuItem = createMenuItem("Change Table", this::updateTableAction);
@@ -117,14 +119,13 @@ public class RestoAppPage extends JFrame {
 		JMenuItem endOrderMenuItem = createMenuItem("End Order", this::endOrderAction);
 		JMenuItem orderMenuItem = createMenuItem("Order Menu Item", this::orderMenuItemAction);
 		JMenuItem newBillMenuItem = createMenuItem("New Bill", this::newBillAction);
-        JMenuItem viewBillMenuItem = createMenuItem("View Bill", this::viewBillAction);
-        JMenuItem cancelBillMenuItem = createMenuItem("Cancel Bill", this::cancelBillAction);
+		JMenuItem viewBillMenuItem = createMenuItem("View Bill", this::viewBillAction);
+		JMenuItem cancelBillMenuItem = createMenuItem("Cancel Bill", this::cancelBillAction);
 		JMenuItem businessStatistics = createMenuItem("Business Statistics", this::businessStatisticsAction);
+		
 		JMenuItem cancelOrderItem = createMenuItem("Cancel Order Item", this::cancelOrderItemAction);
 		JMenuItem cancelOrder = createMenuItem("Cancel Order", this::cancelOrderAction);
-
-		actions.add(cancelOrder);
-		actions.add(cancelOrderItem);
+		
 		actions.add(businessStatistics);
 		actions.add(orderMenuItem);
 		actions.add(endOrderMenuItem);
@@ -136,12 +137,29 @@ public class RestoAppPage extends JFrame {
 		actions.add(moveTableMenuItem);
 		actions.add(removeTableMenuItem);
 		actions.add(menuMenuItem);
-        actions.add(manageBillsMenuItem);
+		actions.add(reservationMenuItem);
+		actions.add(manageTablesMenuItem);
+		actions.add(manageOrderMenuItem);
+		actions.add(manageBillsMenuItem);
+		actions.add(businessStatistics);
 		actions.add(exitMenuItem);
 		menubar.add(actions);
+		
+		manageTablesMenuItem.add(addTableMenuItem);
+		manageTablesMenuItem.add(changeTableMenuItem);
+		manageTablesMenuItem.add(moveTableMenuItem);
+		manageTablesMenuItem.add(removeTableMenuItem);
+		
+		manageOrderMenuItem.add(startOrderMenuItem);
+		manageOrderMenuItem.add(orderMenuItem);
+		manageOrderMenuItem.add(viewOrderMenuItem);
+		manageOrderMenuItem.add(cancelOrderItem);
+		manageOrderMenuItem.add(cancelOrder);
+		manageOrderMenuItem.add(endOrderMenuItem);
+		
 		manageBillsMenuItem.add(newBillMenuItem);
-        manageBillsMenuItem.add(viewBillMenuItem);
-        manageBillsMenuItem.add(cancelBillMenuItem);
+		manageBillsMenuItem.add(viewBillMenuItem);
+		manageBillsMenuItem.add(cancelBillMenuItem);
 		setJMenuBar(menubar);
 	}
 	
@@ -167,19 +185,10 @@ public class RestoAppPage extends JFrame {
 		this::displayMenuAction);
 		JButton reserveTableButton = createButton("reserveTable.png", "Make Reservation [Alt + R]", KeyEvent.VK_R,
 		this::reserveTableAction);
-		JButton startOrderButton = createButton("startOrder.png", "Start Order [Alt + O]", KeyEvent.VK_O,
-		this::startOrderAction);
-		JButton viewOrderButton = createButton("viewOrder.png", "View Order [Alt + V]", KeyEvent.VK_V, 
-		this::viewOrderAction);
-		JButton endOrderButton = createButton("endOrder.png", "Start Order [Alt + E]", KeyEvent.VK_E,
-		this::endOrderAction);
-		JButton orderMenuItemButton = createButton("orderMenuItem.png", "Order Menu Item [Alt + I]", KeyEvent.VK_I,
-		this::orderMenuItemAction);
 		JButton businessStatisticsButton = createButton("businessStatistics.png", "View Business Statistics [Alt + 1]", KeyEvent.VK_1,
 		this::businessStatisticsAction);
-		JButton cancelOrderItemButton = createButton("cancelOrderItem.png", "Cancel Order Item [Alt + C]", KeyEvent.VK_E, this::cancelOrderItemAction);
-		JButton cancelOrderButton = createButton("cancelOrder.png", "Cancel Order [Alt + F]", KeyEvent.VK_E, this::cancelOrderAction);
-		JButton billManagerButton = createButton("billManager.png", "Start Bill Manager [Alt + B]", KeyEvent.VK_B, this::billManagerAction);
+		JButton billManagerButton = createButton("issueBill.png", "Start Bill Manager [Alt + B]", KeyEvent.VK_B, this::billManagerAction);
+		JButton orderManagerButton = createButton("orderManager.png", "Start Order Manager [Alt + O]", KeyEvent.VK_U, this::orderManagerAction);
 		
 		toolbar.add(exitButton);
 		toolbar.add(addTableButton);
@@ -188,13 +197,8 @@ public class RestoAppPage extends JFrame {
 		toolbar.add(removeTableButton);
 		toolbar.add(displayMenuButton);
 		toolbar.add(reserveTableButton);
-		toolbar.add(startOrderButton);
-		toolbar.add(viewOrderButton);
-		toolbar.add(endOrderButton);
-		toolbar.add(orderMenuItemButton);
 		toolbar.add(businessStatisticsButton);
-		toolbar.add(cancelOrderItemButton);
-		toolbar.add(cancelOrderButton);      
+		toolbar.add(orderManagerButton);
 		toolbar.add(billManagerButton);
 		add(toolbar, BorderLayout.NORTH);
 	}
@@ -238,6 +242,37 @@ public class RestoAppPage extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
+	private void orderManagerAction(ActionEvent event){
+		JFrame f = new JFrame("Order Manager");
+		JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+		JButton startOrderButton = createButton("startOrder.png", "Start Order [Alt + O]", KeyEvent.VK_O,
+		this::startOrderAction);
+		JButton orderMenuItemButton = createButton("orderMenuItem.png", "Order Menu Item [Alt + I]", KeyEvent.VK_I,
+		this::orderMenuItemAction);
+		JButton viewOrderButton = createButton("viewOrder.png", "View Order [Alt + V]", KeyEvent.VK_V, 
+		this::viewOrderAction);
+		JButton cancelOrderItemButton = createButton("cancelOrderItem.png", "Cancel Order Item [Alt + C]", KeyEvent.VK_E, this::cancelOrderItemAction);
+		JButton cancelOrderButton = createButton("cancelOrder.png", "Cancel Order [Alt + F]", KeyEvent.VK_E, this::cancelOrderAction);
+		JButton endOrderButton = createButton("endOrder.png", "Start Order [Alt + E]", KeyEvent.VK_E,
+		this::endOrderAction);
+		panel.add(startOrderButton);
+		panel.add(viewOrderButton);
+		panel.add(orderMenuItemButton);
+		panel.add(cancelOrderItemButton);
+		panel.add(cancelOrderButton);
+		panel.add(endOrderButton);
+		
+		f.add(panel);
+		f.setSize(400,150);
+		// f.setLayout(new FlowLayout());
+		f.setLocationRelativeTo(null);
+		f.setVisible(true);
+		f.setResizable(false);
+		panel.validate();
+		panel.repaint();
+	}
+	
+	
 	private void configureScrollbar(JScrollPane scrollbar) {
 		scrollbar.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollbar.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -249,7 +284,7 @@ public class RestoAppPage extends JFrame {
 	
 	private void cancelOrderItemAction(ActionEvent event) { //author: ilanahaddad
 		JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
-
+		
 		List<String> orderItems = RestoController.getAllCurrentOrderItemsNamesWithSeatKey();
 		//List<String> orderItems = RestoController.getAllCurrentOrderItemsNamesWithSeatKey2();
 		if(orderItems != null) {
@@ -257,10 +292,10 @@ public class RestoAppPage extends JFrame {
 		}
 		else {
 			JOptionPane.showMessageDialog(
-					null,
-					"RestoApp currently has no seats with order items",
-					"Cancel Order Items Currently Unavailable",
-					JOptionPane.INFORMATION_MESSAGE);
+			null,
+			"RestoApp currently has no seats with order items",
+			"Cancel Order Items Currently Unavailable",
+			JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 	private void displayCancelOrderItemAction(JPanel panel, List<String> orderItems) { //author: ilanahaddad
@@ -270,13 +305,13 @@ public class RestoAppPage extends JFrame {
 		for(int i=0; i< numOrderItems; i++) {
 			orderItemsArray[i] = orderItems.get(i);
 		}
-
+		
 		panel.add(new JLabel("Select order item to cancel:"));
 		JComboBox<String> orderItemsBox = new JComboBox<String>(orderItemsArray);
 		panel.add(orderItemsBox);
-
+		
 		int result = JOptionPane.showConfirmDialog(null, panel, "Cancel Order Item",
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if (result == JOptionPane.OK_OPTION){
 			try{
 				int indexSelected = orderItemsBox.getSelectedIndex();
@@ -290,22 +325,22 @@ public class RestoAppPage extends JFrame {
 				
 				tablePanel.revalidate();
 				tablePanel.repaint();
-
+				
 				JOptionPane.showMessageDialog(null, "Order items cancelled successfully.");
 			}
 			catch (Exception error){
 				error.printStackTrace();
 				JOptionPane.showMessageDialog(
-						null,
-						error.getMessage(),
-						"Could not cancel order item",
-						JOptionPane.ERROR_MESSAGE);
+				null,
+				error.getMessage(),
+				"Could not cancel order item",
+				JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else {
 			JOptionPane.showMessageDialog(null, "No order items were cancelled.");
 		}
-
+		
 	}
 	/*
 	private void displayCancelOrderItemAction(JPanel panel, List<MenuItem> menuItemsOrdered) { //author: ilanahaddad
@@ -315,54 +350,54 @@ public class RestoAppPage extends JFrame {
 		for(int i=0; i< numMenuItems; i++) {
 			menuItemNamesArray[i] = menuItemsOrdered.get(i).getName();
 		}
-
+		
 		panel.add(new JLabel("Select order item to cancel:"));
 		JComboBox<String> menuItemsOrderedList = new JComboBox<String>(menuItemNamesArray);
 		panel.add(menuItemsOrderedList);
-
+		
 		int result = JOptionPane.showConfirmDialog(null, panel, "Cancel Order Item",
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if (result == JOptionPane.OK_OPTION){
 			try{
 				String menuItemNameSelected = (String) menuItemsOrderedList.getSelectedItem();
 				OrderItem orderItemSelected = RestoController.getOrderItemFromMenuItemName(menuItemNameSelected);
 				RestoController.cancelOrderItem(orderItemSelected);
-
+				
 				tablePanel.revalidate();
 				tablePanel.repaint();
-
+				
 				JOptionPane.showMessageDialog(null, "Order items cancelled successfully.");
 			}
 			catch (Exception error){
 				error.printStackTrace();
 				JOptionPane.showMessageDialog(
-						null,
-						error.getMessage(),
-						"Could not cancel order item",
-						JOptionPane.ERROR_MESSAGE);
+				null,
+				error.getMessage(),
+				"Could not cancel order item",
+				JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else {
 			JOptionPane.showMessageDialog(null, "No order items were cancelled.");
 		}
-
+		
 	}*/
 	private void cancelOrderAction(ActionEvent event) { //author: ilanahaddad
 		JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
-
+		
 		//create array of current table numbers
 		int currentLength = RestoController.getCurrentTables().size();
 		String currentTableNums[] = new String[currentLength];
 		for (int i = 0; i < currentLength; i++){
 			currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
 		}
-
+		
 		panel.add(new JLabel("Select table to cancel all order items for:"));
 		JComboBox<String> allTablesList = new JComboBox<String>(currentTableNums);
 		panel.add(allTablesList);
-
+		
 		int result = JOptionPane.showConfirmDialog(null, panel, "Cancel Order",
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		if (result == JOptionPane.OK_OPTION){
 			try{
 				int tableNum = Integer.parseInt((String) allTablesList.getSelectedItem());
@@ -372,22 +407,22 @@ public class RestoAppPage extends JFrame {
 					return;
 				}
 				RestoController.cancelOrder(selectedTable);
-
+				
 				tablePanel.revalidate();
 				tablePanel.repaint();
-
+				
 				JOptionPane.showMessageDialog(null, "Order cancelled successfully.");
 			}
 			catch (Exception error)
 			{
 				error.printStackTrace();
 				JOptionPane.showMessageDialog(
-						null,
-						error.getMessage(),
-						"Could cancel order",
-						JOptionPane.ERROR_MESSAGE);
+				null,
+				error.getMessage(),
+				"Could cancel order",
+				JOptionPane.ERROR_MESSAGE);
 			}
-
+			
 		}
 		else {
 			JOptionPane.showMessageDialog(null, "No orders were cancelled.");
@@ -628,9 +663,9 @@ public class RestoAppPage extends JFrame {
 		String dessert = "DESSERT\n";
 		String alcoholicBev = "ALCOHOLIC BEVERAGES\n";
 		String nonAlcoholicBev = "NON-ALCOHOLIC BEVERAGES\n";
-
+		
 		DecimalFormat df = new DecimalFormat("#.##");
-
+		
 		for (OrderItem oi : orderItems)
 		{
 			int qty = oi.getQuantity();
@@ -717,19 +752,20 @@ public class RestoAppPage extends JFrame {
 		}
 	}
 	
-    private void billManagerAction(ActionEvent event){
-    	JFrame f = new JFrame("Bill Manager");
-    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
-        JButton newBill = new JButton("New Bill");
-        newBill.addActionListener(this::newBillAction);
-        panel.add(newBill);
-        JButton viewBill = new JButton("View Bill");
-        viewBill.addActionListener(this::viewBillAction);
-        panel.add(viewBill);
-        JButton cancelBill = new JButton("Cancel Bill");
-        cancelBill.addActionListener(this::cancelBillAction);
-        panel.add(cancelBill);
-    	f.add(panel);
+	
+	private void billManagerAction(ActionEvent event){
+		JFrame f = new JFrame("Bill Manager");
+		JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+		JButton newBill = new JButton("New Bill");
+		newBill.addActionListener(this::newBillAction);
+		panel.add(newBill);
+		JButton viewBill = new JButton("View Bill");
+		viewBill.addActionListener(this::viewBillAction);
+		panel.add(viewBill);
+		JButton cancelBill = new JButton("Cancel Bill");
+		cancelBill.addActionListener(this::cancelBillAction);
+		panel.add(cancelBill);
+		f.add(panel);
 		f.setSize(400,150);
 		// f.setLayout(new FlowLayout());
 		f.setLocationRelativeTo(null);
@@ -737,146 +773,146 @@ public class RestoAppPage extends JFrame {
 		f.setResizable(false);
 		panel.validate();
 		panel.repaint();
-        }
-    
-    private void newBillAction(ActionEvent event){
-    	JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
-
-        int currentTableLength = RestoController.getCurrentTables().size();
-        String currentTableNums[] = new String[currentTableLength];
-        for (int i = 0; i < currentTableLength; i++){
-            currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
-        }
-
-
-        int currentSeatLength = RestoController.hmap.keySet().size();
-        String currentSeats[] = new String[currentSeatLength];
-        int count = 0;
-        for (String s: RestoController.hmap.keySet()) {
-        	currentSeats[count] = s;
-        	count++;
-        }
-        panel.add(new JLabel("Select seats to add to Bill:"));
-        panel.add(new JLabel("Select tables to add to Bill:"));
-        panel.add(new JLabel("Select orders to add to Bill:"));
-        DefaultListModel<String> listSeatNums = new DefaultListModel<>();
-        for(int i=0; i<currentSeats.length;i++) { //fill list for UI with wanted list (element per element)
-            listSeatNums.addElement(currentSeats[i]);
-        }
-        JList<String> allSeatsList  = new JList<>(currentSeats); //now list has table nums of current tables
-        allSeatsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-        //SCROLLBAR:
-        allSeatsList.setVisibleRowCount(3);
-        JScrollPane scrollPaneSeats = new JScrollPane(allSeatsList);
-        scrollPaneSeats.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-        //panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
-        panel.add(scrollPaneSeats);
-
-        
-
-        DefaultListModel<String> listTableNums = new DefaultListModel<>();
-        for(int i=0; i<currentTableNums.length;i++) { //fill list for UI with wanted list (element per element)
-            listTableNums.addElement(currentTableNums[i]);
-        }
-        JList<String> allTablesList  = new JList<>(listTableNums); //now list has table nums of current tables
-        allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-        //SCROLLBAR:
-        allTablesList.setVisibleRowCount(3);
-        JScrollPane scrollPaneTable = new JScrollPane(allTablesList);
-        scrollPaneTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-        //panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
-        panel.add(scrollPaneTable);
-    	
-      //create array of current order numbers
-        int currentOrderLength = RestoController.getCurrentOrders().size();
-        String currentOrderNums[] = new String[currentOrderLength];
-        List<Order> currentOrders = RestoController.getCurrentOrders();
-        for (int i = 0; i < currentOrderLength; i++){
-            currentOrderNums[i] = "" + currentOrders.get(i).getNumber();
-        }
-
-        DefaultListModel<String> listOrderNums = new DefaultListModel<>();
-        for(int i=0; i<currentOrderNums.length;i++) { //fill list for UI with wanted list (element per element)
-            listOrderNums.addElement(currentOrderNums[i]);
-        }
-        JList<String> allOrdersList  = new JList<>(listOrderNums); //now list has order nums of current tables
-        allOrdersList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
-        //SCROLLBAR:
-        allOrdersList.setVisibleRowCount(3);
-        JScrollPane scrollPaneOrder = new JScrollPane(allOrdersList);
-        scrollPaneOrder.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
-        //panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
-        panel.add(scrollPaneOrder);
-    	
-
-        
-        int result = JOptionPane.showConfirmDialog(null, panel, "New Bill",
-        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-        if (result == JOptionPane.OK_OPTION){
-            try{
-            	List<String> selectedTablesNums = allTablesList.getSelectedValuesList();
-            	List<String> selectedOrderNums = allOrdersList.getSelectedValuesList();
-                List<String> selectedSeatNums = allSeatsList.getSelectedValuesList();
-                List<Seat> passedSeats = new ArrayList<Seat>();
-                for (int i = 0; i <selectedOrderNums.size(); i++) {
-                	int orderNum = Integer.parseInt((String) selectedOrderNums.get(i));
-                	Order O = RestoController.getCurrentOrder(orderNum);
-                	for (Table t: O.getTables()) {
-                		for(Seat s: t.getSeats()) {
-                    		if(!passedSeats.contains(s)) {
-                    			passedSeats.add(s);
-                    		}
-                    	} 
-                	}
-                }
-                for (int i = 0; i < selectedTablesNums.size(); i++) {
-                	int tableNum = Integer.parseInt((String) selectedTablesNums.get(i));
-                	Table t = RestoController.getTableByNum(tableNum);
-                	List<Seat> seatsAtTable = t.getSeats();
-                	for(Seat s: seatsAtTable) {
-                		if(!passedSeats.contains(s)) {
-                			passedSeats.add(s);
-                		}
-                	}
-                }           
-                                
-                for(int i = 0; i < selectedSeatNums.size(); i++) {
-                	if(!passedSeats.contains(RestoController.hmap.get(selectedSeatNums.get(i)))) {
-                		passedSeats.add(RestoController.hmap.get(selectedSeatNums.get(i)));
-                	}
-                }
-                RestoController.issueBill(passedSeats);
-
-                tablePanel.revalidate();
-                tablePanel.repaint();
-
-                JOptionPane.showMessageDialog(null, "Bill started successfully.");
-            }
-            catch (Exception error)
-            {
-            	JOptionPane.showMessageDialog(
-                null,
-                error.getMessage(),
-                "Could not start bill",
-                JOptionPane.ERROR_MESSAGE);
-
-            }
-        }
-        else {
-            JOptionPane.showMessageDialog(null, "No orders were started.");
-        }
-    }    
-
-    private void cancelBillAction(ActionEvent event){
-    	JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
+	}
+	
+	private void newBillAction(ActionEvent event){
+		JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+		
+		int currentTableLength = RestoController.getCurrentTables().size();
+		String currentTableNums[] = new String[currentTableLength];
+		for (int i = 0; i < currentTableLength; i++){
+			currentTableNums[i] = "" + RestoController.getCurrentTable(i).getNumber();
+		}
+		
+		
+		int currentSeatLength = RestoController.hmap.keySet().size();
+		String currentSeats[] = new String[currentSeatLength];
+		int count = 0;
+		for (String s: RestoController.hmap.keySet()) {
+			currentSeats[count] = s;
+			count++;
+		}
+		panel.add(new JLabel("Select seats to add to Bill:"));
+		panel.add(new JLabel("Select tables to add to Bill:"));
+		panel.add(new JLabel("Select orders to add to Bill:"));
+		DefaultListModel<String> listSeatNums = new DefaultListModel<>();
+		for(int i=0; i<currentSeats.length;i++) { //fill list for UI with wanted list (element per element)
+			listSeatNums.addElement(currentSeats[i]);
+		}
+		JList<String> allSeatsList  = new JList<>(currentSeats); //now list has table nums of current tables
+		allSeatsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		
+		//SCROLLBAR:
+		allSeatsList.setVisibleRowCount(3);
+		JScrollPane scrollPaneSeats = new JScrollPane(allSeatsList);
+		scrollPaneSeats.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		//panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
+		panel.add(scrollPaneSeats);
+		
+		
+		
+		DefaultListModel<String> listTableNums = new DefaultListModel<>();
+		for(int i=0; i<currentTableNums.length;i++) { //fill list for UI with wanted list (element per element)
+			listTableNums.addElement(currentTableNums[i]);
+		}
+		JList<String> allTablesList  = new JList<>(listTableNums); //now list has table nums of current tables
+		allTablesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		
+		//SCROLLBAR:
+		allTablesList.setVisibleRowCount(3);
+		JScrollPane scrollPaneTable = new JScrollPane(allTablesList);
+		scrollPaneTable.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		//panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
+		panel.add(scrollPaneTable);
+		
+		//create array of current order numbers
+		int currentOrderLength = RestoController.getCurrentOrders().size();
+		String currentOrderNums[] = new String[currentOrderLength];
+		List<Order> currentOrders = RestoController.getCurrentOrders();
+		for (int i = 0; i < currentOrderLength; i++){
+			currentOrderNums[i] = "" + currentOrders.get(i).getNumber();
+		}
+		
+		DefaultListModel<String> listOrderNums = new DefaultListModel<>();
+		for(int i=0; i<currentOrderNums.length;i++) { //fill list for UI with wanted list (element per element)
+			listOrderNums.addElement(currentOrderNums[i]);
+		}
+		JList<String> allOrdersList  = new JList<>(listOrderNums); //now list has order nums of current tables
+		allOrdersList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		
+		//SCROLLBAR:
+		allOrdersList.setVisibleRowCount(3);
+		JScrollPane scrollPaneOrder = new JScrollPane(allOrdersList);
+		scrollPaneOrder.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		//panel.add(allTablesList); with new scrollbar, this is replaced by add scrollpane below
+		panel.add(scrollPaneOrder);
+		
+		
+		
+		int result = JOptionPane.showConfirmDialog(null, panel, "New Bill",
+		JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		if (result == JOptionPane.OK_OPTION){
+			try{
+				List<String> selectedTablesNums = allTablesList.getSelectedValuesList();
+				List<String> selectedOrderNums = allOrdersList.getSelectedValuesList();
+				List<String> selectedSeatNums = allSeatsList.getSelectedValuesList();
+				List<Seat> passedSeats = new ArrayList<Seat>();
+				for (int i = 0; i <selectedOrderNums.size(); i++) {
+					int orderNum = Integer.parseInt((String) selectedOrderNums.get(i));
+					Order O = RestoController.getCurrentOrder(orderNum);
+					for (Table t: O.getTables()) {
+						for(Seat s: t.getSeats()) {
+							if(!passedSeats.contains(s)) {
+								passedSeats.add(s);
+							}
+						} 
+					}
+				}
+				for (int i = 0; i < selectedTablesNums.size(); i++) {
+					int tableNum = Integer.parseInt((String) selectedTablesNums.get(i));
+					Table t = RestoController.getTableByNum(tableNum);
+					List<Seat> seatsAtTable = t.getSeats();
+					for(Seat s: seatsAtTable) {
+						if(!passedSeats.contains(s)) {
+							passedSeats.add(s);
+						}
+					}
+				}           
+				
+				for(int i = 0; i < selectedSeatNums.size(); i++) {
+					if(!passedSeats.contains(RestoController.hmap.get(selectedSeatNums.get(i)))) {
+						passedSeats.add(RestoController.hmap.get(selectedSeatNums.get(i)));
+					}
+				}
+				RestoController.issueBill(passedSeats);
+				
+				tablePanel.revalidate();
+				tablePanel.repaint();
+				
+				JOptionPane.showMessageDialog(null, "Bill started successfully.");
+			}
+			catch (Exception error)
+			{
+				JOptionPane.showMessageDialog(
+				null,
+				error.getMessage(),
+				"Could not start bill",
+				JOptionPane.ERROR_MESSAGE);
+				
+			}
+		}
+		else {
+			JOptionPane.showMessageDialog(null, "No orders were started.");
+		}
+	}    
+	
+	private void cancelBillAction(ActionEvent event){
+		JPanel panel = new JPanel(new GridLayout(6, 2, 5, 5));
 		// create array of bills
-    	List<Bill> bills = RestoController.getCurrentBills();
+		List<Bill> bills = RestoController.getCurrentBills();
 		int currentLength = bills.size();
 		String currentBillNums[] = new String[currentLength];
 		for (int i = 0; i < currentLength; i++) {
@@ -912,11 +948,11 @@ public class RestoAppPage extends JFrame {
 		} else {
 			JOptionPane.showMessageDialog(null, "Unsuccessful cancellation.");
 		}
-    }
-    
-    private void viewBillAction(ActionEvent event){
-    	JFrame f = new JFrame("View Bills");
-    	JDialog d = new JDialog(f, "View Bills");
+	}
+	
+	private void viewBillAction(ActionEvent event){
+		JFrame f = new JFrame("View Bills");
+		JDialog d = new JDialog(f, "View Bills");
 		JPanel panel = new JPanel();
 		
 		GridBagLayout grid = new GridBagLayout();  
@@ -1261,7 +1297,7 @@ public class RestoAppPage extends JFrame {
 		JLabel quantitylabel = new JLabel("Quantity");
 		JTextField quantity = new JTextField();
 		JLabel tablelabel = new JLabel("Table");
-
+		
 		//ILANA
 		Set<String> keys = hmap.keySet();
 		String[] keysArray = new String[hmap.keySet().size()];
@@ -1390,7 +1426,7 @@ public class RestoAppPage extends JFrame {
 	
 	private void businessStatisticsAction(ActionEvent event) {
 		JPanel panel = new JPanel(new GridLayout(7, 4, 5, 5));
-
+		
 		panel.add(new JLabel("Start Date:"));
 		
 		JXDatePicker startDatePicker = new JXDatePicker();
@@ -1426,7 +1462,7 @@ public class RestoAppPage extends JFrame {
 		options[1] = new String("Top Items");
 		options[2] = new String("Exit");
 		int result = JOptionPane.showOptionDialog(null, panel, "Business Statistics", 
-				0, JOptionPane.DEFAULT_OPTION, null, options, null);
+		0, JOptionPane.DEFAULT_OPTION, null, options, null);
 		if (result == 0) {
 			try {
 				
@@ -1473,7 +1509,7 @@ public class RestoAppPage extends JFrame {
 				}
 				
 				JOptionPane.showMessageDialog(null, topItems);
-
+				
 			} catch (Exception error) {
 				JOptionPane.showMessageDialog(null, error.getMessage(), "Top 10 Menu Items Failed to Generate.",
 				JOptionPane.ERROR_MESSAGE);
