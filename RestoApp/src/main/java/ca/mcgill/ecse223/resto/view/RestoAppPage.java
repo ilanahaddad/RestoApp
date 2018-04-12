@@ -240,8 +240,8 @@ public class RestoAppPage extends JFrame {
 	private void cancelOrderItemAction(ActionEvent event) { //author: ilanahaddad
 		JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
 
-		//List<String> orderItems = RestoController.getAllCurrentOrderItemsNamesWithSeatKey();
-		List<String> orderItems = RestoController.getAllCurrentOrderItemsNamesWithSeatKey2();
+		List<String> orderItems = RestoController.getAllCurrentOrderItemsNamesWithSeatKey();
+		//List<String> orderItems = RestoController.getAllCurrentOrderItemsNamesWithSeatKey2();
 		if(orderItems != null) {
 			displayCancelOrderItemAction(panel,orderItems);
 		}
