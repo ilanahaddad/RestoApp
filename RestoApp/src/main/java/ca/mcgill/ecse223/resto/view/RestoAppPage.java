@@ -675,6 +675,7 @@ public class RestoAppPage extends JFrame {
 		int i = 0;
 		List<Order> currOrder = RestoController.getCurrentOrders();
 		for (Order o : currOrder) {
+			System.out.println("NUM TABLES FOR ORDER: " + o.getTables().size());
 			currOrderNums[i] = "T" + o.getTable(0).getNumber() + " Order "  + o.getNumber();
 			associatedOrder[i] = o;
 			i++;
@@ -695,6 +696,8 @@ public class RestoAppPage extends JFrame {
 		if (result == JOptionPane.OK_OPTION) {
 			try {
 				int selectedOrderIdx = activeOrders.getSelectedIndex();
+				System.out.println("SELECTED IDX: " + selectedOrderIdx);
+				System.out.println("ORDER: " + associatedOrder[selectedOrderIdx].getNumber());
 				if (selectedOrderIdx >= 0) {
 					RestoController.endOrder(associatedOrder[selectedOrderIdx]);
 					

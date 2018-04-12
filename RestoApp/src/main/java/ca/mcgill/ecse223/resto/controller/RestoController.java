@@ -710,20 +710,23 @@ public class RestoController {
 
         for (Table table : tablesMarked) {
             table.endOrder(orderToEnd);
-        }
+        }    
 
         if (allTablesAvailableOrDifferentCurrentOrder(orderToEnd, tablesInOrder)) {
             r.removeCurrentOrder(orderToEnd);
         }
+
+        System.out.println("HERE");
 
         RestoAppApplication.save();
     }
 
     private static boolean allTablesAvailableOrDifferentCurrentOrder(Order orderToEnd, List<Table> tablesInOrder) {
         for (Table table : tablesInOrder) {
-            if (table.getStatus() == Table.Status.Available
-                    || !table.getOrder(table.numberOfOrders() - 1).equals(orderToEnd)) {
-                return false;
+            if (table.getStatus() != Table.Status.Available) {
+                if (table.numberOfOrders() > 0) {
+                    if (!table.getOrder(table.numberOfOrders() - 1).equals(orderToEnd)) { return false; }
+                }
             }
         }
         return true;
