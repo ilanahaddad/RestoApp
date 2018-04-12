@@ -282,6 +282,42 @@ public class RestoAppPage extends JFrame {
 		updateScrollbarMax(RestoController.getMaxX(), RestoController.getMaxY());
 	}
 	
+/*	private void tempCancelOrderItemAction(ActionEvent event) {
+		JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
+		List<OrderItem> orderItems = new ArrayList<OrderItem>();
+		for (Table t: RestoController.getCurrentTables()) {
+			for(Seat s: t.getCurrentSeats()) {
+				for(OrderItem oi: s.getOrderItems()) {
+					if (!orderItems.contains(oi)) {
+						orderItems.add(oi);
+					}
+				}
+			}
+		}
+		if(orderItems != null) {
+			
+			String orderItemsNames[] = new String[orderItems.size()];
+			int i = 0;
+			for (OrderItem oi: orderItems) {
+				String name = oi.getPricedMenuItem().getMenuItem().getName();
+				orderItemsNames[i] = "" + i + " " + name;
+				for (Seat s: oi.getSeats()) {
+					orderItemsNames[i] = orderItemsNames[i] + " " + RestoController.getKeyForSeat(s);
+				}
+				i++;
+			}
+		}	
+		else {
+			JOptionPane.showMessageDialog(
+					null,
+					"RestoApp currently has no seats with order items",
+					"Cancel Order Items Currently Unavailable",
+					JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+	
+	*/
+	
 	private void cancelOrderItemAction(ActionEvent event) { //author: ilanahaddad
 		JPanel panel = new JPanel(new GridLayout(2, 2, 5,5));
 
@@ -828,7 +864,10 @@ public class RestoAppPage extends JFrame {
         String currentOrderNums[] = new String[currentOrderLength];
         List<Order> currentOrders = RestoController.getCurrentOrders();
         for (int i = 0; i < currentOrderLength; i++){
-            currentOrderNums[i] = "" + currentOrders.get(i).getNumber();
+            currentOrderNums[i] = "O" + currentOrders.get(i).getNumber()+ " ";
+            for (Table t: currentOrders.get(i).getTables()) {
+            	currentOrderNums[i] = currentOrderNums[i] + " T" + t.getNumber();
+            }
         }
 
         DefaultListModel<String> listOrderNums = new DefaultListModel<>();
@@ -901,7 +940,7 @@ public class RestoAppPage extends JFrame {
             }
         }
         else {
-            JOptionPane.showMessageDialog(null, "No orders were started.");
+            JOptionPane.showMessageDialog(null, "No bills were issued.");
         }
     }    
 
