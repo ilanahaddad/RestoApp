@@ -824,25 +824,24 @@ public class RestoController {
     }
     public static List<String> getAllCurrentOrderItemsNamesWithSeatKey2(){
     	RestoApp r = RestoAppApplication.getRestoApp();
- //   	List<OrderItem> allOrderItems = new ArrayList<OrderItem>();
-    	List<String> allOrderItemNames = new ArrayList<String>();
     	List<Table> curTables = r.getCurrentTables();
     	List<String> allOrderItemNamesWithSeatNum = new ArrayList<String>();
     	for(Table t: curTables) {
     		List<Seat> curSeatsAtTable = t.getCurrentSeats();
     		for(Seat s: curSeatsAtTable) {
     			List<OrderItem> orderItemsForSeat = s.getOrderItems(); 
+    			int count = 1;
     			if(s.hasOrderItems()) {
-    				int count = 1;
+    				
         			for(OrderItem i: orderItemsForSeat) {
-        		//		allOrderItems.add(i);
-        				allOrderItemNames.add(i.getPricedMenuItem().getMenuItem().getName());
         				String orderItemName = i.getPricedMenuItem().getMenuItem().getName();
         				String num = getKeyForSeat(s);
         				allOrderItemNamesWithSeatNum.add(count+". "+orderItemName + " " + num);
         				count++;
         			}
+        			
     			}
+    			
 
     		}
     	}
@@ -915,7 +914,7 @@ public class RestoController {
     }
     public static OrderItem getOrderItemFromNameWithSeatKey(String orderItemNameWithSeatKey) {
     		int length = orderItemNameWithSeatKey.length();
-    		String orderItemName = orderItemNameWithSeatKey.substring(0, length-5);
+    		String orderItemName = orderItemNameWithSeatKey.substring(3, length-5);
     		String seatKey = orderItemNameWithSeatKey.substring(length-4, length);
     		Seat seat = hmap.get(seatKey);
     		
