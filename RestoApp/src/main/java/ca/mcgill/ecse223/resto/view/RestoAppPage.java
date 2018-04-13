@@ -973,11 +973,11 @@ public class RestoAppPage extends JFrame {
 					DecimalFormat df = new DecimalFormat("#.##");
 					int billNum = allBillList.getSelectedIndex();
 					Bill selectedBill = RestoController.getCurrentBills().get(billNum);
-					String displayItems = "Bill " + billNum + "\n";
+					String displayItems = "Bill " + billNum + "";
 					List<Seat> seats = selectedBill.getIssuedForSeats();
 					double totalBillPrice = 0;
 					for (Seat s: seats) {
-						displayItems = displayItems + "\nSeat " + RestoController.getKeyForSeat(s);
+						displayItems = displayItems + "\n\nSeat " + RestoController.getKeyForSeat(s);
 						List<OrderItem> items = s.getOrderItems();
 						for(OrderItem item: items) {
 							if(RestoController.getCurrentOrders().contains(item.getOrder())) {
@@ -991,11 +991,26 @@ public class RestoAppPage extends JFrame {
 								if (splitBetween != 1) {
 									displayNum = displayNum + "/"+ splitBetween;
 								}
-								displayItems = displayItems + "\n" + displayNum + " " + name + "---" + totalPrice; 
+								else {
+									displayNum = displayNum + "  ";
+								}
+								displayNum = displayNum + " " + name + " ";
+								while(displayNum.length() < 30) {
+									displayNum = displayNum + "-";
+								}
+								
+								displayNum = displayNum + " $" + totalPrice;
+								displayItems = displayItems + "\n"+ displayNum; 
 							}
 						}
 					}
-					displayItems = displayItems + "\n\nBILL TOTAL = $" + df.format(totalBillPrice);
+					String displayBill = "BILL TOTAL ";
+					while(displayBill.length() < 30) {
+						displayBill = displayBill + "=";
+					}
+					displayBill = displayBill + " $" + df.format(totalBillPrice);
+					displayItems = displayItems + "\n\n"+ displayBill;
+					
 					display.setText(displayItems);
 				}catch (NumberFormatException e) {
 				}catch (Exception error)
